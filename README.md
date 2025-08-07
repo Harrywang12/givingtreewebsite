@@ -26,8 +26,9 @@ A modern, responsive website built with Next.js for The Giving Tree Non-Profit F
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
+- PostgreSQL database
 
-### Installation
+### Local Development
 
 1. Clone the repository:
 ```bash
@@ -40,12 +41,66 @@ cd givingtreewebsite
 npm install
 ```
 
-3. Run the development server:
+3. Set up the database:
+   - Create a PostgreSQL database
+   - Update the `DATABASE_URL` in your `.env` file
+   - Run database migrations:
+   ```bash
+   npm run db:push
+   npm run db:generate
+   ```
+
+4. Seed the database with sample data:
+```bash
+npm run db:seed
+```
+
+5. Run the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Production Deployment
+
+For production deployment with scalability and performance optimizations, see our comprehensive [Deployment Guide](./DEPLOYMENT.md).
+
+**Quick Deploy Options:**
+- **Vercel** (Recommended): One-click deployment with automatic scaling
+- **Docker**: Containerized deployment for any cloud provider
+- **Traditional VPS**: Full control over infrastructure
+
+**Scalability Features:**
+- ✅ Handles 1000+ concurrent users
+- ✅ Redis caching for performance
+- ✅ Database connection pooling
+- ✅ Rate limiting and security
+- ✅ Health monitoring
+- ✅ Global CDN ready
+
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/givingtree?schema=public"
+
+# NextAuth
+NEXTAUTH_SECRET="your-secret-key-here-change-in-production"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+### Sample User Accounts
+
+After running the seed script, you can log in with these test accounts:
+
+- **Email**: sarah.johnson@example.com | **Password**: password123
+- **Email**: michael.chen@example.com | **Password**: password123
+- **Email**: emily.rodriguez@example.com | **Password**: password123
+- **Email**: david.thompson@example.com | **Password**: password123
+- **Email**: lisa.wang@example.com | **Password**: password123
 
 ## 📁 Project Structure
 

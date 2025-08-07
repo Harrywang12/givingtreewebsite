@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { 
   Heart, 
   Leaf, 
@@ -16,12 +17,18 @@ import {
   MessageCircle,
   ThumbsUp
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthModal from '@/components/AuthModal';
 
 export default function Home() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +49,17 @@ export default function Home() {
     }
   };
 
+  const handleDashboardClick = () => {
+    if (user) {
+      // User is logged in, go directly to dashboard
+      router.push('/dashboard');
+    } else {
+      // User is not logged in, show login modal
+      setAuthMode('login');
+      setShowAuthModal(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Navigation */}
@@ -53,13 +71,18 @@ export default function Home() {
               <span className="ml-2 text-xl font-bold text-gray-900">The Giving Tree</span>
             </div>
             <div className="hidden md:flex space-x-8">
-              <a href="#mission" className="text-gray-700 hover:text-green-600">Mission</a>
-              <a href="#about" className="text-gray-700 hover:text-green-600">About</a>
-              <a href="#team" className="text-gray-700 hover:text-green-600">Team</a>
-              <a href="#events" className="text-gray-700 hover:text-green-600">Events</a>
+              <a href="/mission" className="text-gray-700 hover:text-green-600">Mission</a>
+              <a href="/about" className="text-gray-700 hover:text-green-600">About</a>
+              <a href="/team" className="text-gray-700 hover:text-green-600">Team</a>
+              <a href="/events" className="text-gray-700 hover:text-green-600">Events</a>
               <a href="/donate" className="text-gray-700 hover:text-green-600">Donate</a>
               <a href="/leaderboard" className="text-gray-700 hover:text-green-600">Leaderboard</a>
-              <a href="/dashboard" className="text-gray-700 hover:text-green-600">Dashboard</a>
+              <button 
+                onClick={handleDashboardClick}
+                className="text-gray-700 hover:text-green-600"
+              >
+                {user ? 'Dashboard' : 'Sign In'}
+              </button>
               <a href="#contact" className="text-gray-700 hover:text-green-600">Contact</a>
             </div>
           </div>
@@ -99,74 +122,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Mission Statement */}
-      <section id="mission" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-8">Our Mission</h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Our mission is to support Mackenzie Health by collecting and reselling gently used items. 
-              Through the generosity of our community, 100% of the proceeds will go directly toward 
-              enhancing patient care, advancing medical research, and improving hospital facilities.
-            </p>
-          </motion.div>
 
-          {/* Vision */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="text-center p-6 bg-green-50 rounded-lg"
-            >
-              <Leaf className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Reduce Waste</h3>
-              <p className="text-gray-600">Prevent items from ending up in landfills</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="text-center p-6 bg-blue-50 rounded-lg"
-            >
-              <Heart className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Support Local Healthcare</h3>
-              <p className="text-gray-600">Direct funding for Mackenzie Health</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="text-center p-6 bg-purple-50 rounded-lg"
-            >
-              <Users className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Inspire the Next Generation</h3>
-              <p className="text-gray-600">Building a culture of giving</p>
-            </motion.div>
-          </div>
-
-          {/* Statistics Placeholder */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="text-center p-8 bg-gradient-to-r from-green-100 to-blue-100 rounded-lg"
-          >
-            <h3 className="text-2xl font-bold mb-4">Our Impact</h3>
-            <p className="text-gray-600">Statistics coming soon - track our progress in raising funds and reducing waste!</p>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Our Approach */}
       <section className="py-20 bg-gray-50">
@@ -204,10 +160,10 @@ export default function Home() {
                 <h3 className="text-xl font-semibold mb-3">Volunteer</h3>
                 <p className="text-gray-600 mb-4">Join our team and make an impact</p>
                 <button 
-                  onClick={() => window.location.href = '/dashboard'}
+                  onClick={handleDashboardClick}
                   className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors"
                 >
-                  Apply Now
+                  {user ? 'Go to Dashboard' : 'Apply Now'}
                 </button>
               </div>
             </div>
@@ -452,6 +408,13 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        mode={authMode}
+      />
     </div>
   );
 }

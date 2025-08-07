@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Eye, EyeOff, User, Lock, Mail, Phone } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -11,6 +13,8 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
+  const { login, register } = useAuth();
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(mode === 'login');
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,6 +25,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
     confirmPassword: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -28,26 +33,47 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
       ...prev,
       [name]: value
     }));
+    setError(''); // Clear error when user types
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    onClose();
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      password: '',
-      confirmPassword: ''
-    });
+    setError('');
+
+    try {
+      let result;
+      
+      if (isLogin) {
+        result = await login(formData.email, formData.password);
+      } else {
+        if (formData.password !== formData.confirmPassword) {
+          setError('Passwords do not match');
+          setIsSubmitting(false);
+          return;
+        }
+        result = await register(formData.name, formData.email, formData.phone, formData.password);
+      }
+
+      if (result.success) {
+        onClose();
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          password: '',
+          confirmPassword: ''
+        });
+        // Redirect to dashboard after successful authentication
+        router.push('/dashboard');
+      } else {
+        setError(result.error || 'An error occurred');
+      }
+    } catch (error) {
+      setError('An unexpected error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const toggleMode = () => {
@@ -59,6 +85,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
       password: '',
       confirmPassword: ''
     });
+    setError('');
   };
 
   if (!isOpen) return null;
@@ -84,6 +111,12 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
             </button>
           </div>
 
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>

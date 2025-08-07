@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { 
   User, 
   Heart, 
@@ -12,6 +13,7 @@ import {
   Edit,
   LogOut
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Donation {
   id: number;
@@ -22,68 +24,122 @@ interface Donation {
   status: 'completed' | 'pending' | 'processing';
 }
 
-const mockDonations: Donation[] = [
-  {
-    id: 1,
-    date: '2025-12-15',
-    type: 'monetary',
-    amount: 250,
-    status: 'completed'
-  },
-  {
-    id: 2,
-    date: '2025-12-10',
-    type: 'item',
-    items: ['Coffee Table', 'Bookshelf'],
-    status: 'completed'
-  },
-  {
-    id: 3,
-    date: '2025-12-05',
-    type: 'monetary',
-    amount: 100,
-    status: 'completed'
-  },
-  {
-    id: 4,
-    date: '2025-12-01',
-    type: 'item',
-    items: ['Laptop', 'Monitor'],
-    status: 'pending'
-  }
-];
+interface DashboardData {
+  user: any;
+  recentDonations: any[];
+  recentItemDonations: any[];
+  stats: {
+    totalMonetary: number;
+    totalMonetaryDonations: number;
+    totalItemsSold: number;
+    pendingItems: number;
+  };
+}
 
 export default function UserDashboard() {
+  const { user, logout, token } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'overview' | 'donations' | 'profile'>('overview');
-  const [user] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    totalDonations: 350,
-    itemsDonated: 4,
-    memberSince: '2025-09-01'
-  });
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const totalMonetary = mockDonations
-    .filter(d => d.type === 'monetary' && d.status === 'completed')
-    .reduce((sum, d) => sum + (d.amount || 0), 0);
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
 
-  const totalItems = mockDonations
-    .filter(d => d.type === 'item' && d.status === 'completed')
-    .reduce((sum, d) => sum + (d.items?.length || 0), 0);
+      try {
+        const response = await fetch('/api/user/dashboard', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setDashboardData(data);
+        } else {
+          setError('Failed to load dashboard data');
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        setError('Failed to load dashboard data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [token]);
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
+      case 'COMPLETED':
         return 'text-green-600 bg-green-100';
       case 'pending':
+      case 'PENDING':
         return 'text-yellow-600 bg-yellow-100';
       case 'processing':
+      case 'PROCESSING':
         return 'text-blue-600 bg-blue-100';
+      case 'SOLD':
+        return 'text-green-600 bg-green-100';
       default:
         return 'text-gray-600 bg-gray-100';
     }
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading user data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Use real data if available, otherwise fall back to user data
+  const displayUser = dashboardData?.user || user;
+  const totalMonetary = dashboardData?.stats.totalMonetary || user.totalDonated || 0;
+  const totalItems = dashboardData?.stats.totalItemsSold || user.itemsDonated || 0;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -100,12 +156,16 @@ export default function UserDashboard() {
                 <User className="h-8 w-8" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">{user.name}</h1>
-                <p className="text-green-100">Member since {new Date(user.memberSince).toLocaleDateString()}</p>
+                <h1 className="text-2xl font-bold">{displayUser.name}</h1>
+                <p className="text-green-100">Member since {new Date(displayUser.memberSince).toLocaleDateString()}</p>
               </div>
             </div>
-            <button className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors">
-              <LogOut className="h-5 w-5" />
+            <button 
+              onClick={handleLogout}
+              className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+            >
+              <LogOut className="h-5 w-5 mr-2" />
+              Logout
             </button>
           </div>
         </div>
@@ -163,7 +223,7 @@ export default function UserDashboard() {
                     <Heart className="h-8 w-8 text-purple-600 mr-4" />
                     <div>
                       <p className="text-sm text-purple-600">Total Impact</p>
-                      <p className="text-2xl font-bold text-purple-800">${user.totalDonations}</p>
+                      <p className="text-2xl font-bold text-purple-800">${displayUser.totalDonated || totalMonetary}</p>
                     </div>
                   </div>
                 </div>
@@ -173,31 +233,48 @@ export default function UserDashboard() {
               <div>
                 <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
                 <div className="space-y-3">
-                  {mockDonations.slice(0, 3).map((donation) => (
+                  {dashboardData?.recentDonations?.slice(0, 3).map((donation: any) => (
                     <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
-                        {donation.type === 'monetary' ? (
-                          <DollarSign className="h-5 w-5 text-green-600 mr-3" />
-                        ) : (
-                          <Package className="h-5 w-5 text-blue-600 mr-3" />
-                        )}
+                        <DollarSign className="h-5 w-5 text-green-600 mr-3" />
                         <div>
                           <p className="font-medium">
-                            {donation.type === 'monetary' 
-                              ? `$${donation.amount} donation`
-                              : `${donation.items?.join(', ')} donated`
-                            }
+                            ${donation.amount} donation
                           </p>
                           <p className="text-sm text-gray-600">
-                            {new Date(donation.date).toLocaleDateString()}
+                            {new Date(donation.createdAt).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)}`}>
-                        {donation.status}
+                        {donation.status.toLowerCase()}
                       </span>
                     </div>
                   ))}
+                  {dashboardData?.recentItemDonations?.slice(0, 3).map((donation: any) => (
+                    <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center">
+                        <Package className="h-5 w-5 text-blue-600 mr-3" />
+                        <div>
+                          <p className="font-medium">
+                            {donation.items?.join(', ') || 'Item donation'}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {new Date(donation.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)}`}>
+                        {donation.status.toLowerCase()}
+                      </span>
+                    </div>
+                  ))}
+                  {(!dashboardData?.recentDonations?.length && !dashboardData?.recentItemDonations?.length) && (
+                    <div className="text-center py-8 text-gray-500">
+                      <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p>No donations yet. Start making a difference today!</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -207,35 +284,50 @@ export default function UserDashboard() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Donation History</h3>
               <div className="space-y-4">
-                {mockDonations.map((donation) => (
+                {dashboardData?.recentDonations?.map((donation: any) => (
                   <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center">
-                        {donation.type === 'monetary' ? (
-                          <DollarSign className="h-5 w-5 text-green-600 mr-2" />
-                        ) : (
-                          <Package className="h-5 w-5 text-blue-600 mr-2" />
-                        )}
-                        <span className="font-medium">
-                          {donation.type === 'monetary' ? 'Monetary Donation' : 'Item Donation'}
-                        </span>
+                        <DollarSign className="h-5 w-5 text-green-600 mr-2" />
+                        <span className="font-medium">Monetary Donation</span>
                       </div>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)}`}>
-                        {donation.status}
+                        {donation.status.toLowerCase()}
                       </span>
                     </div>
                     <div className="text-sm text-gray-600 mb-2">
-                      Date: {new Date(donation.date).toLocaleDateString()}
+                      Date: {new Date(donation.createdAt).toLocaleDateString()}
                     </div>
                     <div className="text-sm">
-                      {donation.type === 'monetary' ? (
-                        <span className="text-green-600 font-medium">Amount: ${donation.amount}</span>
-                      ) : (
-                        <span className="text-blue-600">Items: {donation.items?.join(', ')}</span>
-                      )}
+                      <span className="text-green-600 font-medium">Amount: ${donation.amount}</span>
                     </div>
                   </div>
                 ))}
+                {dashboardData?.recentItemDonations?.map((donation: any) => (
+                  <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center">
+                        <Package className="h-5 w-5 text-blue-600 mr-2" />
+                        <span className="font-medium">Item Donation</span>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)}`}>
+                        {donation.status.toLowerCase()}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 mb-2">
+                      Date: {new Date(donation.createdAt).toLocaleDateString()}
+                    </div>
+                    <div className="text-sm">
+                      <span className="text-blue-600">Items: {donation.items?.join(', ') || 'Various items'}</span>
+                    </div>
+                  </div>
+                ))}
+                {(!dashboardData?.recentDonations?.length && !dashboardData?.recentItemDonations?.length) && (
+                  <div className="text-center py-8 text-gray-500">
+                    <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p>No donation history yet. Start making a difference today!</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -255,7 +347,7 @@ export default function UserDashboard() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <input
                     type="text"
-                    value={user.name}
+                    value={displayUser.name}
                     readOnly
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -264,7 +356,7 @@ export default function UserDashboard() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                   <input
                     type="email"
-                    value={user.email}
+                    value={displayUser.email}
                     readOnly
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -273,7 +365,7 @@ export default function UserDashboard() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                   <input
                     type="tel"
-                    value={user.phone}
+                    value={displayUser.phone || 'Not provided'}
                     readOnly
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
                   />
@@ -282,7 +374,25 @@ export default function UserDashboard() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Member Since</label>
                   <input
                     type="text"
-                    value={new Date(user.memberSince).toLocaleDateString()}
+                    value={new Date(displayUser.memberSince).toLocaleDateString()}
+                    readOnly
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Total Items Donated</label>
+                  <input
+                    type="text"
+                    value={displayUser.itemsDonated?.toString() || totalItems.toString()}
+                    readOnly
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Total Amount Donated</label>
+                  <input
+                    type="text"
+                    value={`$${displayUser.totalDonated || totalMonetary}`}
                     readOnly
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
                   />

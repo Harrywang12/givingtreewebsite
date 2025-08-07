@@ -1,0 +1,184 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  phone     String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Profile information
+  avatar    String?
+  bio       String?
+  location  String?
+  
+  // Donation tracking
+  totalDonated    Float   @default(0)
+  itemsDonated    Int     @default(0)
+  memberSince     DateTime @default(now())
+  
+  // Relationships
+  donations       Donation[]
+  itemDonations   ItemDonation[]
+  comments        Comment[]
+  likes           Like[]
+  
+  @@map("users")
+}
+
+model Donation {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Float
+  type        DonationType
+  status      DonationStatus @default(PENDING)
+  paymentMethod PaymentMethod?
+  transactionId String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("donations")
+}
+
+model ItemDonation {
+  id              String   @id @default(cuid())
+  userId          String
+  itemDescription String
+  itemCondition   ItemCondition
+  estimatedValue  Float?
+  pickupPreference PickupPreference
+  additionalNotes String?
+  status          ItemDonationStatus @default(PENDING)
+  images          String[] // Array of image URLs
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("item_donations")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  type        EventType
+  location    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  comments    Comment[]
+  likes       Like[]
+
+  @@map("events")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  // Relationships
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@map("likes")
+}
+
+model Newsletter {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("newsletters")
+}
+
+// Enums
+enum DonationType {
+  MONETARY
+  ITEM
+}
+
+enum DonationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  PAYPAL
+  E_TRANSFER
+  CREDIT_CARD
+  DEBIT_CARD
+}
+
+enum ItemCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+}
+
+enum PickupPreference {
+  PICKUP_NEEDED
+  CAN_DROP_OFF
+  EITHER_OPTION
+}
+
+enum ItemDonationStatus {
+  PENDING
+  REVIEWED
+  APPROVED
+  REJECTED
+  PICKED_UP
+  SOLD
+}
+
+enum EventType {
+  NEWS
+  EVENT
+  ANNOUNCEMENT
+}

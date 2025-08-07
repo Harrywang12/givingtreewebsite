@@ -1,28 +1,33 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Medal, Award, Heart } from 'lucide-react';
 
 interface Donor {
-  id: number;
+  id: string;
   name: string;
-  amount: number;
-  items: number;
+  totalDonated: number;
+  itemsDonated: number;
   rank: number;
+  memberSince: string;
 }
 
-const mockDonors: Donor[] = [
-  { id: 1, name: "Sarah Johnson", amount: 2500, items: 15, rank: 1 },
-  { id: 2, name: "Michael Chen", amount: 1800, items: 12, rank: 2 },
-  { id: 3, name: "Emily Rodriguez", amount: 1500, items: 8, rank: 3 },
-  { id: 4, name: "David Thompson", amount: 1200, items: 10, rank: 4 },
-  { id: 5, name: "Lisa Wang", amount: 950, items: 6, rank: 5 },
-  { id: 6, name: "James Wilson", amount: 800, items: 5, rank: 6 },
-  { id: 7, name: "Maria Garcia", amount: 650, items: 4, rank: 7 },
-  { id: 8, name: "Robert Brown", amount: 500, items: 3, rank: 8 },
-  { id: 9, name: "Jennifer Lee", amount: 400, items: 2, rank: 9 },
-  { id: 10, name: "Christopher Davis", amount: 300, items: 1, rank: 10 },
-];
+interface LeaderboardData {
+  donors: Donor[];
+  stats: {
+    totalRaised: number;
+    totalDonors: number;
+    totalItemsSold: number;
+    totalDonations: number;
+  };
+  pagination: {
+    total: number;
+    limit: number;
+    offset: number;
+    hasMore: boolean;
+  };
+}
 
 const getRankIcon = (rank: number) => {
   switch (rank) {
@@ -51,6 +56,59 @@ const getRankColor = (rank: number) => {
 };
 
 export default function Leaderboard() {
+  const [data, setData] = useState<LeaderboardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, []);
+
+  const fetchLeaderboard = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/leaderboard');
+      if (response.ok) {
+        const leaderboardData = await response.json();
+        setData(leaderboardData);
+      } else {
+        setError('Failed to load leaderboard data');
+      }
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+      setError('Failed to load leaderboard data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading leaderboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <p className="text-red-600 mb-4">{error || 'Failed to load leaderboard'}</p>
+          <button 
+            onClick={fetchLeaderboard}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <motion.div
@@ -66,7 +124,7 @@ export default function Leaderboard() {
         </div>
 
         <div className="space-y-4">
-          {mockDonors.map((donor, index) => (
+          {data.donors.map((donor, index) => (
             <motion.div
               key={donor.id}
               initial={{ opacity: 0, x: -20 }}
@@ -85,12 +143,12 @@ export default function Leaderboard() {
                   <div>
                     <h3 className="font-semibold text-gray-900">{donor.name}</h3>
                     <p className="text-sm text-gray-600">
-                      {donor.items} item{donor.items !== 1 ? 's' : ''} donated
+                      {donor.itemsDonated} item{donor.itemsDonated !== 1 ? 's' : ''} donated
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-green-600">
-                      ${donor.amount.toLocaleString()}
+                      ${donor.totalDonated.toLocaleString()}
                     </p>
                     <p className="text-sm text-gray-500">Total Value</p>
                   </div>
