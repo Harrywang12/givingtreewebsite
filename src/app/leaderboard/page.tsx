@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Trophy, Award, Heart } from 'lucide-react';
+import { ArrowLeft, Trophy, Award, Heart, TrendingUp } from 'lucide-react';
 import Leaderboard from '@/components/Leaderboard';
 
 export default function LeaderboardPage() {
