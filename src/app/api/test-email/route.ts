@@ -50,6 +50,7 @@ This test was sent from your Giving Tree website email system.`
     console.log('📤 Attempting to send test email...');
     console.log('📧 To:', gmailUser);
     console.log('👤 From:', testEmailData.email);
+    console.log('🔐 Testing Gmail authentication...');
     
     // Attempt to send the email
     const emailResult = await sendContactEmail(testEmailData);
@@ -64,18 +65,21 @@ This test was sent from your Giving Tree website email system.`
     
     return NextResponse.json({
       success: true,
-      message: 'Test email sent successfully! Check troubleshooting guide below if you don\'t receive it.',
+      message: '✅ Gmail authentication successful! Email sent to Gmail servers. If not received, check delivery troubleshooting below.',
       details: {
+        authenticationStatus: 'SUCCESS - Gmail credentials are working correctly',
         to: gmailUser,
         from: testEmailData.email,
         subject: testEmailData.subject,
         messageId: emailResult?.messageId || 'unknown',
         timestamp: new Date().toISOString(),
+        deliveryNote: 'Email was successfully sent to Gmail. If not received, this is a delivery/filtering issue, not an authentication problem.',
         troubleshooting: {
-          checkSpam: 'Check your spam/junk folder',
-          checkEmail: `Verify ${gmailUser} is correct`,
+          checkSpam: 'Check your spam/junk folder - most common cause',
+          checkEmail: `Verify ${gmailUser} is the correct email address`,
           waitTime: 'Emails can take 1-5 minutes to arrive',
-          gmailFilters: 'Check if Gmail filters are blocking emails'
+          gmailFilters: 'Check Gmail Settings → Filters and Blocked Addresses',
+          gmailTabs: 'Check Promotions/Updates tabs in Gmail'
         }
       }
     });
@@ -90,9 +94,9 @@ This test was sent from your Giving Tree website email system.`
       errorMessage = error.message;
       
       // Categorize common email errors
-      if (error.message.includes('Invalid login')) {
+      if (error.message.includes('Invalid login') || error.message.includes('authentication') || error.message.includes('Username and Password not accepted')) {
         errorCode = 'AUTH_FAILED';
-        errorMessage = 'Gmail authentication failed. Check your app password.';
+        errorMessage = 'Gmail authentication failed. Your username or app password is incorrect.';
       } else if (error.message.includes('ENOTFOUND')) {
         errorCode = 'NETWORK_ERROR';
         errorMessage = 'Network error. Cannot reach Gmail servers.';
