@@ -29,6 +29,7 @@ export default function DonationForm() {
   const [images, setImages] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -50,28 +51,63 @@ export default function DonationForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        itemDescription: '',
-        itemCondition: '',
-        estimatedValue: '',
-        pickupPreference: '',
-        additionalNotes: ''
+    setSubmitError('');
+
+    try {
+      // Prepare the email data
+      const emailData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        items: [{
+          name: formData.itemDescription,
+          category: 'General',
+          condition: formData.itemCondition,
+          description: formData.itemDescription,
+          quantity: 1
+        }],
+        pickupPreference: formData.pickupPreference,
+        preferredDate: '',
+        notes: `${formData.additionalNotes}\n\nEstimated Value: ${formData.estimatedValue || 'Not specified'}\n\nImages uploaded: ${images.length} file(s)`
+      };
+
+      const response = await fetch('/api/donations/items/email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailData),
       });
-      setImages([]);
-    }, 3000);
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          setIsSubmitted(false);
+          setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            itemDescription: '',
+            itemCondition: '',
+            estimatedValue: '',
+            pickupPreference: '',
+            additionalNotes: ''
+          });
+          setImages([]);
+        }, 3000);
+      } else {
+        setSubmitError(result.error || 'Failed to submit donation. Please try again.');
+      }
+    } catch (error) {
+      console.error('Donation form error:', error);
+      setSubmitError('Failed to submit donation. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -84,7 +120,8 @@ export default function DonationForm() {
         <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
         <h3 className="text-2xl font-bold text-green-800 mb-2">Thank You!</h3>
         <p className="text-green-700">
-          Your donation form has been submitted successfully. We'll review your items and contact you soon.
+          Your donation request has been sent to our team at Givingtreenonprofit@gmail.com. 
+          We&apos;ll review your items and contact you soon to arrange pickup or drop-off.
         </p>
       </motion.div>
     );
@@ -294,6 +331,13 @@ export default function DonationForm() {
             >
               {isSubmitting ? 'Submitting...' : 'Submit Donation'}
             </button>
+
+            {/* Error Message */}
+            {submitError && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 text-sm">{submitError}</p>
+              </div>
+            )}
           </div>
         </form>
       </motion.div>
