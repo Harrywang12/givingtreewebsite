@@ -10,11 +10,12 @@ import {
   Package, 
   TrendingUp,
   Edit,
-  LogOut
+  LogOut,
+  Home,
+  Plus
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-
-// Removed unused interface
+import DashboardDonationForm from './DashboardDonationForm';
 
 interface DashboardData {
   user: {
@@ -53,6 +54,7 @@ export default function UserDashboard() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showDonationForm, setShowDonationForm] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -88,6 +90,19 @@ export default function UserDashboard() {
   const handleLogout = () => {
     logout();
     router.push('/');
+  };
+
+  const handleGoHome = () => {
+    router.push('/');
+  };
+
+  const handleDonate = () => {
+    setShowDonationForm(true);
+  };
+
+  const handleDonationComplete = () => {
+    // Refresh dashboard data after donation
+    window.location.reload();
   };
 
   const getStatusColor = (status: string) => {
@@ -170,13 +185,29 @@ export default function UserDashboard() {
                 <p className="text-green-100">Member since {new Date(displayUser.memberSince).toLocaleDateString()}</p>
               </div>
             </div>
-            <button 
-              onClick={handleLogout}
-              className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
-            >
-              <LogOut className="h-5 w-5 mr-2" />
-              Logout
-            </button>
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={handleGoHome}
+                className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+              >
+                <Home className="h-5 w-5 mr-2" />
+                Home
+              </button>
+              <button 
+                onClick={handleDonate}
+                className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Donate
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+              >
+                <LogOut className="h-5 w-5 mr-2" />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
 
@@ -208,6 +239,34 @@ export default function UserDashboard() {
         <div className="p-6">
           {activeTab === 'overview' && (
             <div className="space-y-6">
+              {/* Quick Actions */}
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+                <div className="flex flex-wrap gap-4">
+                  <button
+                    onClick={handleDonate}
+                    className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+                  >
+                    <DollarSign className="h-5 w-5 mr-2" />
+                    Make a Donation
+                  </button>
+                  <button
+                    onClick={() => router.push('/donate')}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                  >
+                    <Package className="h-5 w-5 mr-2" />
+                    Donate Items
+                  </button>
+                  <button
+                    onClick={() => router.push('/events')}
+                    className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center"
+                  >
+                    <Heart className="h-5 w-5 mr-2" />
+                    View Events
+                  </button>
+                </div>
+              </div>
+
               {/* Stats Cards */}
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="bg-green-50 p-6 rounded-lg">
@@ -283,6 +342,12 @@ export default function UserDashboard() {
                     <div className="text-center py-8 text-gray-500">
                       <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                       <p>No donations yet. Start making a difference today!</p>
+                      <button
+                        onClick={handleDonate}
+                        className="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                      >
+                        Make Your First Donation
+                      </button>
                     </div>
                   )}
                 </div>
@@ -292,7 +357,16 @@ export default function UserDashboard() {
 
           {activeTab === 'donations' && (
             <div>
-              <h3 className="text-lg font-semibold mb-4">Donation History</h3>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold">Donation History</h3>
+                <button
+                  onClick={handleDonate}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Donation
+                </button>
+              </div>
               <div className="space-y-4">
                 {dashboardData?.recentDonations?.map((donation) => (
                   <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
@@ -336,6 +410,12 @@ export default function UserDashboard() {
                   <div className="text-center py-8 text-gray-500">
                     <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                     <p>No donation history yet. Start making a difference today!</p>
+                    <button
+                      onClick={handleDonate}
+                      className="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Make Your First Donation
+                    </button>
                   </div>
                 )}
               </div>
@@ -412,6 +492,12 @@ export default function UserDashboard() {
           )}
         </div>
       </motion.div>
+
+      {/* Dashboard Donation Form */}
+      <DashboardDonationForm
+        isOpen={showDonationForm}
+        onClose={() => setShowDonationForm(false)}
+      />
     </div>
   );
 } 
