@@ -29,6 +29,11 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(password)
 
+    // Check if this is an admin email
+    const adminEmails = ['wangharrison2009@gmail.com', 'givingtreenonprofit@gmail.com'];
+    const isAdmin = adminEmails.includes(email);
+    const role = isAdmin ? (email === 'wangharrison2009@gmail.com' ? 'SUPER_ADMIN' : 'ADMIN') : 'USER';
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -36,17 +41,25 @@ export async function POST(request: NextRequest) {
         email,
         phone: phone || null,
         password: hashedPassword,
+        role: role as any,
+        isActive: true,
       },
       select: {
         id: true,
         name: true,
         email: true,
         phone: true,
+        role: true,
         totalDonated: true,
         itemsDonated: true,
         memberSince: true,
       }
     })
+
+    // Log admin user creation
+    if (isAdmin) {
+      console.log(`🔐 Admin user registered: ${email} with role: ${role}`);
+    }
 
     return NextResponse.json({
       message: 'User created successfully',

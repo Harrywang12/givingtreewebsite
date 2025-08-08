@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyToken } from '@/lib/auth'
 import { EventType } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const limit = parseInt(searchParams.get('limit') || '10')
+    const limit = parseInt(searchParams.get('limit') || '20')
     const offset = parseInt(searchParams.get('offset') || '0')
     const type = searchParams.get('type')
 
@@ -24,6 +23,39 @@ export async function GET(request: NextRequest) {
     const events = await prisma.event.findMany({
       where: whereClause,
       include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            role: true
+          }
+        },
+        comments: {
+          where: {
+            user: {
+              isActive: true
+            }
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 5 // Limit initial comments loaded
+        },
+        likes: {
+          where: {
+            user: {
+              isActive: true
+            }
+          }
+        },
         _count: {
           select: {
             comments: true,
@@ -38,7 +70,37 @@ export async function GET(request: NextRequest) {
       skip: offset
     })
 
-    return NextResponse.json({ events })
+    // Format events for public consumption
+    const formattedEvents = events.map(event => ({
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      content: event.content,
+      date: event.date,
+      type: event.type,
+      location: event.location,
+      imageUrl: event.imageUrl,
+      author: {
+        name: event.author.name,
+        isAdmin: event.author.role === 'ADMIN' || event.author.role === 'SUPER_ADMIN'
+      },
+      comments: event.comments.map(comment => ({
+        id: comment.id,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        user: comment.user
+      })),
+      commentCount: event._count.comments,
+      likeCount: event._count.likes,
+      userLiked: false, // Will be updated if user is authenticated
+      createdAt: event.createdAt
+    }))
+
+    return NextResponse.json({ 
+      events: formattedEvents,
+      count: formattedEvents.length,
+      hasMore: events.length === limit
+    })
 
   } catch (error) {
     console.error('Get events error:', error)
@@ -49,62 +111,5 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const { title, description, date, type, location } = await request.json()
-    const token = request.headers.get('authorization')?.replace('Bearer ', '')
-
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-
-    const decoded = verifyToken(token)
-    if (!decoded) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      )
-    }
-
-    // Validate input
-    if (!title || !description || !date || !type) {
-      return NextResponse.json(
-        { error: 'Title, description, date, and type are required' },
-        { status: 400 }
-      )
-    }
-
-    // Validate event type
-    if (!Object.values(EventType).includes(type)) {
-      return NextResponse.json(
-        { error: 'Invalid event type' },
-        { status: 400 }
-      )
-    }
-
-    const event = await prisma.event.create({
-      data: {
-        title,
-        description,
-        date: new Date(date),
-        type: type as EventType,
-        location: location || null,
-      }
-    })
-
-    return NextResponse.json({
-      message: 'Event created successfully',
-      event
-    }, { status: 201 })
-
-  } catch (error) {
-    console.error('Create event error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-} 
+// Event creation is now handled by admin-only endpoint at /api/admin/events
+// This ensures only verified admins can create events 

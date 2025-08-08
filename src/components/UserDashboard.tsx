@@ -12,10 +12,12 @@ import {
   Edit,
   LogOut,
   Home,
-  Plus
+  Plus,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardDonationForm from './DashboardDonationForm';
+import AdminPanel from './AdminPanel';
 
 interface DashboardData {
   user: {
@@ -55,6 +57,7 @@ export default function UserDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [showDonationForm, setShowDonationForm] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editFormData, setEditFormData] = useState({
     name: '',
@@ -105,6 +108,10 @@ export default function UserDashboard() {
 
   const handleDonate = () => {
     setShowDonationForm(true);
+  };
+
+  const handleAdminPanel = () => {
+    setShowAdminPanel(true);
   };
 
   // Removed unused handleDonationComplete function
@@ -249,6 +256,15 @@ export default function UserDashboard() {
                 <Plus className="h-5 w-5 mr-2" />
                 Donate
               </button>
+              {(user?.email === 'wangharrison2009@gmail.com' || user?.email === 'givingtreenonprofit@gmail.com') && (
+                <button 
+                  onClick={handleAdminPanel}
+                  className="bg-blue-600 bg-opacity-80 text-white px-4 py-2 rounded-lg hover:bg-opacity-100 transition-colors flex items-center border border-blue-400"
+                >
+                  <Shield className="h-5 w-5 mr-2" />
+                  Admin
+                </button>
+              )}
               <button 
                 onClick={handleLogout}
                 className="bg-black bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30"
@@ -601,6 +617,12 @@ export default function UserDashboard() {
       <DashboardDonationForm
         isOpen={showDonationForm}
         onClose={() => setShowDonationForm(false)}
+      />
+
+      {/* Admin Panel Modal */}
+      <AdminPanel
+        isOpen={showAdminPanel}
+        onClose={() => setShowAdminPanel(false)}
       />
     </div>
   );
