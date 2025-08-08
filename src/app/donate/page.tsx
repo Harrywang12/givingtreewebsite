@@ -66,12 +66,14 @@ export default function DonatePage() {
   };
 
   const handleLoginToDonate = () => {
+    console.log('handleLoginToDonate clicked', { user, showAuthModal });
     if (user) {
       // User is already logged in, go to dashboard
       router.push('/dashboard');
     } else {
       // Show login modal
       setShowAuthModal(true);
+      console.log('Setting showAuthModal to true');
     }
   };
 
