@@ -83,7 +83,7 @@ export default function Home() {
               >
                 {user ? 'Dashboard' : 'Sign In'}
               </button>
-              <a href="#contact" className="text-gray-700 hover:text-green-600">Contact</a>
+              <a href="/contact" className="text-gray-700 hover:text-green-600">Contact</a>
             </div>
           </div>
         </div>
