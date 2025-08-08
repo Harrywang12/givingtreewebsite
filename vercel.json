@@ -11,11 +11,6 @@
     "NEXTAUTH_SECRET": "@nextauth_secret",
     "DATABASE_URL": "@database_url"
   },
-  "functions": {
-    "src/app/api/**/*.ts": {
-      "maxDuration": 30
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",
