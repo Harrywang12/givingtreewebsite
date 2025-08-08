@@ -17,7 +17,14 @@ import {
 export default function TestEmailPage() {
   const [testEmail, setTestEmail] = useState('');
   const [isRunningTest, setIsRunningTest] = useState(false);
-  const [testResult, setTestResult] = useState<any>(null);
+  const [testResult, setTestResult] = useState<{
+    success: boolean;
+    message?: string;
+    error?: string;
+    errorCode?: string;
+    testType?: string;
+    details?: Record<string, unknown>;
+  } | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
   const runEmailTest = async () => {
