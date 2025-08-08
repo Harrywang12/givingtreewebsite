@@ -10,7 +10,9 @@ import {
   Heart,
   Leaf,
   Send,
-  MessageCircle
+  MessageCircle,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -275,14 +277,33 @@ export default function ContactPage() {
                 {/* Success Message */}
                 {submitMessage && (
                   <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-green-700 text-sm">{submitMessage}</p>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+                      <div>
+                        <p className="text-green-700 text-sm font-medium">Message Sent Successfully!</p>
+                        <p className="text-green-600 text-sm mt-1">
+                          Your message has been sent to Givingtreenonprofit@gmail.com. 
+                          We&apos;ll respond within 24 hours during business days.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
 
                 {/* Error Message */}
                 {submitError && (
                   <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-700 text-sm">{submitError}</p>
+                    <div className="flex items-start">
+                      <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+                      <div>
+                        <p className="text-red-700 text-sm font-medium">Message Failed to Send</p>
+                        <p className="text-red-600 text-sm mt-1">{submitError}</p>
+                        <p className="text-red-600 text-sm mt-2">
+                          If this problem persists, please call us directly at (905) 883-1212 
+                          or visit our <Link href="/test-email" className="underline">email test page</Link> to diagnose the issue.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </form>

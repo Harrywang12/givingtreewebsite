@@ -119,11 +119,18 @@ export default function DonationForm() {
         className="max-w-2xl mx-auto p-8 bg-green-50 rounded-lg text-center"
       >
         <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-green-800 mb-2">Thank You!</h3>
-        <p className="text-green-700">
-          Your donation request has been sent to our team at Givingtreenonprofit@gmail.com. 
-          We&apos;ll review your items and contact you soon to arrange pickup or drop-off.
-        </p>
+        <h3 className="text-2xl font-bold text-green-800 mb-2">Donation Request Submitted!</h3>
+        <div className="text-green-700 space-y-2">
+          <p className="font-medium">
+            ✅ Your donation request has been successfully sent to Givingtreenonprofit@gmail.com
+          </p>
+          <p>
+            📧 We&apos;ll review your items and contact you within 24-48 hours to arrange pickup or drop-off.
+          </p>
+          <p>
+            📞 For urgent donations, call us at (905) 883-1212
+          </p>
+        </div>
       </motion.div>
     );
   }
@@ -338,7 +345,17 @@ export default function DonationForm() {
             {/* Error Message */}
             {submitError && (
               <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-700 text-sm">{submitError}</p>
+                <div className="flex items-start">
+                  <X className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+                  <div>
+                    <p className="text-red-700 text-sm font-medium">Donation Request Failed</p>
+                    <p className="text-red-600 text-sm mt-1">{submitError}</p>
+                    <p className="text-red-600 text-sm mt-2">
+                      Please try again or call us directly at (905) 883-1212. 
+                      You can also visit our email test page to check the system status.
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
