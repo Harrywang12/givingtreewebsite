@@ -4,12 +4,13 @@ import { verifyToken } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const comments = await prisma.comment.findMany({
       where: {
-        eventId: params.id
+        eventId: id
       },
       include: {
         user: {
@@ -38,10 +39,11 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { content } = await request.json()
+    const { id } = await params
     const token = request.headers.get('authorization')?.replace('Bearer ', '')
 
     if (!token) {
@@ -71,7 +73,7 @@ export async function POST(
       data: {
         content: content.trim(),
         userId: decoded.userId,
-        eventId: params.id
+        eventId: id
       },
       include: {
         user: {

@@ -4,9 +4,10 @@ import { verifyToken } from '@/lib/auth'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const token = request.headers.get('authorization')?.replace('Bearer ', '')
 
     if (!token) {
@@ -24,13 +25,11 @@ export async function POST(
       )
     }
 
-    // Check if user already liked this event
-    const existingLike = await prisma.like.findUnique({
+    // Check if user already liked the event
+    const existingLike = await prisma.like.findFirst({
       where: {
-        userId_eventId: {
-          userId: decoded.userId,
-          eventId: params.id
-        }
+        userId: decoded.userId,
+        eventId: id
       }
     })
 
@@ -38,10 +37,7 @@ export async function POST(
       // Unlike the event
       await prisma.like.delete({
         where: {
-          userId_eventId: {
-            userId: decoded.userId,
-            eventId: params.id
-          }
+          id: existingLike.id
         }
       })
 
@@ -54,7 +50,7 @@ export async function POST(
       await prisma.like.create({
         data: {
           userId: decoded.userId,
-          eventId: params.id
+          eventId: id
         }
       })
 
@@ -75,34 +71,44 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const token = request.headers.get('authorization')?.replace('Bearer ', '')
 
     if (!token) {
-      return NextResponse.json({ liked: false })
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
     }
 
     const decoded = verifyToken(token)
     if (!decoded) {
-      return NextResponse.json({ liked: false })
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      )
     }
 
-    // Check if user liked this event
-    const like = await prisma.like.findUnique({
+    // Check if user liked the event
+    const like = await prisma.like.findFirst({
       where: {
-        userId_eventId: {
-          userId: decoded.userId,
-          eventId: params.id
-        }
+        userId: decoded.userId,
+        eventId: id
       }
     })
 
-    return NextResponse.json({ liked: !!like })
+    return NextResponse.json({
+      liked: !!like
+    })
 
   } catch (error) {
-    console.error('Check like error:', error)
-    return NextResponse.json({ liked: false })
+    console.error('Get like status error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 } 

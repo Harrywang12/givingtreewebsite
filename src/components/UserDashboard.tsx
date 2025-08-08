@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { 
   User, 
   Heart, 
-  Calendar, 
   DollarSign, 
   Package, 
   TrendingUp,
@@ -15,19 +14,30 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
-interface Donation {
-  id: number;
-  date: string;
-  type: 'monetary' | 'item';
-  amount?: number;
-  items?: string[];
-  status: 'completed' | 'pending' | 'processing';
-}
+// Removed unused interface
 
 interface DashboardData {
-  user: any;
-  recentDonations: any[];
-  recentItemDonations: any[];
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+    totalDonated: number;
+    itemsDonated: number;
+    memberSince: string;
+  };
+  recentDonations: Array<{
+    id: string;
+    amount: number;
+    status: string;
+    createdAt: string;
+  }>;
+  recentItemDonations: Array<{
+    id: string;
+    items?: string[];
+    status: string;
+    createdAt: string;
+  }>;
   stats: {
     totalMonetary: number;
     totalMonetaryDonations: number;
@@ -180,7 +190,7 @@ export default function UserDashboard() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'donations' | 'profile')}
                 className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-green-500 text-green-600'
@@ -233,7 +243,7 @@ export default function UserDashboard() {
               <div>
                 <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
                 <div className="space-y-3">
-                  {dashboardData?.recentDonations?.slice(0, 3).map((donation: any) => (
+                  {dashboardData?.recentDonations?.slice(0, 3).map((donation) => (
                     <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
                         <DollarSign className="h-5 w-5 text-green-600 mr-3" />
@@ -251,7 +261,7 @@ export default function UserDashboard() {
                       </span>
                     </div>
                   ))}
-                  {dashboardData?.recentItemDonations?.slice(0, 3).map((donation: any) => (
+                  {dashboardData?.recentItemDonations?.slice(0, 3).map((donation) => (
                     <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
                         <Package className="h-5 w-5 text-blue-600 mr-3" />
@@ -284,7 +294,7 @@ export default function UserDashboard() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Donation History</h3>
               <div className="space-y-4">
-                {dashboardData?.recentDonations?.map((donation: any) => (
+                {dashboardData?.recentDonations?.map((donation) => (
                   <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center">
@@ -303,7 +313,7 @@ export default function UserDashboard() {
                     </div>
                   </div>
                 ))}
-                {dashboardData?.recentItemDonations?.map((donation: any) => (
+                {dashboardData?.recentItemDonations?.map((donation) => (
                   <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center">

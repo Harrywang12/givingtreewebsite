@@ -32,10 +32,7 @@ export default function DashboardPage() {
     setShowAuthModal(true);
   };
 
-  const handleAuthSuccess = () => {
-    setShowAuthModal(false);
-    // The AuthContext will automatically update the user state
-  };
+  // Removed unused function
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -114,7 +111,7 @@ export default function DashboardPage() {
                 
                 <div className="text-center">
                   <p className="text-gray-600">
-                    Don't have an account?{' '}
+                    Don&apos;t have an account?{' '}
                     <button
                       onClick={handleRegister}
                       className="text-green-600 hover:text-green-700 font-semibold"

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
+import { EventType } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,13 +12,13 @@ export async function GET(request: NextRequest) {
 
     const whereClause: {
       isActive: boolean;
-      type?: string;
+      type?: EventType;
     } = {
       isActive: true
     }
 
-    if (type) {
-      whereClause.type = type
+    if (type && Object.values(EventType).includes(type as EventType)) {
+      whereClause.type = type as EventType
     }
 
     const events = await prisma.event.findMany({
@@ -76,12 +77,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate event type
+    if (!Object.values(EventType).includes(type)) {
+      return NextResponse.json(
+        { error: 'Invalid event type' },
+        { status: 400 }
+      )
+    }
+
     const event = await prisma.event.create({
       data: {
         title,
         description,
         date: new Date(date),
-        type,
+        type: type as EventType,
         location: location || null,
       }
     })

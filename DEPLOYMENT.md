@@ -1,271 +1,198 @@
-# 🚀 Deployment Guide
+# 🚀 Deploying to Vercel
 
-This guide covers deploying The Giving Tree Foundation website to production with scalability in mind.
+## Prerequisites
 
-## 📋 Prerequisites
+1. **GitHub Account**: Your code should be in a GitHub repository
+2. **Vercel Account**: Sign up at [vercel.com](https://vercel.com)
+3. **Database**: You'll need a PostgreSQL database (recommended: Supabase, PlanetScale, or Neon)
+4. **Redis**: For production, you'll need a Redis service (recommended: Upstash Redis)
 
-- Node.js 18+
-- PostgreSQL database (production-ready)
-- Redis for caching (recommended)
-- Domain name and SSL certificate
-- Environment variables configured
+## Step 1: Prepare Your Database
 
-## 🏗️ Architecture Overview
+### Option A: Supabase (Recommended)
+1. Go to [supabase.com](https://supabase.com) and create a free account
+2. Create a new project
+3. Go to Settings > Database to get your connection string
+4. Run the database migrations:
+   ```bash
+   npx prisma db push
+   npx prisma generate
+   ```
 
-### Production Stack
-- **Frontend**: Next.js 14 (App Router)
-- **Backend**: Next.js API Routes
-- **Database**: PostgreSQL with Prisma ORM
-- **Caching**: Redis
-- **Load Balancer**: Nginx (optional)
-- **CDN**: Vercel Edge Network / Cloudflare
-- **Monitoring**: Health checks and logging
+### Option B: PlanetScale
+1. Go to [planetscale.com](https://planetscale.com) and create a free account
+2. Create a new database
+3. Get your connection string from the dashboard
 
-### Scalability Features
-- ✅ Database connection pooling
-- ✅ Redis caching for frequently accessed data
-- ✅ Rate limiting on API endpoints
-- ✅ Static file optimization
-- ✅ Image optimization
-- ✅ Security headers
-- ✅ Health check endpoints
-- ✅ Load balancing ready
+### Option C: Neon
+1. Go to [neon.tech](https://neon.tech) and create a free account
+2. Create a new project
+3. Get your connection string from the dashboard
 
-## 🚀 Deployment Options
+## Step 2: Set Up Redis (Production)
 
-### Option 1: Vercel (Recommended - Easiest)
+### Option A: Upstash Redis (Recommended)
+1. Go to [upstash.com](https://upstash.com) and create a free account
+2. Create a new Redis database
+3. Copy the connection string
 
-Vercel is the easiest deployment option with automatic scaling and global CDN.
+### Option B: Redis Cloud
+1. Go to [redis.com](https://redis.com) and create a free account
+2. Create a new database
+3. Copy the connection string
 
-#### Steps:
-1. **Push code to GitHub**
-2. **Connect to Vercel**:
+## Step 3: Deploy to Vercel
+
+### Method 1: Vercel Dashboard (Recommended)
+
+1. **Connect GitHub**:
    - Go to [vercel.com](https://vercel.com)
+   - Sign in with your GitHub account
+   - Click "New Project"
    - Import your GitHub repository
-   - Configure environment variables
+
+2. **Configure Project**:
+   - Framework Preset: Next.js
+   - Root Directory: `./` (default)
+   - Build Command: `npm run build` (default)
+   - Output Directory: `.next` (default)
+   - Install Command: `npm install` (default)
 
 3. **Set Environment Variables**:
-   ```env
-   DATABASE_URL=your-production-postgres-url
-   NEXTAUTH_SECRET=your-production-secret
+   ```
+   DATABASE_URL=your_postgresql_connection_string
    NEXTAUTH_URL=https://your-domain.vercel.app
-   REDIS_URL=your-redis-url (optional)
+   NEXTAUTH_SECRET=your-super-secret-key-here
+   REDIS_URL=your_redis_connection_string
+   JWT_SECRET=your-jwt-secret-key-here
    ```
 
 4. **Deploy**:
+   - Click "Deploy"
+   - Wait for the build to complete
+
+### Method 2: Vercel CLI
+
+1. **Install Vercel CLI**:
    ```bash
-   npm run build
-   # Vercel will automatically deploy on git push
+   npm i -g vercel
    ```
 
-#### Vercel Advantages:
-- ✅ Automatic scaling
-- ✅ Global CDN
-- ✅ Zero configuration
-- ✅ Automatic HTTPS
-- ✅ Preview deployments
-- ✅ Built-in analytics
-
-### Option 2: Docker + Cloud Provider
-
-For more control and custom infrastructure.
-
-#### Steps:
-1. **Build Docker image**:
+2. **Login to Vercel**:
    ```bash
-   docker build -t givingtree-app .
+   vercel login
    ```
 
-2. **Deploy with Docker Compose**:
+3. **Deploy**:
    ```bash
-   docker-compose up -d
+   vercel
    ```
 
-3. **For production, use cloud providers**:
-   - **AWS**: ECS + RDS + ElastiCache
-   - **Google Cloud**: GKE + Cloud SQL + Memorystore
-   - **Azure**: AKS + Azure Database + Azure Cache
-   - **DigitalOcean**: App Platform + Managed Databases
-
-### Option 3: Traditional VPS
-
-For complete control over infrastructure.
-
-#### Steps:
-1. **Set up server** (Ubuntu 20.04+ recommended)
-2. **Install dependencies**:
+4. **Set Environment Variables**:
    ```bash
-   curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-   sudo apt-get install -y nodejs postgresql redis-server nginx
+   vercel env add DATABASE_URL
+   vercel env add NEXTAUTH_URL
+   vercel env add NEXTAUTH_SECRET
+   vercel env add REDIS_URL
+   vercel env add JWT_SECRET
    ```
 
-3. **Deploy application**:
-   ```bash
-   git clone your-repo
-   cd givingtreewebsite
-   npm install
-   npm run build
-   npm start
-   ```
+## Step 4: Post-Deployment Setup
 
-4. **Configure Nginx** (use provided `nginx.conf`)
+### 1. Run Database Migrations
+After deployment, you need to run your database migrations:
 
-## 🗄️ Database Setup
-
-### Production Database Options
-
-#### 1. Managed PostgreSQL Services
-- **Vercel Postgres**: Integrated with Vercel
-- **Supabase**: Free tier available
-- **Neon**: Serverless PostgreSQL
-- **AWS RDS**: Enterprise-grade
-- **Google Cloud SQL**: Managed service
-
-#### 2. Database Migration
 ```bash
-# Generate migration
-npx prisma migrate dev --name production-setup
+# Using Vercel CLI
+vercel env pull .env.local
+npx prisma db push
+npx prisma generate
+```
 
-# Apply to production
-npx prisma migrate deploy
-
-# Seed production data (optional)
+### 2. Seed Your Database (Optional)
+```bash
 npm run db:seed
 ```
 
-## 🔧 Environment Configuration
+### 3. Update NEXTAUTH_URL
+Make sure your `NEXTAUTH_URL` environment variable is set to your actual Vercel domain.
 
-### Required Environment Variables
-```env
-# Database
-DATABASE_URL="postgresql://user:password@host:port/database"
+## Environment Variables Reference
 
-# Authentication
-NEXTAUTH_SECRET="your-super-secret-key-here"
-NEXTAUTH_URL="https://your-domain.com"
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:port/db` |
+| `NEXTAUTH_URL` | Your Vercel domain | `https://your-app.vercel.app` |
+| `NEXTAUTH_SECRET` | Secret for NextAuth.js | `your-super-secret-key-here` |
+| `REDIS_URL` | Redis connection string | `redis://user:pass@host:port` |
+| `JWT_SECRET` | Secret for JWT tokens | `your-jwt-secret-key-here` |
 
-# Redis (optional, for caching)
-REDIS_URL="redis://localhost:6379"
+## Troubleshooting
 
-# Production settings
-NODE_ENV="production"
-```
+### Common Issues:
 
-### Security Considerations
-- ✅ Use strong, unique secrets
-- ✅ Enable HTTPS everywhere
-- ✅ Set up proper CORS policies
-- ✅ Implement rate limiting
-- ✅ Use environment-specific configs
+1. **Build Failures**:
+   - Check that all dependencies are in `package.json`
+   - Ensure TypeScript compilation passes locally
+   - Check build logs in Vercel dashboard
 
-## 📊 Performance Optimization
+2. **Database Connection Issues**:
+   - Verify `DATABASE_URL` is correct
+   - Ensure database is accessible from Vercel's servers
+   - Check if database requires SSL
 
-### Built-in Optimizations
-- ✅ Next.js static generation
-- ✅ Image optimization
-- ✅ Code splitting
-- ✅ Redis caching
-- ✅ Database connection pooling
-- ✅ Gzip compression
+3. **Redis Connection Issues**:
+   - Verify `REDIS_URL` is correct
+   - Ensure Redis service is accessible from Vercel
+   - Check Redis service status
 
-### Additional Optimizations
-```bash
-# Enable compression
-npm install compression
+4. **Authentication Issues**:
+   - Verify `NEXTAUTH_URL` matches your domain
+   - Check that `NEXTAUTH_SECRET` is set
+   - Ensure JWT tokens are working
 
-# Add monitoring
-npm install @sentry/nextjs
+### Performance Optimization:
 
-# Performance monitoring
-npm install @vercel/analytics
-```
+1. **Enable Edge Functions** (if needed):
+   - Add `"runtime": "edge"` to API routes that don't need Node.js
 
-## 🔍 Monitoring & Health Checks
+2. **Optimize Images**:
+   - Use Next.js Image component
+   - Configure image domains in `next.config.js`
 
-### Health Check Endpoint
-- **URL**: `/api/health`
-- **Checks**: Database, Redis, uptime
-- **Use**: Load balancer health checks
+3. **Database Optimization**:
+   - Use connection pooling
+   - Implement proper indexing
+   - Consider read replicas for heavy traffic
 
-### Monitoring Setup
-1. **Application Monitoring**: Sentry, LogRocket
-2. **Infrastructure**: UptimeRobot, Pingdom
-3. **Database**: pgAdmin, Prisma Studio
-4. **Performance**: Vercel Analytics, Google Analytics
+## Monitoring & Analytics
 
-## 🚀 Scaling Considerations
+1. **Vercel Analytics**:
+   - Enable in your Vercel dashboard
+   - Track performance and user behavior
 
-### Horizontal Scaling
-- **Load Balancer**: Nginx, AWS ALB
-- **Multiple App Instances**: Docker containers
-- **Database**: Read replicas, connection pooling
-- **Caching**: Redis clusters, CDN
+2. **Error Monitoring**:
+   - Set up error tracking (Sentry, LogRocket)
+   - Monitor API response times
 
-### Vertical Scaling
-- **Server Resources**: CPU, RAM, SSD
-- **Database**: Larger instances, optimized queries
-- **CDN**: Global edge locations
+3. **Database Monitoring**:
+   - Use your database provider's monitoring tools
+   - Set up alerts for connection issues
 
-### Expected Performance
-- **Concurrent Users**: 1000+ with proper scaling
-- **Response Time**: <200ms for cached data
-- **Database**: 10,000+ users with connection pooling
-- **Uptime**: 99.9% with proper monitoring
+## Security Checklist
 
-## 🔒 Security Checklist
+- [ ] Environment variables are set in Vercel (not in code)
+- [ ] Database connection uses SSL
+- [ ] JWT secrets are strong and unique
+- [ ] CORS is properly configured
+- [ ] Rate limiting is implemented
+- [ ] Input validation is in place
+- [ ] HTTPS is enforced
 
-### Production Security
-- ✅ HTTPS enabled
-- ✅ Security headers configured
-- ✅ Rate limiting implemented
-- ✅ Input validation
-- ✅ SQL injection prevention (Prisma)
-- ✅ XSS protection
-- ✅ CSRF protection
-- ✅ Environment variables secured
-- ✅ Database access restricted
-- ✅ Regular security updates
+## Support
 
-## 📈 Analytics & Tracking
-
-### Built-in Analytics
-- **User Registration**: Track signups
-- **Donation Tracking**: Monitor contributions
-- **Engagement**: Page views, time on site
-- **Performance**: Load times, errors
-
-### Recommended Tools
-- **Google Analytics**: User behavior
-- **Vercel Analytics**: Performance metrics
-- **Sentry**: Error tracking
-- **Hotjar**: User experience
-
-## 🆘 Troubleshooting
-
-### Common Issues
-1. **Database Connection**: Check DATABASE_URL
-2. **Authentication**: Verify NEXTAUTH_SECRET
-3. **CORS Errors**: Check domain configuration
-4. **Performance**: Monitor Redis and database
-5. **Build Errors**: Check Node.js version
-
-### Support Resources
-- **Documentation**: README.md
-- **Issues**: GitHub repository
-- **Community**: Next.js Discord
-- **Hosting**: Vercel support
-
-## 🎯 Next Steps
-
-1. **Choose deployment platform**
-2. **Set up production database**
-3. **Configure environment variables**
-4. **Deploy application**
-5. **Set up monitoring**
-6. **Configure custom domain**
-7. **Test all functionality**
-8. **Go live!**
-
----
-
-**Need help?** Check the [README.md](./README.md) for detailed setup instructions or open an issue on GitHub. 
+If you encounter issues:
+1. Check Vercel's documentation
+2. Review build logs in Vercel dashboard
+3. Check your database and Redis service status
+4. Verify all environment variables are set correctly 
