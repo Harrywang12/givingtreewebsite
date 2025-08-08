@@ -4,17 +4,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { 
-  Heart, 
   Leaf, 
   Users, 
-  TrendingUp, 
   Mail, 
   Phone,
   MapPin,
-  ArrowRight,
-  Star,
   Calendar,
-  MessageCircle,
   ThumbsUp
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { Upload, X, CheckCircle } from 'lucide-react';
 
 interface DonationFormData {
@@ -290,9 +291,11 @@ export default function DonationForm() {
               <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {images.map((image, index) => (
                   <div key={index} className="relative">
-                    <img
+                    <Image
                       src={URL.createObjectURL(image)}
                       alt={`Item ${index + 1}`}
+                      width={96}
+                      height={96}
                       className="w-full h-24 object-cover rounded-lg"
                     />
                     <button

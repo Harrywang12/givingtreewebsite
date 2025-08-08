@@ -75,11 +75,7 @@ export default function DonatePage() {
     }
   };
 
-  const handleAuthSuccess = () => {
-    setShowAuthModal(false);
-    // Redirect to dashboard after successful login
-    router.push('/dashboard');
-  };
+  // handleAuthSuccess removed as it's handled in AuthContext
 
   if (isCompleted) {
     return (

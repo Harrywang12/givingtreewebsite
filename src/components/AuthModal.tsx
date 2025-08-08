@@ -70,6 +70,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
         setError(result.error || 'An error occurred');
       }
     } catch (error) {
+      console.error('Auth error:', error);
       setError('An unexpected error occurred');
     } finally {
       setIsSubmitting(false);

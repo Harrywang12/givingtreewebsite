@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const token = generateToken(user.id)
 
     // Return user data (without password) and token
-    const { password: _password, ...userWithoutPassword } = user
+    const { password: _, ...userWithoutPassword } = user
 
     return NextResponse.json({
       message: 'Login successful',

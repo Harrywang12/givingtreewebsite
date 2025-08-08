@@ -107,10 +107,7 @@ export default function UserDashboard() {
     setShowDonationForm(true);
   };
 
-  const handleDonationComplete = () => {
-    // Refresh dashboard data after donation
-    window.location.reload();
-  };
+  // Removed unused handleDonationComplete function
 
   const handleEditProfile = () => {
     if (user) {

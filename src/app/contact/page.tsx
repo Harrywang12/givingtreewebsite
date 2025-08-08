@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { 
   Phone, 
   Mail, 
@@ -73,14 +74,14 @@ export default function ContactPage() {
               <span className="ml-2 text-xl font-bold text-gray-900">The Giving Tree</span>
             </div>
             <div className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-700 hover:text-green-600">Home</a>
-              <a href="/mission" className="text-gray-700 hover:text-green-600">Mission</a>
-              <a href="/about" className="text-gray-700 hover:text-green-600">About</a>
-              <a href="/team" className="text-gray-700 hover:text-green-600">Team</a>
-              <a href="/events" className="text-gray-700 hover:text-green-600">Events</a>
-              <a href="/donate" className="text-gray-700 hover:text-green-600">Donate</a>
-              <a href="/leaderboard" className="text-gray-700 hover:text-green-600">Leaderboard</a>
-              <a href="/contact" className="text-green-600 font-semibold">Contact</a>
+              <Link href="/" className="text-gray-700 hover:text-green-600">Home</Link>
+              <Link href="/mission" className="text-gray-700 hover:text-green-600">Mission</Link>
+              <Link href="/about" className="text-gray-700 hover:text-green-600">About</Link>
+              <Link href="/team" className="text-gray-700 hover:text-green-600">Team</Link>
+              <Link href="/events" className="text-gray-700 hover:text-green-600">Events</Link>
+              <Link href="/donate" className="text-gray-700 hover:text-green-600">Donate</Link>
+              <Link href="/leaderboard" className="text-gray-700 hover:text-green-600">Leaderboard</Link>
+              <Link href="/contact" className="text-green-600 font-semibold">Contact</Link>
             </div>
           </div>
         </div>

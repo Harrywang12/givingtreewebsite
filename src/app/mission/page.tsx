@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Leaf, Heart, Users, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Leaf, Heart, Users } from 'lucide-react';
 
 export default function MissionPage() {
   return (
