@@ -52,18 +52,31 @@ This test was sent from your Giving Tree website email system.`
     console.log('👤 From:', testEmailData.email);
     
     // Attempt to send the email
-    await sendContactEmail(testEmailData);
+    const emailResult = await sendContactEmail(testEmailData);
     
     console.log('✅ Email sent successfully!');
+    console.log('📧 Email details:', {
+      to: gmailUser,
+      from: testEmailData.email,
+      subject: testEmailData.subject,
+      messageId: emailResult?.messageId || 'unknown'
+    });
     
     return NextResponse.json({
       success: true,
-      message: 'Test email sent successfully!',
+      message: 'Test email sent successfully! Check troubleshooting guide below if you don\'t receive it.',
       details: {
         to: gmailUser,
         from: testEmailData.email,
         subject: testEmailData.subject,
-        timestamp: new Date().toISOString()
+        messageId: emailResult?.messageId || 'unknown',
+        timestamp: new Date().toISOString(),
+        troubleshooting: {
+          checkSpam: 'Check your spam/junk folder',
+          checkEmail: `Verify ${gmailUser} is correct`,
+          waitTime: 'Emails can take 1-5 minutes to arrive',
+          gmailFilters: 'Check if Gmail filters are blocking emails'
+        }
       }
     });
 

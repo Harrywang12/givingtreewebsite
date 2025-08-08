@@ -361,11 +361,96 @@ export default function TestEmailPage() {
           </motion.div>
         </div>
 
-        {/* Quick Setup Guide */}
+        {/* Email Delivery Troubleshooting */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mt-12 bg-white rounded-lg shadow-lg p-6"
+        >
+          <h3 className="text-xl font-bold text-gray-900 mb-4">📧 Email Delivery Troubleshooting</h3>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <h4 className="font-semibold text-yellow-800 mb-2">Emails "Sent Successfully" but Not Received?</h4>
+            <p className="text-yellow-700 text-sm">
+              If the test shows success but you don&apos;t receive emails, follow these steps:
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-3">🔍 Check These Locations</h4>
+              <div className="space-y-3">
+                <div className="flex items-start">
+                  <span className="text-red-500 mr-2">1.</span>
+                  <div>
+                    <p className="font-medium">Spam/Junk Folder</p>
+                    <p className="text-sm text-gray-600">Most common cause - check your spam folder first</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-orange-500 mr-2">2.</span>
+                  <div>
+                    <p className="font-medium">Gmail Promotions Tab</p>
+                    <p className="text-sm text-gray-600">Check the Promotions tab in Gmail</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-blue-500 mr-2">3.</span>
+                  <div>
+                    <p className="font-medium">All Mail Folder</p>
+                    <p className="text-sm text-gray-600">Search in Gmail&apos;s &quot;All Mail&quot; section</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-green-500 mr-2">4.</span>
+                  <div>
+                    <p className="font-medium">Wait 1-5 Minutes</p>
+                    <p className="text-sm text-gray-600">Email delivery can be delayed</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-3">⚙️ Gmail Settings to Check</h4>
+              <div className="space-y-3">
+                <div className="bg-gray-50 p-3 rounded">
+                  <p className="font-medium text-sm">Verify Email Address</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Make sure <code className="bg-gray-200 px-1 rounded">Givingtreenonprofit@gmail.com</code> is correct
+                  </p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded">
+                  <p className="font-medium text-sm">Check Gmail Filters</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Go to Gmail Settings → Filters and Blocked Addresses
+                  </p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded">
+                  <p className="font-medium text-sm">Enable External Senders</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Make sure Gmail accepts emails from external sources
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h5 className="font-semibold text-blue-800 mb-2">🔧 Still Not Working?</h5>
+            <div className="text-blue-700 text-sm space-y-1">
+              <p>• Try sending to a different email address (like a personal Gmail)</p>
+              <p>• Check the Vercel function logs for any additional error messages</p>
+              <p>• Verify your Gmail account can receive emails from external sources</p>
+              <p>• Contact your domain administrator if using a custom domain</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Quick Setup Guide */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 bg-white rounded-lg shadow-lg p-6"
         >
           <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Email Setup Guide</h3>
           <div className="grid md:grid-cols-2 gap-6">

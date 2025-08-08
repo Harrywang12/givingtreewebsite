@@ -78,7 +78,10 @@ export const sendContactEmail = async (data: ContactEmailData) => {
     replyTo: data.email,
   };
 
-  await transporter.sendMail(mailOptions);
+  const result = await transporter.sendMail(mailOptions);
+  console.log('📧 Contact email sent with message ID:', result.messageId);
+  console.log('📨 Response:', result.response);
+  return result;
 };
 
 export const sendItemDonationEmail = async (data: ItemDonationEmailData) => {
@@ -146,5 +149,8 @@ export const sendItemDonationEmail = async (data: ItemDonationEmailData) => {
     replyTo: data.email,
   };
 
-  await transporter.sendMail(mailOptions);
+  const result = await transporter.sendMail(mailOptions);
+  console.log('📧 Donation email sent with message ID:', result.messageId);
+  console.log('📨 Response:', result.response);
+  return result;
 };
