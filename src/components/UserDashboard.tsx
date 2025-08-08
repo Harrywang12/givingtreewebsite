@@ -188,21 +188,21 @@ export default function UserDashboard() {
             <div className="flex items-center space-x-3">
               <button 
                 onClick={handleGoHome}
-                className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+                className="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
               >
                 <Home className="h-5 w-5 mr-2" />
                 Home
               </button>
               <button 
                 onClick={handleDonate}
-                className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+                className="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Donate
               </button>
               <button 
                 onClick={handleLogout}
-                className="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+                className="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 Logout
