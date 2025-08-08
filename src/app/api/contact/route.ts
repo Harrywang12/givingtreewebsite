@@ -6,13 +6,13 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limiting to prevent spam
     const clientIp = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
-    const rateLimitResult = await rateLimit(clientIp, 5, 3600); // 5 emails per hour
+    const rateLimitKey = `contact_${clientIp}`;
+    const isAllowed = await rateLimit.check(rateLimitKey, 5, 3600); // 5 emails per hour
     
-    if (!rateLimitResult.success) {
+    if (!isAllowed) {
       return NextResponse.json(
         { 
-          error: 'Too many contact form submissions. Please try again later.',
-          retryAfter: rateLimitResult.retryAfter 
+          error: 'Too many contact form submissions. Please try again later.'
         },
         { status: 429 }
       );
