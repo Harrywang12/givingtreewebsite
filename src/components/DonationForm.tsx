@@ -351,8 +351,7 @@ export default function DonationForm() {
                     <p className="text-red-700 text-sm font-medium">Donation Request Failed</p>
                     <p className="text-red-600 text-sm mt-1">{submitError}</p>
                     <p className="text-red-600 text-sm mt-2">
-                      Please try again or call us directly at (905) 883-1212. 
-                      You can also visit our email test page to check the system status.
+                      Please try again or call us directly at (905) 883-1212.
                     </p>
                   </div>
                 </div>

@@ -299,8 +299,7 @@ export default function ContactPage() {
                         <p className="text-red-700 text-sm font-medium">Message Failed to Send</p>
                         <p className="text-red-600 text-sm mt-1">{submitError}</p>
                         <p className="text-red-600 text-sm mt-2">
-                          If this problem persists, please call us directly at (905) 883-1212 
-                          or visit our <Link href="/test-email" className="underline">email test page</Link> to diagnose the issue.
+                          If this problem persists, please call us directly at (905) 883-1212.
                         </p>
                       </div>
                     </div>
