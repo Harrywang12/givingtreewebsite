@@ -1,21 +1,31 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import redisClient from '@/lib/redis';
+import getRedisClient from '@/lib/redis';
 
 export async function GET() {
   try {
     // Check database connection
     await prisma.$queryRaw`SELECT 1`;
     
-    // Check Redis connection
-    await redisClient.ping();
+    // Check Redis connection (optional)
+    let redisStatus = 'not_configured';
+    try {
+      const redisClient = await getRedisClient();
+      if (redisClient) {
+        await redisClient.ping();
+        redisStatus = 'connected';
+      }
+    } catch (error) {
+      redisStatus = 'error';
+      console.error('Redis health check failed:', error);
+    }
     
     return NextResponse.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       services: {
         database: 'connected',
-        redis: 'connected',
+        redis: redisStatus,
         uptime: process.uptime()
       }
     });

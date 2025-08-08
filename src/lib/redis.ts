@@ -1,29 +1,69 @@
-import { createClient } from 'redis';
+import { createClient, RedisClientType } from 'redis';
 
-const redisClient = createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379',
-});
+let redisClient: RedisClientType | null = null;
+let isConnecting = false;
 
-redisClient.on('error', (err) => {
-  console.error('Redis Client Error:', err);
-});
+// Lazy initialization of Redis client
+const getRedisClient = async (): Promise<RedisClientType | null> => {
+  // If Redis URL is not provided, return null
+  if (!process.env.REDIS_URL) {
+    return null;
+  }
 
-redisClient.on('connect', () => {
-  console.log('Redis Client Connected');
-});
+  // If client already exists and is connected, return it
+  if (redisClient && redisClient.isOpen) {
+    return redisClient;
+  }
 
-// Connect to Redis
-if (!redisClient.isOpen) {
-  redisClient.connect().catch(console.error);
-}
+  // If already connecting, wait
+  if (isConnecting) {
+    return new Promise((resolve) => {
+      const checkConnection = () => {
+        if (redisClient && redisClient.isOpen) {
+          resolve(redisClient);
+        } else if (!isConnecting) {
+          resolve(null);
+        } else {
+          setTimeout(checkConnection, 100);
+        }
+      };
+      checkConnection();
+    });
+  }
 
-export default redisClient;
+  // Create new client
+  try {
+    isConnecting = true;
+    redisClient = createClient({
+      url: process.env.REDIS_URL,
+    });
+
+    redisClient.on('error', (err) => {
+      console.error('Redis Client Error:', err);
+    });
+
+    redisClient.on('connect', () => {
+      console.log('Redis Client Connected');
+    });
+
+    await redisClient.connect();
+    isConnecting = false;
+    return redisClient;
+  } catch (error) {
+    console.error('Failed to connect to Redis:', error);
+    isConnecting = false;
+    return null;
+  }
+};
 
 // Cache utility functions
 export const cache = {
   async get(key: string) {
     try {
-      const value = await redisClient.get(key);
+      const client = await getRedisClient();
+      if (!client) return null;
+      
+      const value = await client.get(key);
       return value ? JSON.parse(value) : null;
     } catch (error) {
       console.error('Redis get error:', error);
@@ -33,11 +73,14 @@ export const cache = {
 
   async set(key: string, value: unknown, ttl?: number) {
     try {
+      const client = await getRedisClient();
+      if (!client) return;
+      
       const serialized = JSON.stringify(value);
       if (ttl) {
-        await redisClient.setEx(key, ttl, serialized);
+        await client.setEx(key, ttl, serialized);
       } else {
-        await redisClient.set(key, serialized);
+        await client.set(key, serialized);
       }
     } catch (error) {
       console.error('Redis set error:', error);
@@ -46,7 +89,10 @@ export const cache = {
 
   async del(key: string) {
     try {
-      await redisClient.del(key);
+      const client = await getRedisClient();
+      if (!client) return;
+      
+      await client.del(key);
     } catch (error) {
       console.error('Redis del error:', error);
     }
@@ -54,7 +100,10 @@ export const cache = {
 
   async exists(key: string) {
     try {
-      return await redisClient.exists(key);
+      const client = await getRedisClient();
+      if (!client) return false;
+      
+      return await client.exists(key);
     } catch (error) {
       console.error('Redis exists error:', error);
       return false;
@@ -66,9 +115,12 @@ export const cache = {
 export const rateLimit = {
   async check(key: string, limit: number, window: number): Promise<boolean> {
     try {
-      const current = await redisClient.incr(key);
+      const client = await getRedisClient();
+      if (!client) return true; // Allow if Redis is not available
+      
+      const current = await client.incr(key);
       if (current === 1) {
-        await redisClient.expire(key, window);
+        await client.expire(key, window);
       }
       return current <= limit;
     } catch (error) {
@@ -76,4 +128,15 @@ export const rateLimit = {
       return true; // Allow if Redis fails
     }
   }
-}; 
+};
+
+// Export a function to close Redis connection (useful for cleanup)
+export const closeRedis = async () => {
+  if (redisClient && redisClient.isOpen) {
+    await redisClient.quit();
+    redisClient = null;
+  }
+};
+
+// For backward compatibility, export a default client getter
+export default getRedisClient; 
