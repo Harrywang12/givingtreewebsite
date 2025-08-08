@@ -3,23 +3,22 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { 
-  CreditCard, 
-  DollarSign, 
-  Package, 
-  Heart, 
-  ArrowRight,
-  CheckCircle,
-  User,
-  Lock
-} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import AuthModal from '@/components/AuthModal';
+import {
+  DollarSign,
+  Package,
+  Heart,
+  ArrowRight,
+  CreditCard,
+  CheckCircle,
+  User
+} from 'lucide-react';
 import DonationForm from '@/components/DonationForm';
+import AuthModal from '@/components/AuthModal';
 
 export default function DonatePage() {
-  const { user } = useAuth();
   const router = useRouter();
+  const { user } = useAuth();
   const [donationType, setDonationType] = useState<'monetary' | 'item' | null>(null);
   const [donationMode, setDonationMode] = useState<'anonymous' | 'login' | null>(null);
   const [amount, setAmount] = useState('');
@@ -36,10 +35,25 @@ export default function DonatePage() {
     if (!finalAmount) return;
 
     setIsProcessing(true);
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsProcessing(false);
-    setIsCompleted(true);
+    try {
+      const response = await fetch('/api/donations/monetary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: parseFloat(finalAmount),
+          type: 'MONETARY',
+          paymentMethod: 'E_TRANSFER'
+        })
+      });
+
+      if (response.ok) {
+        setIsCompleted(true);
+      }
+    } catch (error) {
+      console.error('Donation error:', error);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleAmountSelect = (selectedAmount: number) => {
@@ -201,98 +215,102 @@ export default function DonatePage() {
   // Show anonymous donation form
   if (donationType === 'monetary' && donationMode === 'anonymous') {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-2xl mx-auto"
-      >
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center mb-8">
-            <button
-              onClick={() => setDonationMode(null)}
-              className="text-green-600 hover:text-green-700 font-semibold mb-4 inline-flex items-center"
-            >
-              ← Back to donation options
-            </button>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Anonymous Donation</h2>
-            <p className="text-gray-600">
-              Your donation will directly support Mackenzie Health's mission to provide 
-              exceptional healthcare to our community.
-            </p>
-          </div>
-
-          <form onSubmit={handleMonetaryDonation} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-4">
-                Select Donation Amount
-              </label>
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                {presetAmounts.map((presetAmount) => (
-                  <button
-                    key={presetAmount}
-                    type="button"
-                    onClick={() => handleAmountSelect(presetAmount)}
-                    className={`p-4 rounded-lg border-2 font-semibold transition-colors ${
-                      amount === presetAmount.toString()
-                        ? 'border-green-500 bg-green-50 text-green-700'
-                        : 'border-gray-300 hover:border-green-300'
-                    }`}
-                  >
-                    ${presetAmount}
-                  </button>
-                ))}
-              </div>
-              <div>
-                <label htmlFor="customAmount" className="block text-sm font-medium text-gray-700 mb-2">
-                  Or enter a custom amount
-                </label>
-                <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="number"
-                    id="customAmount"
-                    value={customAmount}
-                    onChange={(e) => {
-                      setCustomAmount(e.target.value);
-                      setAmount('');
-                    }}
-                    placeholder="Enter amount"
-                    min="1"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <Heart className="h-5 w-5 text-green-600 mr-2" />
-                <p className="text-sm text-green-700">
-                  100% of your donation goes directly to Mackenzie Health
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-20">
+        <div className="max-w-4xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl mx-auto"
+          >
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <div className="text-center mb-8">
+                <button
+                  onClick={() => setDonationMode(null)}
+                  className="text-green-600 hover:text-green-700 font-semibold mb-4 inline-flex items-center"
+                >
+                  ← Back to donation options
+                </button>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Anonymous Donation</h2>
+                <p className="text-gray-600">
+                  Your donation will directly support Mackenzie Health's mission to provide 
+                  exceptional healthcare to our community.
                 </p>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={isProcessing || (!amount && !customAmount)}
-              className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-            >
-              {isProcessing ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <CreditCard className="h-5 w-5 mr-2" />
-                  Donate ${customAmount || amount}
-                </>
-              )}
-            </button>
-          </form>
+              <form onSubmit={handleMonetaryDonation} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-4">
+                    Select Donation Amount
+                  </label>
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    {presetAmounts.map((presetAmount) => (
+                      <button
+                        key={presetAmount}
+                        type="button"
+                        onClick={() => handleAmountSelect(presetAmount)}
+                        className={`p-4 rounded-lg border-2 font-semibold transition-colors ${
+                          amount === presetAmount.toString()
+                            ? 'border-green-500 bg-green-50 text-green-700'
+                            : 'border-gray-300 hover:border-green-300'
+                        }`}
+                      >
+                        ${presetAmount}
+                      </button>
+                    ))}
+                  </div>
+                  <div>
+                    <label htmlFor="customAmount" className="block text-sm font-medium text-gray-700 mb-2">
+                      Or enter a custom amount
+                    </label>
+                    <div className="relative">
+                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="number"
+                        id="customAmount"
+                        value={customAmount}
+                        onChange={(e) => {
+                          setCustomAmount(e.target.value);
+                          setAmount('');
+                        }}
+                        placeholder="Enter amount"
+                        min="1"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="flex items-center">
+                    <Heart className="h-5 w-5 text-green-600 mr-2" />
+                    <p className="text-sm text-green-700">
+                      100% of your donation goes directly to Mackenzie Health
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isProcessing || (!amount && !customAmount)}
+                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {isProcessing ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="h-5 w-5 mr-2" />
+                      Donate ${customAmount || amount}
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
