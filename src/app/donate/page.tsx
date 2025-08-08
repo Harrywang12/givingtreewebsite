@@ -325,6 +325,12 @@ export default function DonatePage() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-20">
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-12">
+          <button
+            onClick={() => router.push('/')}
+            className="text-green-600 hover:text-green-700 font-semibold mb-6 inline-flex items-center"
+          >
+            ← Back to Home
+          </button>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Make a Donation</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Choose how you'd like to support Mackenzie Health. Every contribution makes a difference 
