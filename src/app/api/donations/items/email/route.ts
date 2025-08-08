@@ -5,7 +5,7 @@ import { rateLimit } from '@/lib/redis';
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting to prevent spam
-    const clientIp = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    const clientIp = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     const rateLimitResult = await rateLimit(clientIp, 3, 3600); // 3 donation emails per hour
     
     if (!rateLimitResult.success) {
