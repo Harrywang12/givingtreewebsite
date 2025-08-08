@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { name, phone, bio, location } = await request.json()
+    const { name, email, phone, bio, location } = await request.json()
     const token = request.headers.get('authorization')?.replace('Bearer ', '')
 
     if (!token) {
@@ -77,10 +77,28 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Check if email is being changed and if it's already taken
+    if (email) {
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          email: email,
+          NOT: { id: decoded.userId }
+        }
+      })
+      
+      if (existingUser) {
+        return NextResponse.json(
+          { error: 'Email is already in use' },
+          { status: 400 }
+        )
+      }
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: decoded.userId },
       data: {
         name: name || undefined,
+        email: email || undefined,
         phone: phone || undefined,
         bio: bio || undefined,
         location: location || undefined,

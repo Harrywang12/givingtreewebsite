@@ -55,6 +55,13 @@ export default function UserDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [showDonationForm, setShowDonationForm] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -103,6 +110,51 @@ export default function UserDashboard() {
   const handleDonationComplete = () => {
     // Refresh dashboard data after donation
     window.location.reload();
+  };
+
+  const handleEditProfile = () => {
+    if (user) {
+      setEditFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      });
+      setIsEditingProfile(true);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingProfile(false);
+    setEditFormData({ name: '', email: '', phone: '' });
+  };
+
+  const handleSaveProfile = async () => {
+    if (!token) return;
+    
+    setIsSavingProfile(true);
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(editFormData)
+      });
+
+      if (response.ok) {
+        setIsEditingProfile(false);
+        // Refresh the dashboard data to get updated user info
+        window.location.reload(); // Simple way to refresh user data
+      } else {
+        setError('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError('Failed to update profile');
+    } finally {
+      setIsSavingProfile(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -188,21 +240,21 @@ export default function UserDashboard() {
             <div className="flex items-center space-x-3">
               <button 
                 onClick={handleGoHome}
-                className="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+                className="bg-black bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30"
               >
                 <Home className="h-5 w-5 mr-2" />
                 Home
               </button>
               <button 
                 onClick={handleDonate}
-                className="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+                className="bg-black bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Donate
               </button>
               <button 
                 onClick={handleLogout}
-                className="bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center"
+                className="bg-black bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 Logout
@@ -426,40 +478,95 @@ export default function UserDashboard() {
             <div className="max-w-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold">Profile Information</h3>
-                <button className="flex items-center text-green-600 hover:text-green-700">
+                <button 
+                  onClick={handleEditProfile}
+                  className="flex items-center text-green-600 hover:text-green-700"
+                >
                   <Edit className="h-4 w-4 mr-1" />
                   Edit
                 </button>
               </div>
               
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    value={displayUser.name}
-                    readOnly
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                  <input
-                    type="email"
-                    value={displayUser.email}
-                    readOnly
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                  <input
-                    type="tel"
-                    value={displayUser.phone || 'Not provided'}
-                    readOnly
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
-                  />
-                </div>
+                {isEditingProfile ? (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                      <input
+                        type="text"
+                        value={editFormData.name}
+                        onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                      <input
+                        type="email"
+                        value={editFormData.email}
+                        onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Enter your email address"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                      <input
+                        type="tel"
+                        value={editFormData.phone}
+                        onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Enter your phone number"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-4 pt-4">
+                      <button
+                        onClick={handleSaveProfile}
+                        disabled={isSavingProfile}
+                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSavingProfile ? 'Saving...' : 'Save Changes'}
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                      <input
+                        type="text"
+                        value={displayUser.name}
+                        readOnly
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                      <input
+                        type="email"
+                        value={displayUser.email}
+                        readOnly
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                      <input
+                        type="tel"
+                        value={displayUser.phone || 'Not provided'}
+                        readOnly
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
+                      />
+                    </div>
+                  </>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Member Since</label>
                   <input
