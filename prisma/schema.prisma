@@ -38,7 +38,7 @@ model User {
   comments        Comment[]
   likes           Like[]
   
-  @@map("users")
+  @@map("app_users")
 }
 
 model Donation {
@@ -56,7 +56,7 @@ model Donation {
   // Relationships
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("donations")
+  @@map("app_donations")
 }
 
 model ItemDonation {
@@ -75,7 +75,7 @@ model ItemDonation {
   // Relationships
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("item_donations")
+  @@map("app_item_donations")
 }
 
 model Event {
@@ -93,7 +93,7 @@ model Event {
   comments    Comment[]
   likes       Like[]
 
-  @@map("events")
+  @@map("app_events")
 }
 
 model Comment {
@@ -108,7 +108,7 @@ model Comment {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  @@map("comments")
+  @@map("app_comments")
 }
 
 model Like {
@@ -122,7 +122,7 @@ model Like {
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@unique([userId, eventId])
-  @@map("likes")
+  @@map("app_likes")
 }
 
 model Newsletter {
@@ -131,7 +131,7 @@ model Newsletter {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  @@map("newsletters")
+  @@map("app_newsletters")
 }
 
 // Enums
