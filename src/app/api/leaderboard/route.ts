@@ -24,7 +24,9 @@ export async function GET(request: NextRequest) {
         memberSince: true,
         donations: {
           where: {
-            status: 'COMPLETED',
+            status: {
+              in: ['PENDING', 'PROCESSING', 'COMPLETED']
+            },
             type: 'MONETARY'
           },
           select: {
@@ -35,7 +37,9 @@ export async function GET(request: NextRequest) {
       where: {
         donations: {
           some: {
-            status: 'COMPLETED',
+            status: {
+              in: ['PENDING', 'PROCESSING', 'COMPLETED']
+            },
             type: 'MONETARY',
             amount: {
               gt: 0
@@ -74,7 +78,9 @@ export async function GET(request: NextRequest) {
       where: {
         donations: {
           some: {
-            status: 'COMPLETED',
+            status: {
+              in: ['PENDING', 'PROCESSING', 'COMPLETED']
+            },
             type: 'MONETARY',
             amount: {
               gt: 0
@@ -94,7 +100,9 @@ export async function GET(request: NextRequest) {
           id: true
         },
         where: {
-          status: 'COMPLETED',
+          status: {
+            in: ['PENDING', 'PROCESSING', 'COMPLETED']
+          },
           type: 'MONETARY'
         }
       }),
@@ -102,7 +110,9 @@ export async function GET(request: NextRequest) {
         where: {
           donations: {
             some: {
-              status: 'COMPLETED',
+              status: {
+                in: ['PENDING', 'PROCESSING', 'COMPLETED']
+              },
               type: 'MONETARY',
               amount: {
                 gt: 0
