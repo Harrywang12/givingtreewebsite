@@ -84,8 +84,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         const data = await response.json();
         setDonations(data.donations || []);
       }
-    } catch (error) {
-      console.error('Failed to fetch donations');
+    } catch (err) {
+      console.error('Failed to fetch donations:', err);
     }
   };
 
@@ -109,7 +109,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       } else {
         setError('Failed to update donation status');
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Failed to update donation status:', err);
       setError('Failed to update donation status');
     } finally {
       setIsSubmitting(false);

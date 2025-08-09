@@ -1,27 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { isAdmin, requireAdmin } from '@/lib/admin';
-import { verifyToken } from '@/lib/auth';
+import { verifyAdminFromRequest } from '@/lib/admin';
 
 export async function GET(request: NextRequest) {
   try {
     // Verify admin authentication
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-    }
-
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
-    // Check if user is admin
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId }
-    });
-
-    if (!user || !isAdmin(user.email)) {
+    const admin = await verifyAdminFromRequest(request);
+    if (!admin) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
