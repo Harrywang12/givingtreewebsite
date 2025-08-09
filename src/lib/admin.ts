@@ -256,13 +256,13 @@ export function validateEventData(data: EventInput): {
     return { isValid: false, errors };
   }
 
-  // Sanitize data
+  // Sanitize data (we know fields are valid at this point)
   const sanitized = {
-    title: data.title.trim().substring(0, 200), // Limit title length
-    description: data.description.trim().substring(0, 1000), // Limit description
+    title: data.title!.trim().substring(0, 200), // Limit title length
+    description: data.description!.trim().substring(0, 1000), // Limit description
     content: data.content ? data.content.trim().substring(0, 5000) : null, // Limit content
-    date: new Date(data.date),
-    type: data.type,
+    date: new Date(data.date!),
+    type: data.type as 'NEWS' | 'EVENT' | 'ANNOUNCEMENT',
     location: data.location ? data.location.trim().substring(0, 200) : null,
     imageUrl: data.imageUrl && isValidUrl(data.imageUrl) ? data.imageUrl : null,
     isActive: Boolean(data.isActive ?? true)
