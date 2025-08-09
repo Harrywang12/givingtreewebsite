@@ -12,8 +12,7 @@ export default function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   const handleDashboardClick = () => {
-    if (user) router.push('/dashboard');
-    else router.push('/donate');
+    router.push('/dashboard');
   };
 
   return (
@@ -44,9 +43,9 @@ export default function SiteHeader() {
             <button
               onClick={handleDashboardClick}
               className="btn btn-primary"
-              aria-label={user ? 'Open dashboard' : 'Sign in to donate'}
+              aria-label={user ? 'Open dashboard' : 'Sign in'}
             >
-              {user ? 'Dashboard' : 'Donate / Sign In'}
+              {user ? 'Dashboard' : 'Sign In'}
             </button>
           </div>
 
@@ -74,7 +73,7 @@ export default function SiteHeader() {
               <Link href="/leaderboard" className="mobile-link">Leaderboard</Link>
               <Link href="/contact" className="mobile-link">Contact</Link>
               <button onClick={handleDashboardClick} className="mt-1 w-full btn btn-primary">
-                {user ? 'Dashboard' : 'Donate / Sign In'}
+                {user ? 'Dashboard' : 'Sign In'}
               </button>
             </div>
           </div>
