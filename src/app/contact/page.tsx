@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { 
   Phone, 
   Mail, 
@@ -66,42 +65,21 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
+      <section className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Leaf className="h-8 w-8 text-green-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">The Giving Tree</span>
-            </div>
-            <div className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-green-600">Home</Link>
-              <Link href="/mission" className="text-gray-700 hover:text-green-600">Mission</Link>
-              <Link href="/about" className="text-gray-700 hover:text-green-600">About</Link>
-              <Link href="/team" className="text-gray-700 hover:text-green-600">Team</Link>
-              <Link href="/events" className="text-gray-700 hover:text-green-600">Events</Link>
-              <Link href="/donate" className="text-gray-700 hover:text-green-600">Donate</Link>
-              <Link href="/leaderboard" className="text-gray-700 hover:text-green-600">Leaderboard</Link>
-              <Link href="/contact" className="text-green-600 font-semibold">Contact</Link>
+          <div className="pt-12">
+            <div className="relative overflow-hidden rounded-2xl soft-shadow">
+              <div className="absolute inset-0 texture-leaf" />
+              <div className="relative z-10 px-6 py-12 sm:px-12">
+                <div className="max-w-2xl">
+                  <h1 className="text-4xl sm:text-5xl font-bold text-zinc-900">Contact Us</h1>
+                  <p className="mt-3 text-lg text-zinc-700">We’re here to help and answer any questions you may have.</p>
+                </div>
+              </div>
+              <div className="absolute right-0 top-0 hidden h-full w-1/2 bg-[url('https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center sm:block" aria-hidden="true" />
             </div>
           </div>
-        </div>
-      </nav>
-
-      {/* Header Section */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-blue-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-5xl font-bold mb-6">Contact Us</h1>
-            <p className="text-xl mb-8 max-w-3xl mx-auto">
-              Get in touch with The Giving Tree Foundation. We&apos;re here to help and answer any questions you may have.
-            </p>
-          </motion.div>
         </div>
       </section>
 
@@ -193,7 +171,7 @@ export default function ContactPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="bg-white p-8 rounded-lg shadow-lg"
+              className="card p-8"
             >
               <div className="flex items-center mb-6">
                 <MessageCircle className="h-6 w-6 text-green-600 mr-2" />
@@ -265,11 +243,7 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                <button type="submit" disabled={isSubmitting} className="w-full btn btn-primary py-3 px-6">
                   <Send className="h-5 w-5 mr-2" />
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
@@ -307,11 +281,8 @@ export default function ContactPage() {
                 )}
               </form>
 
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-700">
-                  <strong>Quick Response:</strong> For urgent matters, please call us directly at (905) 883-1212. 
-                  We typically respond to emails within 24 hours during business days.
-                </p>
+              <div className="mt-6 p-4 rounded-lg texture-leaf">
+                <p className="text-sm text-zinc-700"><strong>Quick Response:</strong> For urgent matters, please call us directly at (905) 883-1212. We typically respond to emails within 24 hours during business days.</p>
               </div>
             </motion.div>
           </div>
@@ -319,11 +290,11 @@ export default function ContactPage() {
       </section>
 
       {/* Additional Information */}
-      <section className="py-16 bg-white">
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Other Ways to Connect</h2>
-            <p className="text-lg text-gray-600">Find the best way to reach us for your specific needs</p>
+            <h2 className="text-3xl font-bold text-zinc-900 mb-4">Other Ways to Connect</h2>
+            <p className="text-lg text-zinc-600">Find the best way to reach us for your specific needs</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -331,18 +302,18 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-center p-6 bg-green-50 rounded-lg"
+              className="text-center p-6 card"
             >
               <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Heart className="h-8 w-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Volunteer Opportunities</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-xl font-semibold text-zinc-900 mb-2">Volunteer Opportunities</h3>
+              <p className="text-zinc-600 mb-4">
                 Interested in volunteering? Contact our volunteer coordinator for available opportunities.
               </p>
               <a 
                 href="mailto:volunteers@givingtreefoundation.org" 
-                className="text-green-600 hover:text-green-700 font-semibold"
+                className="text-emerald-700 hover:text-emerald-800 font-semibold"
               >
                 volunteers@givingtreefoundation.org
               </a>
@@ -352,18 +323,18 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-center p-6 bg-blue-50 rounded-lg"
+              className="text-center p-6 card"
             >
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Mail className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Donations & Partnerships</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-xl font-semibold text-zinc-900 mb-2">Donations & Partnerships</h3>
+              <p className="text-zinc-600 mb-4">
                 For large donations, corporate partnerships, or sponsorship opportunities.
               </p>
               <a 
                 href="mailto:partnerships@givingtreefoundation.org" 
-                className="text-blue-600 hover:text-blue-700 font-semibold"
+                className="text-blue-700 hover:text-blue-800 font-semibold"
               >
                 partnerships@givingtreefoundation.org
               </a>
@@ -373,18 +344,18 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-center p-6 bg-purple-50 rounded-lg"
+              className="text-center p-6 card"
             >
               <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Phone className="h-8 w-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Media & Press</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-xl font-semibold text-zinc-900 mb-2">Media & Press</h3>
+              <p className="text-zinc-600 mb-4">
                 Media inquiries, press releases, and interview requests.
               </p>
               <a 
                 href="mailto:media@givingtreefoundation.org" 
-                className="text-purple-600 hover:text-purple-700 font-semibold"
+                className="text-purple-700 hover:text-purple-800 font-semibold"
               >
                 media@givingtreefoundation.org
               </a>
@@ -392,24 +363,7 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              <Leaf className="h-8 w-8 text-green-400" />
-              <span className="ml-2 text-xl font-bold">The Giving Tree Foundation</span>
-            </div>
-            <p className="text-gray-300 mb-4">
-              Supporting Mackenzie Health through community donations and sustainability
-            </p>
-            <p className="text-gray-400 text-sm">
-              © 2024 The Giving Tree Foundation. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   );
 }

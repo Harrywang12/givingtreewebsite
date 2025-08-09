@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import PageBanner from '@/components/PageBanner';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -79,16 +80,16 @@ export default function DonatePage() {
 
   if (isCompleted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-20">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50 py-20">
         <div className="max-w-2xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-lg shadow-lg p-8"
+            className="card p-8"
           >
             <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Thank You!</h2>
-            <p className="text-lg text-gray-600 mb-6">
+            <h2 className="text-3xl font-bold text-zinc-900 mb-4">Thank You!</h2>
+            <p className="text-lg text-zinc-600 mb-6">
               Your donation has been processed successfully. Your generosity will make a real difference 
               in supporting Mackenzie Health and our community.
             </p>
@@ -101,13 +102,13 @@ export default function DonatePage() {
                   setAmount('');
                   setCustomAmount('');
                 }}
-                className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                className="btn btn-primary px-6 py-3"
               >
                 Make Another Donation
               </button>
               <button
                 onClick={() => router.push('/')}
-                className="block w-full text-green-600 hover:text-green-700 font-semibold"
+                className="block w-full text-emerald-700 hover:text-emerald-800 font-semibold"
               >
                 Return to Homepage
               </button>
@@ -120,17 +121,17 @@ export default function DonatePage() {
 
   if (donationType === 'item') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-20">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50 py-20">
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-8">
             <button
               onClick={() => setDonationType(null)}
-              className="text-green-600 hover:text-green-700 font-semibold mb-4 inline-flex items-center"
+              className="text-emerald-700 hover:text-emerald-800 font-semibold mb-4 inline-flex items-center"
             >
               ← Back to donation options
             </button>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Donate Items</h1>
-            <p className="text-xl text-gray-600">
+            <h1 className="text-4xl font-bold text-zinc-900 mb-4">Donate Items</h1>
+            <p className="text-xl text-zinc-600">
               Help us support Mackenzie Health by donating gently used items
             </p>
           </div>
@@ -143,17 +144,17 @@ export default function DonatePage() {
   // Show donation mode selection for monetary donations
   if (donationType === 'monetary' && !donationMode) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-20">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50 py-20">
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-8">
             <button
               onClick={() => setDonationType(null)}
-              className="text-green-600 hover:text-green-700 font-semibold mb-4 inline-flex items-center"
+              className="text-emerald-700 hover:text-emerald-800 font-semibold mb-4 inline-flex items-center"
             >
               ← Back to donation options
             </button>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Monetary Donation</h1>
-            <p className="text-xl text-gray-600">
+            <h1 className="text-4xl font-bold text-zinc-900 mb-4">Monetary Donation</h1>
+            <p className="text-xl text-zinc-600">
               Choose how you'd like to make your donation
             </p>
           </div>
@@ -163,18 +164,18 @@ export default function DonatePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow cursor-pointer"
+              className="card p-8 hover:shadow-xl transition-shadow cursor-pointer"
               onClick={handleAnonymousDonation}
             >
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Heart className="h-8 w-8 text-green-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Anonymous Donation</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-2xl font-bold text-zinc-900 mb-4">Anonymous Donation</h3>
+                <p className="text-zinc-600 mb-6">
                   Make a donation without creating an account. Quick and simple process.
                 </p>
-                <div className="flex items-center justify-center text-green-600 font-semibold">
+                <div className="flex items-center justify-center text-emerald-700 font-semibold">
                   <span>Donate Anonymously</span>
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </div>
@@ -185,18 +186,18 @@ export default function DonatePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow cursor-pointer"
+              className="card p-8 hover:shadow-xl transition-shadow cursor-pointer"
               onClick={handleLoginToDonate}
             >
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <User className="h-8 w-8 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Login & Donate</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-2xl font-bold text-zinc-900 mb-4">Login & Donate</h3>
+                <p className="text-zinc-600 mb-6">
                   Create an account or login to track your donations and view your impact.
                 </p>
-                <div className="flex items-center justify-center text-blue-600 font-semibold">
+                <div className="flex items-center justify-center text-blue-700 font-semibold">
                   <span>{user ? 'Go to Dashboard' : 'Login to Donate'}</span>
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </div>
@@ -218,23 +219,23 @@ export default function DonatePage() {
   // Show anonymous donation form
   if (donationType === 'monetary' && donationMode === 'anonymous') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-20">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50 py-20">
         <div className="max-w-4xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="max-w-2xl mx-auto"
           >
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="card p-8">
               <div className="text-center mb-8">
                 <button
                   onClick={() => setDonationMode(null)}
-                  className="text-green-600 hover:text-green-700 font-semibold mb-4 inline-flex items-center"
+                  className="text-emerald-700 hover:text-emerald-800 font-semibold mb-4 inline-flex items-center"
                 >
                   ← Back to donation options
                 </button>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Anonymous Donation</h2>
-                <p className="text-gray-600">
+                <h2 className="text-3xl font-bold text-zinc-900 mb-4">Anonymous Donation</h2>
+                <p className="text-zinc-600">
                   Your donation will directly support Mackenzie Health's mission to provide 
                   exceptional healthcare to our community.
                 </p>
@@ -277,7 +278,7 @@ export default function DonatePage() {
                         }}
                         placeholder="Enter amount"
                         min="1"
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -292,10 +293,10 @@ export default function DonatePage() {
                   </div>
                 </div>
 
-                <button
+              <button
                   type="submit"
                   disabled={isProcessing || (!amount && !customAmount)}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full btn btn-primary py-3 font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   {isProcessing ? (
                     <>
@@ -318,40 +319,28 @@ export default function DonatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-20">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <button
-            onClick={() => router.push('/')}
-            className="text-green-600 hover:text-green-700 font-semibold mb-6 inline-flex items-center"
-          >
-            ← Back to Home
-          </button>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Make a Donation</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Choose how you'd like to support Mackenzie Health. Every contribution makes a difference 
-            in enhancing patient care and advancing medical research.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
+      <PageBanner title="Make a Donation" subtitle="Choose how you'd like to support Mackenzie Health. Every contribution makes a difference in enhancing patient care and advancing medical research." />
+      <div className="max-w-4xl mx-auto px-4 py-16">
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow cursor-pointer"
+            className="card p-8 hover:shadow-xl transition-shadow cursor-pointer"
             onClick={() => setDonationType('monetary')}
           >
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <DollarSign className="h-8 w-8 text-green-600" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Monetary Donation</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-2xl font-bold text-zinc-900 mb-4">Monetary Donation</h3>
+              <p className="text-zinc-600 mb-6">
                 Make a direct financial contribution to support hospital initiatives, 
                 medical equipment, and patient care programs.
               </p>
-              <div className="flex items-center justify-center text-green-600 font-semibold">
+              <div className="flex items-center justify-center text-emerald-700 font-semibold">
                 <span>Donate Now</span>
                 <ArrowRight className="h-5 w-5 ml-2" />
               </div>
@@ -362,19 +351,19 @@ export default function DonatePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow cursor-pointer"
+            className="card p-8 hover:shadow-xl transition-shadow cursor-pointer"
             onClick={() => setDonationType('item')}
           >
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Package className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Item Donation</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-2xl font-bold text-zinc-900 mb-4">Item Donation</h3>
+              <p className="text-zinc-600 mb-6">
                 Donate gently used items that we'll resell to raise funds for the hospital. 
                 Help reduce waste while supporting healthcare.
               </p>
-              <div className="flex items-center justify-center text-blue-600 font-semibold">
+              <div className="flex items-center justify-center text-blue-700 font-semibold">
                 <span>Donate Items</span>
                 <ArrowRight className="h-5 w-5 ml-2" />
               </div>

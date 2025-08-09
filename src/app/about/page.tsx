@@ -1,36 +1,19 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Heart, Users, Leaf } from 'lucide-react';
+import { Heart, Users, Leaf } from 'lucide-react';
+import PageBanner from '@/components/PageBanner';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <button
-              onClick={() => window.history.back()}
-              className="inline-flex items-center text-green-100 hover:text-white mb-6 transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Back
-            </button>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">About Us</h1>
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto">
-              Turning generosity into tangible support for healthcare in our community
-            </p>
-          </motion.div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
+      <PageBanner
+        title="About Us"
+        subtitle="Turning generosity into tangible support for healthcare in our community"
+      />
 
       {/* About Us Content */}
-      <section className="py-20 bg-white">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -39,8 +22,8 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-8">Our Story</h2>
-            <div className="max-w-4xl mx-auto text-lg text-gray-600 leading-relaxed">
+            <h2 className="text-4xl font-bold text-zinc-900 mb-8">Our Story</h2>
+            <div className="max-w-4xl mx-auto text-lg text-zinc-600 leading-relaxed">
               <p className="mb-6">
                 The Giving Tree Non-Profit Foundation is dedicated to turning generosity into tangible support 
                 for healthcare in our community. Our mission is to uplift and strengthen Mackenzie Health by 
@@ -65,10 +48,10 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-r from-green-50 to-blue-50 p-8 rounded-lg mb-16"
+            className="p-8 rounded-2xl texture-leaf mb-16"
           >
             <h3 className="text-2xl font-bold text-center mb-6">What We Do</h3>
-            <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto">
+            <p className="text-lg text-zinc-600 text-center max-w-3xl mx-auto">
               At the Giving Tree Foundation, we transform donated, gently used items into life-changing 
               contributions for our local hospital, Mackenzie Health. Our process is simple but powerful: 
               community members donate items they no longer need, we carefully sort and resell them, and 
@@ -89,7 +72,7 @@ export default function AboutPage() {
                 <Heart className="h-8 w-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold mb-3">1. Collect Donations</h3>
-              <p className="text-gray-600">
+              <p className="text-zinc-600">
                 Community members donate gently used items they no longer need
               </p>
             </motion.div>
@@ -104,7 +87,7 @@ export default function AboutPage() {
                 <Users className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-3">2. Sort & Resell</h3>
-              <p className="text-gray-600">
+              <p className="text-zinc-600">
                 We carefully sort items and resell them to new owners
               </p>
             </motion.div>
@@ -119,7 +102,7 @@ export default function AboutPage() {
                 <Leaf className="h-8 w-8 text-purple-600" />
               </div>
               <h3 className="text-xl font-semibold mb-3">3. Support Healthcare</h3>
-              <p className="text-gray-600">
+              <p className="text-zinc-600">
                 100% of proceeds go directly to Mackenzie Health initiatives
               </p>
             </motion.div>
@@ -128,7 +111,7 @@ export default function AboutPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-blue-600 text-white">
+      <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -136,21 +119,15 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-bold mb-6">Join Our Community</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold mb-6 text-zinc-900">Join Our Community</h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto text-zinc-700">
               Be part of our mission to support Mackenzie Health and make a difference in healthcare.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => window.location.href = '/donate'}
-                className="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-              >
+              <button onClick={() => (window.location.href = '/donate')} className="btn btn-primary px-8 py-3">
                 Make a Donation
               </button>
-              <button 
-                onClick={() => window.location.href = '/team'}
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition-colors"
-              >
+              <button onClick={() => (window.location.href = '/team')} className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-8 py-3 font-semibold text-emerald-700 hover:bg-emerald-50">
                 Meet Our Team
               </button>
             </div>

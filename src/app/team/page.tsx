@@ -1,36 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Users, Heart, Mail, Linkedin } from 'lucide-react';
+import { Users, Heart, Mail, Linkedin } from 'lucide-react';
+import PageBanner from '@/components/PageBanner';
 
 export default function TeamPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <button
-              onClick={() => window.history.back()}
-              className="inline-flex items-center text-green-100 hover:text-white mb-6 transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Back
-            </button>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Meet Our Team</h1>
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto">
-              The passionate individuals behind The Giving Tree Foundation
-            </p>
-          </motion.div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
+      <PageBanner title="Meet Our Team" subtitle="The passionate individuals behind The Giving Tree Foundation" />
 
       {/* Team Members */}
-      <section className="py-20 bg-white">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -39,8 +19,8 @@ export default function TeamPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-8">Our Founders</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <h2 className="text-4xl font-bold text-zinc-900 mb-8">Our Founders</h2>
+            <p className="text-xl text-zinc-600 max-w-3xl mx-auto">
               Meet the visionaries who founded The Giving Tree Foundation with a mission to support 
               healthcare through community generosity.
             </p>
@@ -53,14 +33,14 @@ export default function TeamPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-lg shadow-lg p-8 text-center"
+              className="card p-8 text-center"
             >
               <div className="w-32 h-32 bg-green-200 rounded-full mx-auto mb-6 flex items-center justify-center">
                 <Users className="h-16 w-16 text-green-600" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Ruogu Qiu</h3>
-              <p className="text-green-600 font-semibold mb-4">Co-Founder</p>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-2xl font-bold text-zinc-900 mb-2">Ruogu Qiu</h3>
+              <p className="text-emerald-700 font-semibold mb-4">Co-Founder</p>
+              <p className="text-zinc-600 mb-6">
                 Ruogu brings a deep passion for community service and sustainable practices. 
                 With a background in healthcare advocacy, Ruogu envisioned a way to connect 
                 community generosity with tangible healthcare improvements.
@@ -81,14 +61,14 @@ export default function TeamPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="bg-white rounded-lg shadow-lg p-8 text-center"
+              className="card p-8 text-center"
             >
               <div className="w-32 h-32 bg-blue-200 rounded-full mx-auto mb-6 flex items-center justify-center">
                 <Users className="h-16 w-16 text-blue-600" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Justin Wu</h3>
-              <p className="text-blue-600 font-semibold mb-4">Co-Founder</p>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-2xl font-bold text-zinc-900 mb-2">Justin Wu</h3>
+              <p className="text-blue-700 font-semibold mb-4">Co-Founder</p>
+              <p className="text-zinc-600 mb-6">
                 Justin combines strategic thinking with a commitment to social impact. 
                 His expertise in operations and community engagement has been instrumental 
                 in building the foundation's sustainable donation model.

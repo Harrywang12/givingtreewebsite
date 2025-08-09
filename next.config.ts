@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   
   // Image optimization
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'images.unsplash.com', 'plus.unsplash.com', 'images.pexels.com'],
     formats: ['image/webp', 'image/avif'],
   },
   
