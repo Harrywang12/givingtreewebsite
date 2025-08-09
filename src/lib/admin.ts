@@ -167,7 +167,7 @@ export function createAdminMiddleware(requiredRole: 'ADMIN' | 'SUPER_ADMIN' = 'A
 /**
  * Rate limiting for admin actions
  */
-export async function checkAdminRateLimit(adminId: string, action: string): Promise<boolean> {
+export async function checkAdminRateLimit(): Promise<boolean> {
   try {
     // Implementation depends on your rate limiting strategy
     // For now, return true but you can add Redis-based rate limiting
@@ -206,9 +206,31 @@ export async function logAdminAction(
 /**
  * Sanitize and validate event data for admin posting
  */
-export function validateEventData(data: any): {
+interface EventInput {
+  title?: string;
+  description?: string;
+  content?: string;
+  date?: string;
+  type?: string;
+  location?: string;
+  imageUrl?: string;
+  isActive?: boolean;
+}
+
+interface SanitizedEventData {
+  title: string;
+  description: string;
+  content: string | null;
+  date: Date;
+  type: 'NEWS' | 'EVENT' | 'ANNOUNCEMENT';
+  location: string | null;
+  imageUrl: string | null;
+  isActive: boolean;
+}
+
+export function validateEventData(data: EventInput): {
   isValid: boolean;
-  sanitized?: any;
+  sanitized?: SanitizedEventData;
   errors?: string[];
 } {
   const errors: string[] = [];

@@ -5,9 +5,7 @@ import { motion } from 'framer-motion';
 import { 
   Plus, 
   Calendar, 
-  User, 
   Shield, 
-  Eye, 
   EyeOff,
   Save,
   X,
@@ -52,12 +50,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   // Check if user is admin
   const isAdmin = user?.email === 'wangharrison2009@gmail.com' || user?.email === 'givingtreenonprofit@gmail.com';
 
-  useEffect(() => {
-    if (isOpen && isAdmin) {
-      fetchAdminEvents();
-    }
-  }, [isOpen, isAdmin]);
-
   const fetchAdminEvents = async () => {
     try {
       const response = await fetch('/api/admin/events', {
@@ -74,6 +66,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       console.error('Error fetching admin events:', error);
     }
   };
+
+  useEffect(() => {
+    if (isOpen && isAdmin) {
+      fetchAdminEvents();
+    }
+  }, [isOpen, isAdmin]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +107,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       } else {
         setError(result.error || 'Failed to create event');
       }
-    } catch (error) {
+    } catch {
       setError('Network error. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -355,7 +353,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
               </div>
             ) : (
               <div className="space-y-3 max-h-60 overflow-y-auto">
-                {events.slice(0, 10).map((event: any) => (
+                {events.slice(0, 10).map((event: { id: string; title: string; type: string; date: string; commentCount: number; likeCount: number; isActive: boolean }) => (
                   <div key={event.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex-1">
                       <h5 className="font-medium text-gray-900">{event.title}</h5>
