@@ -65,7 +65,7 @@ export default function DashboardPage() {
       <PageBanner title="My Dashboard" subtitle="Track your donations, view your impact, and manage your profile." />
 
       {/* Login Section */}
-      <div className="py-20">
+      <div className="py-12 sm:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -73,7 +73,7 @@ export default function DashboardPage() {
             transition={{ delay: 0.2 }}
             className="text-center"
           >
-            <div className="card p-12 max-w-2xl mx-auto">
+            <div className="card p-6 sm:p-12 max-w-2xl mx-auto">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <User className="h-10 w-10 text-green-600" />
               </div>
@@ -93,7 +93,7 @@ export default function DashboardPage() {
                 </button>
                 
                 <div className="text-center">
-                  <p className="text-zinc-600">
+                  <p className="text-zinc-600 text-sm sm:text-base">
                     Don&apos;t have an account?{' '}
                     <button
                       onClick={handleRegister}
@@ -107,7 +107,7 @@ export default function DashboardPage() {
 
               <div className="mt-8 pt-8 border-t border-gray-200">
                 <h3 className="text-lg font-semibold text-zinc-900 mb-4">What you can do:</h3>
-                <div className="grid md:grid-cols-3 gap-4 text-sm text-zinc-600">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-sm text-zinc-600">
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                     Track donations
