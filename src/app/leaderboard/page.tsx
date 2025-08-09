@@ -97,7 +97,7 @@ export default function LeaderboardPage() {
                 onClick={() => window.location.href = '/donate'}
                 className="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
               >
-                Make a Donation
+                Donate Money
               </button>
               <button 
                 onClick={() => window.location.href = '/donate'}

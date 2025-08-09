@@ -16,32 +16,31 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(cached)
     }
 
-    // Get top donors by total donated amount
+    // Get top donors by monetary donations only
     const topDonors = await prisma.user.findMany({
       select: {
         id: true,
         name: true,
-        totalDonated: true,
-        itemsDonated: true,
         memberSince: true,
-        _count: {
+        donations: {
+          where: {
+            status: 'COMPLETED',
+            type: 'MONETARY'
+          },
           select: {
-            donations: {
-              where: {
-                status: 'COMPLETED'
-              }
-            },
-            itemDonations: {
-              where: {
-                status: 'SOLD'
-              }
-            }
+            amount: true
           }
         }
       },
       where: {
-        totalDonated: {
-          gt: 0
+        donations: {
+          some: {
+            status: 'COMPLETED',
+            type: 'MONETARY',
+            amount: {
+              gt: 0
+            }
+          }
         }
       },
       orderBy: {
@@ -51,29 +50,65 @@ export async function GET(request: NextRequest) {
       skip: offset
     })
 
-    // Add rank to each donor
-    const donorsWithRank = topDonors.map((donor, index) => ({
-      ...donor,
-      rank: offset + index + 1
-    }))
+    // Calculate total monetary donations and add rank to each donor
+    const donorsWithRank = topDonors
+      .map((donor) => {
+        const totalDonated = donor.donations.reduce((sum, donation) => sum + donation.amount, 0);
+        return {
+          id: donor.id,
+          name: donor.name,
+          totalDonated,
+          itemsDonated: 0, // Not shown on leaderboard anymore, but kept for interface compatibility
+          memberSince: donor.memberSince,
+          rank: 0 // Will be set after sorting
+        };
+      })
+      .sort((a, b) => b.totalDonated - a.totalDonated)
+      .map((donor, index) => ({
+        ...donor,
+        rank: offset + index + 1
+      }))
 
-    // Get total count for pagination
+    // Get total count for pagination (users with monetary donations)
     const totalCount = await prisma.user.count({
       where: {
-        totalDonated: {
-          gt: 0
+        donations: {
+          some: {
+            status: 'COMPLETED',
+            type: 'MONETARY',
+            amount: {
+              gt: 0
+            }
+          }
         }
       }
     })
 
-    // Get overall statistics
+    // Get overall statistics (monetary donations only)
     const stats = await prisma.$transaction([
-      prisma.user.aggregate({
+      prisma.donation.aggregate({
         _sum: {
-          totalDonated: true
+          amount: true
         },
         _count: {
           id: true
+        },
+        where: {
+          status: 'COMPLETED',
+          type: 'MONETARY'
+        }
+      }),
+      prisma.user.count({
+        where: {
+          donations: {
+            some: {
+              status: 'COMPLETED',
+              type: 'MONETARY',
+              amount: {
+                gt: 0
+              }
+            }
+          }
         }
       }),
       prisma.itemDonation.aggregate({
@@ -83,22 +118,14 @@ export async function GET(request: NextRequest) {
         where: {
           status: 'SOLD'
         }
-      }),
-      prisma.donation.aggregate({
-        _count: {
-          id: true
-        },
-        where: {
-          status: 'COMPLETED'
-        }
       })
     ])
 
     const overallStats = {
-      totalRaised: stats[0]._sum.totalDonated || 0,
-      totalDonors: stats[0]._count.id,
-      totalItemsSold: stats[1]._count.id,
-      totalDonations: stats[2]._count.id
+      totalRaised: stats[0]._sum.amount || 0,
+      totalDonors: stats[1],
+      totalItemsSold: stats[2]._count.id,
+      totalDonations: stats[0]._count.id
     }
 
     const result = {

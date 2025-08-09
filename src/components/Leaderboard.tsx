@@ -143,14 +143,14 @@ export default function Leaderboard() {
                   <div>
                     <h3 className="font-semibold text-gray-900">{donor.name}</h3>
                     <p className="text-sm text-gray-600">
-                      {donor.itemsDonated} item{donor.itemsDonated !== 1 ? 's' : ''} donated
+                      Member since {new Date(donor.memberSince).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-green-600">
                       ${donor.totalDonated.toLocaleString()}
                     </p>
-                    <p className="text-sm text-gray-500">Total Value</p>
+                    <p className="text-sm text-gray-500">Donated</p>
                   </div>
                 </div>
               </div>
@@ -161,13 +161,19 @@ export default function Leaderboard() {
         <div className="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
           <h3 className="text-xl font-semibold text-center mb-4">Join the Leaderboard</h3>
           <p className="text-center text-gray-600 mb-4">
-            Make a donation today and see your name on our leaderboard!
+            Make a monetary donation today and see your name on our leaderboard!
           </p>
           <div className="flex justify-center space-x-4">
-            <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
-              Donate Now
+            <button 
+              onClick={() => window.location.href = '/donate'}
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Donate Money
             </button>
-            <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            <button 
+              onClick={() => window.location.href = '/donate'}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
               Donate Items
             </button>
           </div>
