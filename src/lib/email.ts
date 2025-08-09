@@ -33,6 +33,11 @@ export interface ItemDonationEmailData {
   address?: string;
   preferredDate?: string;
   notes?: string;
+  attachments?: Array<{
+    filename: string;
+    content: string;
+    contentType: string;
+  }>;
 }
 
 export const sendContactEmail = async (data: ContactEmailData) => {
@@ -97,6 +102,14 @@ export const sendItemDonationEmail = async (data: ItemDonationEmailData) => {
     </div>
   `).join('');
 
+  // Prepare attachments if images are provided
+  const attachments = data.attachments?.map(attachment => ({
+    filename: attachment.filename,
+    content: attachment.content,
+    encoding: 'base64' as const,
+    contentType: attachment.contentType
+  })) || [];
+
   const mailOptions = {
     from: process.env.GMAIL_USER,
     to: 'Givingtreenonprofit@gmail.com',
@@ -126,6 +139,18 @@ export const sendItemDonationEmail = async (data: ItemDonationEmailData) => {
           <h3 style="color: #374151; margin-top: 30px;">Donated Items</h3>
           ${itemsHtml}
           
+          ${data.attachments && data.attachments.length > 0 ? `
+            <h3 style="color: #374151; margin-top: 30px;">Item Photos</h3>
+            <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #059669;">
+              <p style="line-height: 1.6; margin: 0; color: #059669;">
+                📸 <strong>${data.attachments.length} image(s) attached</strong> - Please view the attached files to see photos of the donated items.
+              </p>
+              <ul style="margin: 10px 0; padding-left: 20px;">
+                ${data.attachments.map(att => `<li style="margin: 5px 0;">${att.filename}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+          
           ${data.notes ? `
             <h3 style="color: #374151; margin-top: 30px;">Additional Notes</h3>
             <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #059669;">
@@ -137,6 +162,7 @@ export const sendItemDonationEmail = async (data: ItemDonationEmailData) => {
             <p style="margin: 0; color: #166534; font-size: 14px;">
               <strong>Action Required:</strong> Please contact ${data.name} to coordinate the pickup of these donated items.
               Total items: ${data.items.length}
+              ${data.attachments && data.attachments.length > 0 ? ` | Photos: ${data.attachments.length} attached` : ''}
             </p>
           </div>
         </div>
@@ -147,6 +173,7 @@ export const sendItemDonationEmail = async (data: ItemDonationEmailData) => {
       </div>
     `,
     replyTo: data.email,
+    attachments: attachments
   };
 
   const result = await transporter.sendMail(mailOptions);

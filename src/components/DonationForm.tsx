@@ -55,6 +55,25 @@ export default function DonationForm() {
     setSubmitError('');
 
     try {
+      // Convert images to base64 for email attachments
+      const imageAttachments = await Promise.all(
+        images.map(async (file) => {
+          return new Promise<{ filename: string; content: string; contentType: string }>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              const base64Content = (reader.result as string).split(',')[1]; // Remove data URL prefix
+              resolve({
+                filename: file.name,
+                content: base64Content,
+                contentType: file.type
+              });
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        })
+      );
+
       // Prepare the email data
       const emailData = {
         name: formData.name,
@@ -69,7 +88,8 @@ export default function DonationForm() {
         }],
         pickupPreference: formData.pickupPreference,
         preferredDate: '',
-        notes: `${formData.additionalNotes}\n\nEstimated Value: ${formData.estimatedValue || 'Not specified'}\n\nImages uploaded: ${images.length} file(s)`
+        notes: `${formData.additionalNotes}\n\nEstimated Value: ${formData.estimatedValue || 'Not specified'}\n\nImages attached: ${imageAttachments.length} file(s)`,
+        attachments: imageAttachments
       };
 
       const response = await fetch('/api/donations/items/email', {
@@ -337,9 +357,16 @@ export default function DonationForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Donation'}
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  {images.length > 0 ? 'Processing images...' : 'Submitting...'}
+                </>
+              ) : (
+                'Submit Donation'
+              )}
             </button>
 
             {/* Error Message */}
