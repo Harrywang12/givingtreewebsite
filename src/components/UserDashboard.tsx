@@ -223,62 +223,62 @@ export default function UserDashboard() {
   const totalItems = dashboardData?.stats.totalItemsSold || user.itemsDonated || 0;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6">
+    <div className="max-w-6xl mx-auto p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-lg shadow-lg"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-4 sm:p-6 rounded-t-lg">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+        <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6 rounded-t-lg">
+          <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 sm:mr-4">
-                <User className="h-6 w-6 sm:h-8 sm:w-8" />
+              <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                <User className="h-8 w-8" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold">{displayUser.name}</h1>
-                <p className="text-green-100 text-sm sm:text-base">Member since {new Date(displayUser.memberSince).toLocaleDateString()}</p>
+                <h1 className="text-2xl font-bold">{displayUser.name}</h1>
+                <p className="text-green-100">Member since {new Date(displayUser.memberSince).toLocaleDateString()}</p>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div className="flex items-center space-x-3">
               <button 
                 onClick={handleGoHome}
-                className="bg-black bg-opacity-20 text-white px-3 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30 text-sm"
+                className="bg-black bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30"
               >
-                <Home className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Home</span>
+                <Home className="h-5 w-5 mr-2" />
+                Home
               </button>
               <button 
                 onClick={handleDonate}
-                className="bg-black bg-opacity-20 text-white px-3 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30 text-sm"
+                className="bg-black bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30"
               >
-                <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Donate</span>
+                <Plus className="h-5 w-5 mr-2" />
+                Donate
               </button>
               {(user?.email === 'wangharrison2009@gmail.com' || user?.email === 'givingtreenonprofit@gmail.com') && (
                 <button 
                   onClick={handleAdminPanel}
-                  className="bg-blue-600 bg-opacity-80 text-white px-3 py-2 rounded-lg hover:bg-opacity-100 transition-colors flex items-center border border-blue-400 text-sm"
+                  className="bg-blue-600 bg-opacity-80 text-white px-4 py-2 rounded-lg hover:bg-opacity-100 transition-colors flex items-center border border-blue-400"
                 >
-                  <Shield className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Admin</span>
+                  <Shield className="h-5 w-5 mr-2" />
+                  Admin
                 </button>
               )}
               <button 
                 onClick={handleLogout}
-                className="bg-black bg-opacity-20 text-white px-3 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30 text-sm"
+                className="bg-black bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors flex items-center border border-white border-opacity-30"
               >
-                <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Logout</span>
+                <LogOut className="h-5 w-5 mr-2" />
+                Logout
               </button>
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="border-b border-gray-200 overflow-x-auto">
-          <nav className="flex space-x-4 sm:space-x-8 px-4 sm:px-6 min-w-max">
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8 px-6">
             {[
               { id: 'overview', label: 'Overview', icon: TrendingUp },
               { id: 'donations', label: 'Donations', icon: Heart },
@@ -287,13 +287,13 @@ export default function UserDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as 'overview' | 'donations' | 'profile')}
-                className={`flex items-center py-4 px-2 sm:px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
+                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-green-500 text-green-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
-                <tab.icon className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
+                <tab.icon className="h-5 w-5 mr-2" />
                 {tab.label}
               </button>
             ))}
@@ -301,63 +301,63 @@ export default function UserDashboard() {
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6">
+        <div className="p-6">
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Quick Actions */}
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 sm:p-6 rounded-lg">
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-                <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+                <div className="flex flex-wrap gap-4">
                   <button
                     onClick={handleDonate}
-                    className="bg-green-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center text-sm sm:text-base"
+                    className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center"
                   >
-                    <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                    <DollarSign className="h-5 w-5 mr-2" />
                     Make a Donation
                   </button>
                   <button
                     onClick={() => router.push('/donate')}
-                    className="bg-blue-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center text-sm sm:text-base"
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
                   >
-                    <Package className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                    <Package className="h-5 w-5 mr-2" />
                     Donate Items
                   </button>
                   <button
                     onClick={() => router.push('/events')}
-                    className="bg-purple-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center text-sm sm:text-base"
+                    className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center"
                   >
-                    <Heart className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                    <Heart className="h-5 w-5 mr-2" />
                     View Events
                   </button>
                 </div>
               </div>
 
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                <div className="bg-green-50 p-4 sm:p-6 rounded-lg">
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="bg-green-50 p-6 rounded-lg">
                   <div className="flex items-center">
-                    <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mr-3 sm:mr-4" />
+                    <DollarSign className="h-8 w-8 text-green-600 mr-4" />
                     <div>
                       <p className="text-sm text-green-600">Total Donated</p>
-                      <p className="text-xl sm:text-2xl font-bold text-green-800">${totalMonetary}</p>
+                      <p className="text-2xl font-bold text-green-800">${totalMonetary}</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-blue-50 p-4 sm:p-6 rounded-lg">
+                <div className="bg-blue-50 p-6 rounded-lg">
                   <div className="flex items-center">
-                    <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mr-3 sm:mr-4" />
+                    <Package className="h-8 w-8 text-blue-600 mr-4" />
                     <div>
                       <p className="text-sm text-blue-600">Items Donated</p>
-                      <p className="text-xl sm:text-2xl font-bold text-blue-800">{totalItems}</p>
+                      <p className="text-2xl font-bold text-blue-800">{totalItems}</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-purple-50 p-4 sm:p-6 rounded-lg">
+                <div className="bg-purple-50 p-6 rounded-lg">
                   <div className="flex items-center">
-                    <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600 mr-3 sm:mr-4" />
+                    <Heart className="h-8 w-8 text-purple-600 mr-4" />
                     <div>
                       <p className="text-sm text-purple-600">Total Impact</p>
-                      <p className="text-xl sm:text-2xl font-bold text-purple-800">${displayUser.totalDonated || totalMonetary}</p>
+                      <p className="text-2xl font-bold text-purple-800">${displayUser.totalDonated || totalMonetary}</p>
                     </div>
                   </div>
                 </div>
@@ -368,7 +368,7 @@ export default function UserDashboard() {
                 <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
                 <div className="space-y-3">
                   {dashboardData?.recentDonations?.slice(0, 3).map((donation) => (
-                    <div key={donation.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg space-y-2 sm:space-y-0">
+                    <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
                         <DollarSign className="h-5 w-5 text-green-600 mr-3" />
                         <div>
@@ -380,13 +380,13 @@ export default function UserDashboard() {
                           </p>
                         </div>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)} self-start sm:self-auto`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)}`}>
                         {donation.status.toLowerCase()}
                       </span>
                     </div>
                   ))}
                   {dashboardData?.recentItemDonations?.slice(0, 3).map((donation) => (
-                    <div key={donation.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg space-y-2 sm:space-y-0">
+                    <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
                         <Package className="h-5 w-5 text-blue-600 mr-3" />
                         <div>
@@ -398,7 +398,7 @@ export default function UserDashboard() {
                           </p>
                         </div>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)} self-start sm:self-auto`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)}`}>
                         {donation.status.toLowerCase()}
                       </span>
                     </div>
@@ -422,11 +422,11 @@ export default function UserDashboard() {
 
           {activeTab === 'donations' && (
             <div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-3 sm:space-y-0">
+              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold">Donation History</h3>
                 <button
                   onClick={handleDonate}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center sm:justify-start"
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   New Donation
@@ -435,12 +435,12 @@ export default function UserDashboard() {
               <div className="space-y-4">
                 {dashboardData?.recentDonations?.map((donation) => (
                   <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 space-y-2 sm:space-y-0">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center">
                         <DollarSign className="h-5 w-5 text-green-600 mr-2" />
                         <span className="font-medium">Monetary Donation</span>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)} self-start sm:self-auto`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)}`}>
                         {donation.status.toLowerCase()}
                       </span>
                     </div>
@@ -454,12 +454,12 @@ export default function UserDashboard() {
                 ))}
                 {dashboardData?.recentItemDonations?.map((donation) => (
                   <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 space-y-2 sm:space-y-0">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center">
                         <Package className="h-5 w-5 text-blue-600 mr-2" />
                         <span className="font-medium">Item Donation</span>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)} self-start sm:self-auto`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)}`}>
                         {donation.status.toLowerCase()}
                       </span>
                     </div>
@@ -489,11 +489,11 @@ export default function UserDashboard() {
 
           {activeTab === 'profile' && (
             <div className="max-w-2xl">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-3 sm:space-y-0">
+              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold">Profile Information</h3>
                 <button 
                   onClick={handleEditProfile}
-                  className="flex items-center text-green-600 hover:text-green-700 self-start sm:self-auto"
+                  className="flex items-center text-green-600 hover:text-green-700"
                 >
                   <Edit className="h-4 w-4 mr-1" />
                   Edit
@@ -533,17 +533,17 @@ export default function UserDashboard() {
                         placeholder="Enter your phone number"
                       />
                     </div>
-                    <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
+                    <div className="flex items-center space-x-4 pt-4">
                       <button
                         onClick={handleSaveProfile}
                         disabled={isSavingProfile}
-                        className="w-full sm:w-auto bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isSavingProfile ? 'Saving...' : 'Save Changes'}
                       </button>
                       <button
                         onClick={handleCancelEdit}
-                        className="w-full sm:w-auto bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition-colors"
+                        className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition-colors"
                       >
                         Cancel
                       </button>

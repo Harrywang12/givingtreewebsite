@@ -5,24 +5,7 @@ const nextConfig = {
   
   // Image optimization
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'plus.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.pexels.com',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-      },
-    ],
+    domains: ['localhost', 'images.unsplash.com', 'plus.unsplash.com', 'images.pexels.com'],
     formats: ['image/webp', 'image/avif'],
   },
   

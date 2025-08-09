@@ -7,6 +7,7 @@ import {
   MapPin, 
   Clock, 
   Heart,
+  Leaf,
   Send,
   MessageCircle,
   CheckCircle,

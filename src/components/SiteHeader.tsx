@@ -61,9 +61,9 @@ export default function SiteHeader() {
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-zinc-200 bg-white shadow-lg">
-          <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-            <div className="grid gap-2">
+        <div className="md:hidden border-t border-zinc-200 bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+            <div className="grid gap-1">
               <Link href="/" className="mobile-link">Home</Link>
               <Link href="/mission" className="mobile-link">Mission</Link>
               <Link href="/about" className="mobile-link">About</Link>
@@ -72,7 +72,7 @@ export default function SiteHeader() {
               <Link href="/donate" className="mobile-link">Donate</Link>
               <Link href="/leaderboard" className="mobile-link">Leaderboard</Link>
               <Link href="/contact" className="mobile-link">Contact</Link>
-              <button onClick={handleDashboardClick} className="mt-2 w-full btn btn-primary py-3">
+              <button onClick={handleDashboardClick} className="mt-1 w-full btn btn-primary">
                 {user ? 'Dashboard' : 'Sign In'}
               </button>
             </div>
