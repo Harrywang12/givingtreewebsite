@@ -17,6 +17,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(mode === 'login');
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,6 +27,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -79,6 +81,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
+    setShowForgotPassword(false);
     setFormData({
       name: '',
       email: '',
@@ -87,6 +90,40 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
       confirmPassword: ''
     });
     setError('');
+    setMessage('');
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message);
+        setShowForgotPassword(false);
+      } else {
+        setError(data.error || 'Failed to send reset email');
+      }
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      setError('An unexpected error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -115,6 +152,12 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
               {error}
+            </div>
+          )}
+
+          {message && (
+            <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg mb-4">
+              {message}
             </div>
           )}
           
@@ -247,11 +290,59 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
             </p>
           </div>
 
-          {isLogin && (
+          {isLogin && !showForgotPassword && (
             <div className="mt-4 text-center">
-              <button className="text-green-600 hover:text-green-700 text-sm">
+              <button 
+                onClick={() => setShowForgotPassword(true)}
+                className="text-emerald-700 hover:text-emerald-800 text-sm"
+              >
                 Forgot your password?
               </button>
+            </div>
+          )}
+
+          {isLogin && showForgotPassword && (
+            <div className="mt-4">
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold text-zinc-900 mb-2">Reset Password</h3>
+                <p className="text-sm text-zinc-600 mb-4">
+                  Enter your email address and we'll send you a link to reset your password.
+                </p>
+              </div>
+              
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div>
+                  <label htmlFor="resetEmail" className="block text-sm font-medium text-zinc-700 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="resetEmail"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    name="email"
+                    required
+                    className="w-full px-4 py-3 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    placeholder="Enter your email"
+                  />
+                </div>
+                
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full btn btn-primary"
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Reset Link'}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(false)}
+                  className="w-full text-emerald-700 hover:text-emerald-800 text-sm"
+                >
+                  Back to Sign In
+                </button>
+              </form>
             </div>
           )}
         </motion.div>

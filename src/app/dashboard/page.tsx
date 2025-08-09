@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { User, LogIn } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
-import { useRouter } from 'next/navigation';
 import UserDashboard from '@/components/UserDashboard';
 import AuthModal from '@/components/AuthModal';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,7 +12,6 @@ export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const router = useRouter();
 
   // Redirect to dashboard if user is already logged in
   useEffect(() => {
@@ -65,7 +63,7 @@ export default function DashboardPage() {
       <PageBanner title="My Dashboard" subtitle="Track your donations, view your impact, and manage your profile." />
 
       {/* Login Section */}
-      <div className="py-20">
+      <div className="py-12 sm:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -73,12 +71,12 @@ export default function DashboardPage() {
             transition={{ delay: 0.2 }}
             className="text-center"
           >
-            <div className="card p-12 max-w-2xl mx-auto">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <User className="h-10 w-10 text-green-600" />
+            <div className="card p-6 sm:p-12 max-w-2xl mx-auto">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <User className="h-8 w-8 sm:h-10 sm:w-10 text-green-600" />
               </div>
-              <h2 className="text-3xl font-bold text-zinc-900 mb-4">Welcome Back</h2>
-              <p className="text-zinc-600 mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 mb-4">Welcome Back</h2>
+              <p className="text-zinc-600 mb-8 text-sm sm:text-base">
                 Sign in to your account to view your donation history, track your impact, 
                 and manage your profile.
               </p>
@@ -86,14 +84,14 @@ export default function DashboardPage() {
               <div className="space-y-4">
                 <button
                   onClick={handleLogin}
-                  className="w-full btn btn-primary py-3 font-semibold flex items-center justify-center"
+                  className="w-full btn btn-primary py-3 font-semibold flex items-center justify-center text-sm sm:text-base"
                 >
-                  <LogIn className="h-5 w-5 mr-2" />
+                  <LogIn className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                   Sign In
                 </button>
                 
                 <div className="text-center">
-                  <p className="text-zinc-600">
+                  <p className="text-zinc-600 text-sm sm:text-base">
                     Don&apos;t have an account?{' '}
                     <button
                       onClick={handleRegister}
@@ -107,7 +105,7 @@ export default function DashboardPage() {
 
               <div className="mt-8 pt-8 border-t border-gray-200">
                 <h3 className="text-lg font-semibold text-zinc-900 mb-4">What you can do:</h3>
-                <div className="grid md:grid-cols-3 gap-4 text-sm text-zinc-600">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-zinc-600">
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                     Track donations
