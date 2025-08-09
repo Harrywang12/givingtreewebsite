@@ -74,7 +74,20 @@ async function main() {
 
   console.log(`✅ Created ${users.length} users`)
 
-  // Create sample events
+  // Create a system admin user for seeding events
+  const systemAdmin = await prisma.user.upsert({
+    where: { email: 'admin@givingtree.org' },
+    update: {},
+    create: {
+      email: 'admin@givingtree.org',
+      name: 'System Administrator',
+      password: hashedPassword,
+      role: 'ADMIN',
+      isActive: true,
+    },
+  });
+
+  // Create sample events with authorId
   const events = await Promise.all([
     prisma.event.upsert({
       where: { id: 'event-1' },
@@ -83,9 +96,11 @@ async function main() {
         id: 'event-1',
         title: 'Foundation Launch',
         description: "We're excited to announce the official launch of The Giving Tree Non-Profit Foundation! Join us in our mission to support Mackenzie Health and make a difference in our community.",
+        content: "The Giving Tree Non-Profit Foundation officially launches today! Our mission is to support Mackenzie Health through community donations and volunteer efforts. Join us as we embark on this journey to make healthcare accessible and supportive for everyone in our community.",
         date: new Date('2025-12-01'),
         type: 'NEWS',
         location: 'Virtual Event',
+        authorId: systemAdmin.id,
       },
     }),
     prisma.event.upsert({
@@ -95,9 +110,11 @@ async function main() {
         id: 'event-2',
         title: 'First Community Donation Drive',
         description: 'Join us for our first community-wide donation drive. We\'ll be collecting gently used items at multiple locations across the city. Every item donated helps support Mackenzie Health.',
+        content: "Our inaugural donation drive will take place across multiple locations in the city. We're looking for gently used clothing, household items, books, and toys. All proceeds will directly benefit Mackenzie Health's patient support programs.",
         date: new Date('2026-01-15'),
         type: 'EVENT',
         location: 'Multiple Locations',
+        authorId: systemAdmin.id,
       },
     }),
     prisma.event.upsert({
@@ -107,9 +124,11 @@ async function main() {
         id: 'event-3',
         title: 'Volunteer Orientation Session',
         description: 'Interested in volunteering with The Giving Tree Foundation? Join us for an orientation session to learn about our mission, processes, and how you can get involved.',
+        content: "Join us for a comprehensive orientation session where you'll learn about The Giving Tree Foundation's mission, volunteer opportunities, and how you can make a meaningful impact in our community. We'll cover our processes, expectations, and help you find the perfect volunteer role.",
         date: new Date('2026-02-01'),
         type: 'EVENT',
         location: 'Community Center',
+        authorId: systemAdmin.id,
       },
     }),
   ])

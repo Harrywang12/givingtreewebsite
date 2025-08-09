@@ -71,6 +71,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     if (isOpen && isAdmin) {
       fetchAdminEvents();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, isAdmin]);
 
   const handleSubmit = async (e: React.FormEvent) => {
