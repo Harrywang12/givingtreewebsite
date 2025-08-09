@@ -1,81 +1,190 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, MessageCircle, ThumbsUp, Heart, Users } from 'lucide-react';
+import { ArrowLeft, Calendar, MessageCircle, ThumbsUp, Heart, Users, User } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+
+interface Comment {
+  id: string;
+  content: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+  };
+}
 
 interface Event {
-  id: number;
+  id: string;
   title: string;
-  date: string;
   description: string;
-  likes: number;
-  comments: string[];
-  type: 'news' | 'event';
+  content?: string;
+  date: string;
+  type: 'NEWS' | 'EVENT' | 'ANNOUNCEMENT';
+  location?: string;
+  imageUrl?: string;
+  author: {
+    name: string;
+    isAdmin: boolean;
+  };
+  comments: Comment[];
+  commentCount: number;
+  likeCount: number;
+  userLiked?: boolean;
+  createdAt: string;
 }
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: 1,
-      title: "Foundation Launch",
-      date: "December 2025",
-      description: "We're excited to announce the official launch of The Giving Tree Non-Profit Foundation! Join us in our mission to support Mackenzie Health and make a difference in our community.",
-      likes: 45,
-      comments: [
-        "Congratulations on the launch! Looking forward to supporting this great cause.",
-        "This is exactly what our community needs. Count me in!",
-        "Amazing initiative! Can't wait to see the impact you'll make."
-      ],
-      type: 'news'
-    },
-    {
-      id: 2,
-      title: "First Community Donation Drive",
-      date: "January 2026",
-      description: "Join us for our first community-wide donation drive. We'll be collecting gently used items at multiple locations across the city. Every item donated helps support Mackenzie Health.",
-      likes: 32,
-      comments: [
-        "I have some furniture to donate. Where can I drop it off?",
-        "Great idea! I'll spread the word to my neighbors.",
-        "This is such a sustainable way to support healthcare."
-      ],
-      type: 'event'
-    },
-    {
-      id: 3,
-      title: "Volunteer Orientation Session",
-      date: "February 2026",
-      description: "Interested in volunteering with The Giving Tree Foundation? Join us for an orientation session to learn about our mission, processes, and how you can get involved.",
-      likes: 28,
-      comments: [
-        "I'd love to volunteer! How do I sign up?",
-        "Perfect timing! I've been looking for ways to give back.",
-        "What kind of volunteer opportunities are available?"
-      ],
-      type: 'event'
-    }
-  ]);
+  const { user, token } = useAuth();
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [newComment, setNewComment] = useState<{ [key: string]: string }>({});
+  const [commentingOn, setCommentingOn] = useState<string | null>(null);
+  const [likingEvents, setLikingEvents] = useState<Set<string>>(new Set());
 
-  const [newComment, setNewComment] = useState<{ [key: number]: string }>({});
+  // Fetch events from API
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-  const handleLike = (eventId: number) => {
-    setEvents(prev => prev.map(event => 
-      event.id === eventId ? { ...event, likes: event.likes + 1 } : event
-    ));
-  };
-
-  const handleComment = (eventId: number) => {
-    const comment = newComment[eventId];
-    if (comment && comment.trim()) {
-      setEvents(prev => prev.map(event => 
-        event.id === eventId 
-          ? { ...event, comments: [...event.comments, comment] }
-          : event
-      ));
-      setNewComment(prev => ({ ...prev, [eventId]: '' }));
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/events?limit=20');
+      
+      if (response.ok) {
+        const data = await response.json();
+        setEvents(data.events || []);
+      } else {
+        setError('Failed to load events');
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      setError('Failed to load events');
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleLike = async (eventId: string) => {
+    if (!user || !token || likingEvents.has(eventId)) return;
+
+    setLikingEvents(prev => new Set(prev).add(eventId));
+
+    try {
+      const response = await fetch(`/api/events/${eventId}/like`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Update the event in state
+        setEvents(prev => prev.map(event => 
+          event.id === eventId 
+            ? { 
+                ...event, 
+                likeCount: result.likeCount,
+                userLiked: result.liked
+              }
+            : event
+        ));
+      } else {
+        console.error('Failed to like event');
+      }
+    } catch (error) {
+      console.error('Error liking event:', error);
+    } finally {
+      setLikingEvents(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(eventId);
+        return newSet;
+      });
+    }
+  };
+
+  const handleComment = async (eventId: string) => {
+    if (!user || !token || !newComment[eventId]?.trim()) return;
+
+    setCommentingOn(eventId);
+
+    try {
+      const response = await fetch(`/api/events/${eventId}/comments`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: newComment[eventId].trim()
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Add the new comment to the event
+        setEvents(prev => prev.map(event => 
+          event.id === eventId 
+            ? { 
+                ...event, 
+                comments: [result.comment, ...event.comments],
+                commentCount: event.commentCount + 1
+              }
+            : event
+        ));
+        
+        // Clear the comment input
+        setNewComment(prev => ({ ...prev, [eventId]: '' }));
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to post comment:', errorData.error);
+      }
+    } catch (error) {
+      console.error('Error posting comment:', error);
+    } finally {
+      setCommentingOn(null);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'NEWS':
+        return 'bg-blue-100 text-blue-600';
+      case 'EVENT':
+        return 'bg-green-100 text-green-600';
+      case 'ANNOUNCEMENT':
+        return 'bg-purple-100 text-purple-600';
+      default:
+        return 'bg-gray-100 text-gray-600';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading events...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
@@ -118,84 +227,159 @@ export default function EventsPage() {
             </p>
           </motion.div>
 
-          <div className="space-y-8">
-            {events.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-gray-50 rounded-lg p-8"
+          {error && (
+            <div className="text-center py-8">
+              <p className="text-red-600 mb-4">{error}</p>
+              <button 
+                onClick={fetchEvents}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
-                    <Calendar className="h-5 w-5 text-gray-500 mr-2" />
-                    <span className="text-gray-600">{event.date}</span>
-                    <span className={`ml-3 px-2 py-1 rounded-full text-xs font-medium ${
-                      event.type === 'news' 
-                        ? 'bg-blue-100 text-blue-600' 
-                        : 'bg-green-100 text-green-600'
-                    }`}>
-                      {event.type === 'news' ? 'News' : 'Event'}
-                    </span>
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {events.length === 0 && !error ? (
+            <div className="text-center py-12">
+              <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Events Yet</h3>
+              <p className="text-gray-600 mb-6">
+                Our admins haven't posted any events yet. Check back soon!
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {events.map((event, index) => (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="bg-gray-50 rounded-lg p-8 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <Calendar className="h-5 w-5 text-gray-500 mr-2" />
+                      <span className="text-gray-600">{formatDate(event.date)}</span>
+                      <span className={`ml-3 px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(event.type)}`}>
+                        {event.type}
+                      </span>
+                      {event.author.isAdmin && (
+                        <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-600">
+                          Official
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <span className="text-sm text-gray-500">
+                        By {event.author.name}
+                      </span>
+                      <button 
+                        onClick={() => handleLike(event.id)}
+                        disabled={!user || likingEvents.has(event.id)}
+                        className={`flex items-center space-x-1 transition-colors ${
+                          user 
+                            ? 'text-gray-600 hover:text-red-500 cursor-pointer' 
+                            : 'text-gray-400 cursor-not-allowed'
+                        } ${event.userLiked ? 'text-red-500' : ''}`}
+                      >
+                        <ThumbsUp className={`h-4 w-4 ${likingEvents.has(event.id) ? 'animate-pulse' : ''}`} />
+                        <span>{event.likeCount}</span>
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <button 
-                      onClick={() => handleLike(event.id)}
-                      className="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition-colors"
-                    >
-                      <ThumbsUp className="h-4 w-4" />
-                      <span>{event.likes}</span>
-                    </button>
-                  </div>
-                </div>
-                
-                <h3 className="text-xl font-semibold mb-3">{event.title}</h3>
-                <p className="text-gray-600 mb-6">{event.description}</p>
-                
-                {/* Comments Section */}
-                <div className="mt-6">
-                  <h4 className="font-semibold mb-3 flex items-center">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Comments ({event.comments.length})
-                  </h4>
-                  <div className="space-y-2 mb-4">
-                    {event.comments.map((comment, commentIndex) => (
-                      <div key={commentIndex} className="bg-white p-3 rounded border">
-                        <p className="text-sm text-gray-600">{comment}</p>
+                  
+                  <h3 className="text-xl font-semibold mb-3">{event.title}</h3>
+                  <p className="text-gray-600 mb-4">{event.description}</p>
+                  
+                  {event.content && (
+                    <div className="bg-white p-4 rounded-lg mb-4">
+                      <p className="text-gray-700 whitespace-pre-wrap">{event.content}</p>
+                    </div>
+                  )}
+
+                  {event.location && (
+                    <p className="text-sm text-gray-500 mb-4">
+                      📍 {event.location}
+                    </p>
+                  )}
+                  
+                  {/* Comments Section */}
+                  <div className="mt-6">
+                    <h4 className="font-semibold mb-3 flex items-center">
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Comments ({event.commentCount})
+                    </h4>
+                    
+                    {/* Add Comment Form */}
+                    {user ? (
+                      <form 
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleComment(event.id);
+                        }} 
+                        className="flex gap-2 mb-4"
+                      >
+                        <input
+                          type="text"
+                          value={newComment[event.id] || ''}
+                          onChange={(e) => setNewComment(prev => ({
+                            ...prev,
+                            [event.id]: e.target.value
+                          }))}
+                          placeholder="Add a comment..."
+                          className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                          disabled={commentingOn === event.id}
+                        />
+                        <button 
+                          type="submit"
+                          disabled={commentingOn === event.id || !newComment[event.id]?.trim()}
+                          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {commentingOn === event.id ? 'Posting...' : 'Post'}
+                        </button>
+                      </form>
+                    ) : (
+                      <div className="bg-gray-100 p-3 rounded-lg mb-4 text-center">
+                        <p className="text-gray-600">
+                          <a href="/dashboard" className="text-green-600 hover:underline">Sign in</a> to join the conversation
+                        </p>
                       </div>
-                    ))}
+                    )}
+
+                    {/* Comments List */}
+                    <div className="space-y-3">
+                      {event.comments.slice(0, 5).map((comment) => (
+                        <div key={comment.id} className="bg-white p-3 rounded-lg border">
+                          <div className="flex items-center mb-2">
+                            <User className="h-4 w-4 text-gray-400 mr-2" />
+                            <span className="text-sm font-medium text-gray-700">{comment.user.name}</span>
+                            <span className="text-xs text-gray-500 ml-2">
+                              {new Date(comment.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600">{comment.content}</p>
+                        </div>
+                      ))}
+                      
+                      {event.commentCount > 5 && (
+                        <div className="text-center">
+                          <button className="text-green-600 hover:underline text-sm">
+                            View all {event.commentCount} comments
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    handleComment(event.id);
-                  }} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newComment[event.id] || ''}
-                      onChange={(e) => setNewComment(prev => ({
-                        ...prev,
-                        [event.id]: e.target.value
-                      }))}
-                      placeholder="Add a comment..."
-                      className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                    <button 
-                      type="submit"
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                    >
-                      Post
-                    </button>
-                  </form>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Upcoming Events */}
+      {/* Get Involved Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -299,4 +483,4 @@ export default function EventsPage() {
       </section>
     </div>
   );
-} 
+}
