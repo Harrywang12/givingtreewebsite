@@ -10,7 +10,8 @@ import {
   Save,
   X,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  DollarSign
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -35,7 +36,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [events, setEvents] = useState([]);
+  const [donations, setDonations] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [activeTab, setActiveTab] = useState<'events' | 'donations'>('events');
   
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
@@ -67,11 +70,58 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     }
   };
 
-  useEffect(() => {
+  const fetchAdminDonations = async () => {
+    if (!token) return;
+    
+    try {
+      const response = await fetch('/api/admin/donations', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setDonations(data.donations || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch donations');
+    }
+  };
+
+  const updateDonationStatus = async (donationId: string, newStatus: string) => {
+    if (!token) return;
+    
+    try {
+      setIsSubmitting(true);
+      const response = await fetch(`/api/admin/donations/${donationId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      
+      if (response.ok) {
+        setMessage('Donation status updated successfully');
+        fetchAdminDonations(); // Refresh the list
+      } else {
+        setError('Failed to update donation status');
+      }
+    } catch (error) {
+      setError('Failed to update donation status');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+    useEffect(() => {
     if (isOpen && isAdmin) {
       fetchAdminEvents();
+      fetchAdminDonations();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, isAdmin]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -192,20 +242,65 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Event Management</h3>
-            <button
-              onClick={() => setShowForm(!showForm)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-            >
-              {showForm ? <EyeOff className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
-              {showForm ? 'Hide Form' : 'Create Event'}
-            </button>
+          {/* Navigation Tabs */}
+          <div className="border-b border-gray-200 mb-6">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => {setActiveTab('events'); setShowForm(false);}}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'events'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Events Management
+              </button>
+              <button
+                onClick={() => {setActiveTab('donations'); setShowForm(false);}}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'donations'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Donation Management
+              </button>
+            </nav>
           </div>
 
+          {activeTab === 'events' && (
+            <>
+              {/* Event Action Buttons */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Event Management</h3>
+                <button
+                  onClick={() => setShowForm(!showForm)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                >
+                  {showForm ? <EyeOff className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+                  {showForm ? 'Hide Form' : 'Create Event'}
+                </button>
+              </div>
+            </>
+          )}
+
+          {activeTab === 'donations' && (
+            <>
+              {/* Donation Management Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Donation Management</h3>
+                <button
+                  onClick={fetchAdminDonations}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Refresh
+                </button>
+              </div>
+            </>
+          )}
+
           {/* Create Event Form */}
-          {showForm && (
+          {activeTab === 'events' && showForm && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -345,8 +440,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           )}
 
           {/* Events List */}
-          <div>
-            <h4 className="text-md font-semibold text-gray-900 mb-3">Recent Events ({events.length})</h4>
+          {activeTab === 'events' && (
+            <div>
+              <h4 className="text-md font-semibold text-gray-900 mb-3">Recent Events ({events.length})</h4>
             {events.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -376,7 +472,69 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 ))}
               </div>
             )}
-          </div>
+            </div>
+          )}
+
+          {/* Donations List */}
+          {activeTab === 'donations' && (
+            <div>
+              <h4 className="text-md font-semibold text-gray-900 mb-3">Recent Donations ({donations.length})</h4>
+              {donations.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <DollarSign className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No donations found</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-60 overflow-y-auto">
+                  {donations.map((donation: { 
+                    id: string; 
+                    amount: number; 
+                    status: string; 
+                    paymentMethod: string; 
+                    createdAt: string; 
+                    user: { name: string; email: string } 
+                  }) => (
+                    <div key={donation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h5 className="font-medium text-gray-900">${donation.amount.toFixed(2)}</h5>
+                          <div className="flex items-center space-x-2">
+                            <select
+                              value={donation.status}
+                              onChange={(e) => updateDonationStatus(donation.id, e.target.value)}
+                              disabled={isSubmitting}
+                              className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="PENDING">Pending</option>
+                              <option value="PROCESSING">Processing</option>
+                              <option value="COMPLETED">Completed</option>
+                              <option value="FAILED">Failed</option>
+                              <option value="CANCELLED">Cancelled</option>
+                            </select>
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              donation.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                              donation.status === 'PROCESSING' ? 'bg-yellow-100 text-yellow-800' :
+                              donation.status === 'PENDING' ? 'bg-blue-100 text-blue-800' :
+                              donation.status === 'FAILED' ? 'bg-red-100 text-red-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {donation.status}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {donation.user.name} ({donation.user.email})
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {donation.paymentMethod} • {new Date(donation.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </motion.div>
     </div>
