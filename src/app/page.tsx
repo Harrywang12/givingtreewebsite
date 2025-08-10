@@ -269,15 +269,15 @@ export default function Home() {
       <section className="py-24 bg-green-50 relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute -top-20 -right-20 w-64 h-64 opacity-5">
-          <Image 
+                  <Image
             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234caf50'%3E%3Cpath d='M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C16 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z'/%3E%3C/svg%3E"
             width={256}
             height={256}
             alt=""
-          />
-        </div>
+                  />
+                </div>
         <div className="absolute -bottom-20 -left-20 w-64 h-64 opacity-5">
-          <Image 
+                  <Image
             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234caf50'%3E%3Cpath d='M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C16 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z'/%3E%3C/svg%3E"
             width={256}
             height={256}
@@ -356,15 +356,15 @@ export default function Home() {
               <p className="text-green-700 mb-5">
                 Join our team of dedicated volunteers. Your time and skills can make an incredible difference.
               </p>
-              <button 
-                onClick={handleDashboardClick}
+              <Link 
+                href="/volunteer"
                 className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors"
               >
                 Join Us
                 <ArrowRight className="ml-1 h-4 w-4" />
-              </button>
+              </Link>
             </motion.div>
-          </div>
+            </div>
         </div>
       </section>
 
@@ -383,11 +383,11 @@ export default function Home() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
+          <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8 }}
             >
               <span className="text-green-600 font-medium">OUR IMPACT</span>
               <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Making a Real Difference</h2>
@@ -421,14 +421,14 @@ export default function Home() {
                   Learn More About Our Work
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-              </div>
-            </motion.div>
-            
-            <motion.div
+            </div>
+          </motion.div>
+
+          <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
               <div className="relative z-10 rounded-2xl overflow-hidden img-natural">
@@ -443,7 +443,7 @@ export default function Home() {
               
               <div className="absolute -bottom-8 -right-8 w-48 h-48 bg-green-100 rounded-full z-0"></div>
               <div className="absolute -top-8 -left-8 w-24 h-24 bg-green-50 rounded-full z-0"></div>
-            </motion.div>
+          </motion.div>
           </div>
         </div>
       </section>
@@ -536,11 +536,11 @@ export default function Home() {
                   Leading the technical vision and digital infrastructure to create seamless 
                   experiences that connect donors, volunteers, and healthcare communities.
                 </p>
-              </div>
+            </div>
               
               {/* Subtle background decoration */}
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-green-100 rounded-full opacity-50 z-0 transition-transform duration-500 group-hover:scale-125"></div>
-            </motion.div>
+          </motion.div>
           </div>
 
           <div className="text-center mt-12">
@@ -616,14 +616,14 @@ export default function Home() {
                 </div>
               </motion.div>
             ))}
-          </div>
+              </div>
 
           <div className="text-center mt-12">
             <Link href="/events" className="btn btn-secondary">
               View All Updates
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
-          </div>
+            </div>
         </div>
       </section>
 
@@ -639,11 +639,11 @@ export default function Home() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div
+          <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8 }}
             >
               <span className="text-green-600 font-medium">GET IN TOUCH</span>
               <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Contact Us</h2>
@@ -671,16 +671,16 @@ export default function Home() {
                     <div className="ml-4">
                       <h4 className="font-medium text-green-900">Phone</h4>
                       <p className="text-green-700">(905) 883-1212</p>
-                    </div>
+                </div>
                   </li>
                   <li className="flex items-start">
                     <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mt-1">
                       <MapPin className="h-5 w-5 text-green-700" />
-                    </div>
+                </div>
                     <div className="ml-4">
                       <h4 className="font-medium text-green-900">Location</h4>
                       <p className="text-green-700">Serving Mackenzie Health communities</p>
-                    </div>
+                </div>
                   </li>
                 </ul>
               </div>
@@ -699,32 +699,32 @@ export default function Home() {
                     <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="name">Name</label>
                     <input type="text" id="name" className="field" placeholder="Your name" />
                   </div>
-                  <div>
+            <div>
                     <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="email">Email</label>
-                    <input 
-                      type="email" 
+                <input
+                  type="email"
                       id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="field" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="field"
                       placeholder="Your email address" 
-                    />
+                />
                   </div>
                   <div>
                     <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="message">Message</label>
                     <textarea id="message" className="field min-h-[120px] resize-none" placeholder="How can we help?"></textarea>
                   </div>
-                  <button 
-                    type="submit" 
+                <button 
+                  type="submit"
                     onClick={handleSubscribe}
                     className="btn btn-primary w-full"
-                  >
+                >
                     <Send className="mr-2 h-5 w-5" />
                     Send Message
-                  </button>
-                </form>
-              </div>
-            </motion.div>
+                </button>
+              </form>
+            </div>
+          </motion.div>
           </div>
         </div>
       </section>

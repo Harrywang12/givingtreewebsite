@@ -103,9 +103,9 @@ export default function SiteFooter() {
               </h4>
               <ul className="space-y-3 text-base text-green-800">
                 <li>
-                  <Link href="/donate" className="footer-link flex items-center">
-                    <Heart className="h-4 w-4 mr-2 text-green-600" />
-                    Donate
+                  <Link href="/donate" className="footer-link inline-flex items-center align-middle">
+                    <Heart className="h-4 w-4 mr-2 text-green-600 inline-block align-middle" />
+                    <span className="inline-block align-middle">Donate</span>
                   </Link>
                 </li>
                 <li>

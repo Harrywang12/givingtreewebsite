@@ -176,12 +176,12 @@ export default function TeamPage() {
               >
                 Make a Donation
               </button>
-              <button 
-                onClick={() => window.location.href = '/dashboard'}
+              <a 
+                href="/volunteer"
                 className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition-colors"
               >
                 Volunteer With Us
-              </button>
+              </a>
             </div>
           </motion.div>
         </div>
