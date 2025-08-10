@@ -24,6 +24,11 @@ export const metadata: Metadata = {
   title: "The Giving Tree Non-Profit Foundation",
   description: "Supporting Mackenzie Health through community donations and reselling gently used items. 100% of proceeds go directly to enhancing patient care.",
   keywords: "non-profit, healthcare, donations, Mackenzie Health, community support, sustainability",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+    shortcut: "/logo.png",
+  },
 };
 
 export default function RootLayout({

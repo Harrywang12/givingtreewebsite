@@ -152,8 +152,8 @@ export default function Leaderboard() {
           ))}
         </div>
 
-        <div className="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
-          <h3 className="text-xl font-semibold text-center mb-4">Join the Leaderboard</h3>
+        <div className="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg dark:text-gray-900">
+          <h3 className="text-xl font-semibold text-center mb-4 text-gray-900 dark:text-gray-900">Join the Leaderboard</h3>
           <p className="text-center text-gray-700 dark:text-gray-800 mb-4">
             Make a monetary donation today and see your name on our leaderboard!
           </p>
