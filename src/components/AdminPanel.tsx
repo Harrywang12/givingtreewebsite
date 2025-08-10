@@ -468,6 +468,35 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       }`}>
                         {event.isActive ? 'Active' : 'Inactive'}
                       </span>
+                      <button
+                        onClick={async () => {
+                          if (!confirm('Delete this event? This cannot be undone.')) return;
+                          try {
+                            setIsSubmitting(true);
+                            const res = await fetch(`/api/admin/events/${event.id}`, {
+                              method: 'DELETE',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            if (res.ok) {
+                              setMessage('Event deleted successfully');
+                              fetchAdminEvents();
+                            } else {
+                              const data = await res.json();
+                              setError(data.error || 'Failed to delete event');
+                            }
+                          } catch (err) {
+                            console.error('Delete event failed:', err);
+                            setError('Failed to delete event');
+                          } finally {
+                            setIsSubmitting(false);
+                          }
+                        }}
+                        className="px-2 py-1 text-xs rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                        disabled={isSubmitting}
+                        aria-label={`Delete event ${event.title}`}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 ))}
