@@ -34,6 +34,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-[var(--color-bg)] text-[var(--color-fg)]">
       <head>
+        <link rel="icon" href="/logo.png" sizes="any" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="shortcut icon" href="/logo.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

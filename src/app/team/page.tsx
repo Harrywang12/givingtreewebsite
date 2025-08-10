@@ -87,7 +87,7 @@ export default function TeamPage() {
       </section>
 
       {/* Values Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 dark:text-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -97,7 +97,7 @@ export default function TeamPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-gray-900 mb-8">Our Values</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-700 max-w-3xl mx-auto">
               The principles that guide everything we do at The Giving Tree Foundation
             </p>
           </motion.div>
@@ -113,8 +113,8 @@ export default function TeamPage() {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Heart className="h-8 w-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Compassion</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Compassion</h3>
+              <p className="text-gray-700 dark:text-gray-800">
                 We approach every interaction with empathy and understanding, 
                 recognizing the impact of healthcare on individuals and families.
               </p>
@@ -129,8 +129,8 @@ export default function TeamPage() {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Community</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Community</h3>
+              <p className="text-gray-700 dark:text-gray-800">
                 We believe in the power of collective action and the strength 
                 that comes from working together for a common cause.
               </p>
@@ -145,8 +145,8 @@ export default function TeamPage() {
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Heart className="h-8 w-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Transparency</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Transparency</h3>
+              <p className="text-gray-700 dark:text-gray-800">
                 We maintain complete transparency in our operations, ensuring 
                 donors know exactly how their contributions make a difference.
               </p>

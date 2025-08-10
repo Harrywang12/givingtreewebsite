@@ -81,7 +81,7 @@ export default function Leaderboard() {
       <div className="max-w-4xl mx-auto p-6">
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading leaderboard...</p>
+          <p className="text-gray-700 dark:text-gray-800">Loading leaderboard...</p>
         </div>
       </div>
     );
@@ -112,7 +112,7 @@ export default function Leaderboard() {
       >
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Top Donors</h2>
-          <p className="text-gray-600">
+          <p className="text-gray-700 dark:text-gray-800">
             Our community's most generous supporters. Thank you for making a difference!
           </p>
         </div>
@@ -136,7 +136,7 @@ export default function Leaderboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-gray-900">{donor.name}</h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-700 dark:text-gray-800">
                       Member since {new Date(donor.memberSince).toLocaleDateString()}
                     </p>
                   </div>
@@ -144,7 +144,7 @@ export default function Leaderboard() {
                     <p className="text-lg font-bold text-green-600">
                       ${donor.totalDonated.toLocaleString()}
                     </p>
-                    <p className="text-sm text-gray-500">Donated</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-800">Donated</p>
                   </div>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function Leaderboard() {
 
         <div className="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
           <h3 className="text-xl font-semibold text-center mb-4">Join the Leaderboard</h3>
-          <p className="text-center text-gray-600 mb-4">
+          <p className="text-center text-gray-700 dark:text-gray-800 mb-4">
             Make a monetary donation today and see your name on our leaderboard!
           </p>
           <div className="flex justify-center space-x-4">

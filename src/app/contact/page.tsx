@@ -86,7 +86,7 @@ export default function ContactPage() {
             >
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">Get In Touch</h2>
-                <p className="text-lg text-gray-600 mb-8">
+                <p className="text-lg text-green-800 mb-8">
                   We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
                 </p>
               </div>
@@ -99,7 +99,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Address</h3>
-                    <p className="text-gray-600">
+                    <p className="text-green-800">
                       10 Trench Street<br />
                       Richmond Hill, ON L4C 4Z3<br />
                       Canada
@@ -113,7 +113,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-gray-600">+1 (905) 883-1212</p>
+                    <p className="text-green-800">+1 (905) 883-1212</p>
                   </div>
                 </div>
 
@@ -123,7 +123,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">Givingtreenonprofit@gmail.com</p>
+                    <p className="text-green-800">Givingtreenonprofit@gmail.com</p>
                   </div>
                 </div>
 
@@ -133,7 +133,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Office Hours</h3>
-                    <p className="text-gray-600">
+                    <p className="text-green-800">
                       Monday - Friday: 9:00 AM - 5:00 PM<br />
                       Saturday: 10:00 AM - 2:00 PM<br />
                       Sunday: Closed
@@ -148,7 +148,7 @@ export default function ContactPage() {
                   <Heart className="h-6 w-6 text-green-600 mr-2" />
                   <h3 className="font-semibold text-gray-900">Our Mission</h3>
                 </div>
-                <p className="text-gray-600">
+                <p className="text-green-800">
                   Supporting Mackenzie Health through community donations and reselling gently used items. 
                   100% of proceeds go directly to enhancing patient care and medical equipment.
                 </p>
@@ -169,7 +169,7 @@ export default function ContactPage() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-green-800 mb-2">
                     Full Name *
                   </label>
                   <input
@@ -185,7 +185,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-green-800 mb-2">
                     Email Address *
                   </label>
                   <input
@@ -201,7 +201,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-medium text-green-800 mb-2">
                     Subject *
                   </label>
                   <input
@@ -217,7 +217,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-green-800 mb-2">
                     Message *
                   </label>
                   <textarea
@@ -271,7 +271,7 @@ export default function ContactPage() {
               </form>
 
               <div className="mt-6 p-4 rounded-lg texture-leaf">
-                <p className="text-sm text-zinc-700"><strong>Quick Response:</strong> For urgent matters, please call us directly at (905) 883-1212. We typically respond to emails within 24 hours during business days.</p>
+                <p className="text-sm text-green-800"><strong>Quick Response:</strong> For urgent matters, please call us directly at (905) 883-1212. We typically respond to emails within 24 hours during business days.</p>
               </div>
             </motion.div>
           </div>
@@ -283,7 +283,7 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-zinc-900 mb-4">Other Ways to Connect</h2>
-            <p className="text-lg text-zinc-600">Find the best way to reach us for your specific needs</p>
+            <p className="text-lg text-green-800">Find the best way to reach us for your specific needs</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -297,7 +297,7 @@ export default function ContactPage() {
                 <Heart className="h-8 w-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-zinc-900 mb-2">Volunteer Opportunities</h3>
-              <p className="text-zinc-600 mb-4">
+              <p className="text-green-800 mb-4">
                 Interested in volunteering? Contact our volunteer coordinator for available opportunities.
               </p>
               <a 

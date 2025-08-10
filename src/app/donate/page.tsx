@@ -256,7 +256,7 @@ export default function DonatePage() {
                 <p className="text-green-700 mb-6 leading-relaxed">
                   Make a donation without creating an account. A quick and simple process to help make a difference.
                 </p>
-                <div className="inline-flex items-center justify-center text-green-700 font-medium px-4 py-2 rounded-lg bg-green-50 transition-colors hover:bg-green-100">
+                <div className="inline-flex items-center justify-center text-green-800 dark:text-green-900 font-medium px-4 py-2 rounded-lg bg-green-50 transition-colors hover:bg-green-100">
                   <span>Donate Anonymously</span>
                   <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
                 </div>
@@ -350,10 +350,10 @@ export default function DonatePage() {
                         key={presetAmount}
                         type="button"
                         onClick={() => handleAmountSelect(presetAmount)}
-                        className={`p-4 rounded-lg border-2 font-semibold transition-all hover:shadow-md ${
+                         className={`p-4 rounded-lg border-2 font-semibold transition-all hover:shadow-md ${
                           amount === presetAmount.toString()
-                            ? 'border-green-500 bg-green-50 text-green-700 shadow-lg shadow-green-100'
-                            : 'border-gray-200 hover:border-green-300 hover:bg-green-50/50'
+                             ? 'border-green-500 bg-green-50 text-green-800 dark:text-green-900 shadow-lg shadow-green-100'
+                             : 'border-gray-200 hover:border-green-300 hover:bg-green-50/50 text-gray-800 dark:text-gray-900'
                         }`}
                       >
                         ${presetAmount}

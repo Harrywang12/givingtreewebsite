@@ -28,28 +28,28 @@ export default function LeaderboardPage() {
                 <TrendingUp className="h-8 w-8 text-green-600" />
               </div>
               <h3 className="text-3xl font-bold text-zinc-900 mb-2">$50,000+</h3>
-              <p className="text-zinc-600">Total Raised</p>
+              <p className="text-green-800">Total Raised</p>
             </div>
             <div>
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Heart className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="text-3xl font-bold text-zinc-900 mb-2">500+</h3>
-              <p className="text-zinc-600">Active Donors</p>
+              <p className="text-green-800">Active Donors</p>
             </div>
             <div>
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Trophy className="h-8 w-8 text-purple-600" />
               </div>
               <h3 className="text-3xl font-bold text-zinc-900 mb-2">1,200+</h3>
-              <p className="text-zinc-600">Items Donated</p>
+              <p className="text-green-800">Items Donated</p>
             </div>
             <div>
               <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="h-8 w-8 text-yellow-600" />
               </div>
               <h3 className="text-3xl font-bold text-zinc-900 mb-2">100%</h3>
-              <p className="text-zinc-600">To Hospital</p>
+              <p className="text-green-800">To Hospital</p>
             </div>
           </motion.div>
         </div>
@@ -70,7 +70,7 @@ export default function LeaderboardPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl font-bold mb-6 text-zinc-900">Join Our Community of Givers</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto text-zinc-700">
+            <p className="text-xl mb-8 max-w-2xl mx-auto text-green-800">
               Every donation, no matter the size, makes a difference. Start your journey of giving 
               and see your name on our leaderboard!
             </p>

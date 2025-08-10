@@ -172,7 +172,7 @@ export default function EventsPage() {
       case 'ANNOUNCEMENT':
         return 'bg-purple-100 text-purple-600';
       default:
-        return 'bg-gray-100 text-gray-600';
+        return 'bg-gray-100 text-gray-700 dark:text-gray-800';
     }
   };
 
@@ -181,7 +181,7 @@ export default function EventsPage() {
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading events...</p>
+          <p className="text-gray-700 dark:text-gray-800">Loading events...</p>
         </div>
       </div>
     );
@@ -205,7 +205,7 @@ export default function EventsPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-zinc-900 mb-8">Latest Updates</h2>
-            <p className="text-xl text-zinc-600">
+            <p className="text-xl text-green-800">
               Follow our journey and stay connected with our community
             </p>
           </motion.div>
@@ -224,9 +224,9 @@ export default function EventsPage() {
 
           {events.length === 0 && !error ? (
             <div className="text-center py-12">
-              <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <Calendar className="h-16 w-16 text-gray-500 dark:text-gray-700 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-zinc-900 mb-2">No Events Yet</h3>
-              <p className="text-zinc-600 mb-6">
+              <p className="text-green-800 mb-6">
                 Our admins haven't posted any events yet. Check back soon!
               </p>
             </div>
@@ -243,8 +243,8 @@ export default function EventsPage() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center">
-                      <Calendar className="h-5 w-5 text-gray-500 mr-2" />
-                      <span className="text-zinc-600">{formatDate(event.date)}</span>
+                      <Calendar className="h-5 w-5 text-gray-700 dark:text-gray-800 mr-2" />
+                      <span className="text-green-800">{formatDate(event.date)}</span>
                       <span className={`ml-3 px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(event.type)}`}>
                         {event.type}
                       </span>
@@ -255,7 +255,7 @@ export default function EventsPage() {
                       )}
                     </div>
                     <div className="flex items-center space-x-4">
-                      <span className="text-sm text-zinc-500">
+                      <span className="text-sm text-green-700">
                         By {event.author.name}
                       </span>
                       <button 
@@ -263,8 +263,8 @@ export default function EventsPage() {
                         disabled={!user || likingEvents.has(event.id)}
                         className={`flex items-center space-x-1 transition-colors ${
                           user 
-                            ? 'text-zinc-600 hover:text-red-500 cursor-pointer' 
-                            : 'text-zinc-400 cursor-not-allowed'
+                            ? 'text-zinc-700 dark:text-zinc-800 hover:text-red-500 cursor-pointer' 
+                            : 'text-zinc-500 dark:text-zinc-600 cursor-not-allowed'
                         } ${event.userLiked ? 'text-red-500' : ''}`}
                       >
                         <ThumbsUp className={`h-4 w-4 ${likingEvents.has(event.id) ? 'animate-pulse' : ''}`} />
@@ -274,7 +274,7 @@ export default function EventsPage() {
                   </div>
                   
                   <h3 className="text-xl font-semibold mb-3">{event.title}</h3>
-                  <p className="text-zinc-600 mb-4">{event.description}</p>
+                  <p className="text-green-800 mb-4">{event.description}</p>
                   
                   {event.content && (
                     <div className="bg-white p-4 rounded-lg mb-4">
@@ -283,9 +283,9 @@ export default function EventsPage() {
                   )}
 
                   {event.location && (
-                    <p className="text-sm text-zinc-500 mb-4">
-                      📍 {event.location}
-                    </p>
+                                          <p className="text-sm text-green-700 mb-4">
+                        📍 {event.location}
+                      </p>
                   )}
                   
                   {/* Comments Section */}
@@ -325,7 +325,7 @@ export default function EventsPage() {
                       </form>
                     ) : (
                       <div className="bg-gray-100 p-3 rounded-lg mb-4 text-center">
-                        <p className="text-zinc-600">
+                        <p className="text-green-800">
                           <a href="/dashboard" className="text-emerald-700 hover:underline">Sign in</a> to join the conversation
                         </p>
                       </div>
@@ -336,13 +336,13 @@ export default function EventsPage() {
                       {event.comments.slice(0, 5).map((comment) => (
                         <div key={comment.id} className="bg-white p-3 rounded-lg border">
                           <div className="flex items-center mb-2">
-                            <User className="h-4 w-4 text-zinc-400 mr-2" />
+                            <User className="h-4 w-4 text-zinc-600 dark:text-zinc-800 mr-2" />
                             <span className="text-sm font-medium text-zinc-700">{comment.user.name}</span>
-                            <span className="text-xs text-zinc-500 ml-2">
+                            <span className="text-xs text-green-700 ml-2">
                               {new Date(comment.createdAt).toLocaleDateString()}
                             </span>
                           </div>
-                          <p className="text-sm text-zinc-600">{comment.content}</p>
+                          <p className="text-sm text-green-800">{comment.content}</p>
                         </div>
                       ))}
                       
@@ -373,7 +373,7 @@ export default function EventsPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-zinc-900 mb-8">Get Involved</h2>
-            <p className="text-xl text-zinc-600">
+            <p className="text-xl text-green-800">
               Join our community and make a difference
             </p>
           </motion.div>
@@ -388,7 +388,7 @@ export default function EventsPage() {
             >
               <Heart className="h-12 w-12 text-green-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-3">Make a Donation</h3>
-              <p className="text-zinc-600 mb-4">Support our mission with a financial contribution</p>
+              <p className="text-green-800 mb-4">Support our mission with a financial contribution</p>
               <button 
                 onClick={() => window.location.href = '/donate'}
                 className="btn btn-primary"
@@ -405,7 +405,7 @@ export default function EventsPage() {
             >
               <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-3">Volunteer</h3>
-              <p className="text-zinc-600 mb-4">Join our team and help us grow our impact</p>
+              <p className="text-green-800 mb-4">Join our team and help us grow our impact</p>
               <a 
                 href="/volunteer"
                 className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 font-semibold text-white hover:opacity-90"
@@ -422,7 +422,7 @@ export default function EventsPage() {
             >
               <Calendar className="h-12 w-12 text-purple-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-3">Stay Updated</h3>
-              <p className="text-zinc-600 mb-4">Subscribe to our newsletter for the latest updates</p>
+              <p className="text-green-800 mb-4">Subscribe to our newsletter for the latest updates</p>
               <button 
                 onClick={() => window.location.href = '/'}
                 className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-4 py-2 font-semibold text-emerald-700 hover:bg-emerald-50"
@@ -444,7 +444,7 @@ export default function EventsPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl font-bold mb-6 text-zinc-900">Stay Connected</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto text-zinc-700">
+            <p className="text-xl mb-8 max-w-2xl mx-auto text-green-800">
               Follow our journey and be part of our mission to support Mackenzie Health
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
