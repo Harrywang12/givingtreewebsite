@@ -55,7 +55,12 @@ export default function VolunteerPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
-      <PageBanner title="Volunteer With Us" subtitle="Apply to join our community of volunteers" />
+      <PageBanner
+        title="Volunteer With Us"
+        subtitle="Apply to join our community of volunteers"
+        imageUrl="/volunteerhero.jpg"
+        imageAlt="Volunteers supporting The Giving Tree Foundation"
+      />
 
       <section className="py-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10">
