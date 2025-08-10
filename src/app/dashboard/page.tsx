@@ -38,7 +38,7 @@ export default function DashboardPage() {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-emerald-50 via-green-50 to-sky-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -50,7 +50,7 @@ export default function DashboardPage() {
   // If user is logged in, show the dashboard
   if (user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-emerald-50 via-green-50 to-sky-50">
         <PageBanner title="My Dashboard" subtitle="Track your donations, view your impact, and manage your profile." />
         <div className="pt-8">
           <UserDashboard />
@@ -61,7 +61,7 @@ export default function DashboardPage() {
 
   // If user is not logged in, show the login page
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-emerald-50 via-green-50 to-sky-50">
       <PageBanner title="My Dashboard" subtitle="Track your donations, view your impact, and manage your profile." />
 
       {/* Login Section */}

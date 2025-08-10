@@ -43,6 +43,75 @@ export default function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   
+  // Home Events state
+  type HomeEvent = {
+    id: string;
+    title: string;
+    description: string;
+    content?: string;
+    date: string;
+    type: 'NEWS' | 'EVENT' | 'ANNOUNCEMENT';
+    location?: string;
+    imageUrl?: string;
+    author: {
+      name: string;
+      isAdmin: boolean;
+    };
+    comments: Array<{
+      id: string;
+      content: string;
+      createdAt: string;
+      user: { id: string; name: string };
+    }>;
+    commentCount: number;
+    likeCount: number;
+    userLiked?: boolean;
+    createdAt: string;
+  };
+
+  const [homeEvents, setHomeEvents] = useState<HomeEvent[]>([]);
+  const [homeEventsLoading, setHomeEventsLoading] = useState<boolean>(true);
+  const [homeEventsError, setHomeEventsError] = useState<string>('');
+
+  useEffect(() => {
+    const fetchHomeEvents = async () => {
+      try {
+        setHomeEventsLoading(true);
+        const res = await fetch('/api/events?limit=6');
+        if (!res.ok) throw new Error('Failed to load events');
+        const data = await res.json();
+        setHomeEvents(data.events || []);
+      } catch (e) {
+        setHomeEventsError('Failed to load updates.');
+      } finally {
+        setHomeEventsLoading(false);
+      }
+    };
+    fetchHomeEvents();
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'NEWS':
+        return 'bg-blue-100 text-blue-600';
+      case 'EVENT':
+        return 'bg-green-100 text-green-600';
+      case 'ANNOUNCEMENT':
+        return 'bg-purple-100 text-purple-600';
+      default:
+        return 'bg-gray-100 text-gray-600';
+    }
+  };
+  
   // Parallax scroll references
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -192,22 +261,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Scroll indicator */}
-          <motion.div 
-            className="absolute bottom-10 left-1/2 -translate-x-1/2"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-          >
-            <motion.div 
-              className="w-8 h-12 rounded-full border-2 border-white/40 flex items-start justify-center"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-            >
-              <motion.div className="w-1 h-2 bg-white mt-2 rounded-full"></motion.div>
-            </motion.div>
-            <p className="mt-2 text-sm text-white/70">Scroll to explore</p>
-          </motion.div>
+          {/* Scroll indicator removed per request */}
         </motion.div>
       </section>
 
@@ -516,117 +570,52 @@ export default function Home() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="card overflow-hidden group"
-            >
-              <div className="h-48 overflow-hidden">
-                <Image 
-                  src={NATURAL_IMAGES[3]} 
-                  alt="Foundation Launch Event"
-                  width={500}
-                  height={300}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-3">
-                  <div className="flex items-center text-green-600">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span className="text-sm">December 2025</span>
-                  </div>
-                  <button 
-                    onClick={handleLike}
-                    className="flex items-center space-x-1 text-gray-500 hover:text-red-500 transition-colors"
-                  >
-                    <ThumbsUp className="h-4 w-4" />
-                    <span className="text-sm">{likes}</span>
-                  </button>
+            {homeEventsLoading && (
+              <div className="col-span-full text-center text-zinc-600">Loading updates...</div>
+            )}
+            {homeEventsError && !homeEventsLoading && (
+              <div className="col-span-full text-center text-red-600">{homeEventsError}</div>
+            )}
+            {!homeEventsLoading && !homeEventsError && homeEvents.length === 0 && (
+              <div className="col-span-full text-center text-zinc-600">No updates yet. Check back soon.</div>
+            )}
+            {homeEvents.slice(0, 6).map((event, idx) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: idx * 0.05 }}
+                className="card overflow-hidden group"
+              >
+                <div className="h-48 overflow-hidden">
+                  <Image
+                    src={event.imageUrl || NATURAL_IMAGES[(3 + idx) % NATURAL_IMAGES.length]}
+                    alt={event.title}
+                    width={500}
+                    height={300}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
                 </div>
-                <h3 className="text-xl font-bold text-green-900 mb-3">Foundation Launch</h3>
-                <p className="text-green-700 mb-4">
-                  We're excited to announce the official launch of The Giving Tree Non-Profit Foundation! 
-                  Join us in making a difference in our community.
-                </p>
-                <Link href="/events" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
-                  Read More
-                  <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="card overflow-hidden group"
-            >
-              <div className="h-48 overflow-hidden">
-                <Image 
-                  src={NATURAL_IMAGES[4]} 
-                  alt="Community Donation Drive"
-                  width={500}
-                  height={300}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-3">
-                  <div className="flex items-center text-green-600">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span className="text-sm">January 2026</span>
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <div className="flex items-center text-green-600">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      <span className="text-sm">{formatDate(event.date)}</span>
+                      <span className={`ml-3 px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(event.type)}`}>
+                        {event.type}
+                      </span>
+                    </div>
                   </div>
+                  <h3 className="text-xl font-bold text-green-900 mb-3">{event.title}</h3>
+                  <p className="text-green-700 mb-4 line-clamp-3">{event.description}</p>
+                  <Link href="/events" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
+                    Read More
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
                 </div>
-                <h3 className="text-xl font-bold text-green-900 mb-3">Winter Donation Drive</h3>
-                <p className="text-green-700 mb-4">
-                  Help us collect essential items for patients during the winter season. 
-                  Your generosity can make the coldest months warmer for those in need.
-                </p>
-                <Link href="/events" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
-                  Read More
-                  <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="card overflow-hidden group"
-            >
-              <div className="h-48 overflow-hidden">
-                <Image 
-                  src={NATURAL_IMAGES[5]} 
-                  alt="Volunteer Training Session"
-                  width={500}
-                  height={300}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-3">
-                  <div className="flex items-center text-green-600">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span className="text-sm">February 2026</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-green-900 mb-3">Volunteer Training</h3>
-                <p className="text-green-700 mb-4">
-                  Join our next volunteer orientation and training session. Learn how you 
-                  can contribute your skills to our growing community initiative.
-                </p>
-                <Link href="/events" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
-                  Read More
-                  <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
-              </div>
-            </motion.div>
+              </motion.div>
+            ))}
           </div>
 
           <div className="text-center mt-12">

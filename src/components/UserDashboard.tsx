@@ -230,7 +230,10 @@ export default function UserDashboard() {
         className="bg-white rounded-lg shadow-lg"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-4 sm:p-6 rounded-t-lg">
+        <div className="relative overflow-hidden bg-gradient-to-r from-green-700 to-green-500 text-white p-4 sm:p-6 rounded-t-lg">
+          {/* Decorative organic shapes */}
+          <div className="pointer-events-none absolute -top-10 -left-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center">
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 sm:mr-4">
@@ -305,26 +308,26 @@ export default function UserDashboard() {
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Quick Actions */}
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 sm:p-6 rounded-lg">
+              <div className="card card-highlight p-4 sm:p-6">
                 <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
                 <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
                   <button
                     onClick={handleDonate}
-                    className="bg-green-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center sm:justify-start"
+                    className="btn btn-primary flex items-center justify-center sm:justify-start"
                   >
                     <DollarSign className="h-5 w-5 mr-2" />
                     Make a Donation
                   </button>
                   <button
                     onClick={() => router.push('/donate')}
-                    className="bg-blue-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center sm:justify-start"
+                    className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-3 font-semibold text-white hover:opacity-90"
                   >
                     <Package className="h-5 w-5 mr-2" />
                     Donate Items
                   </button>
                   <button
                     onClick={() => router.push('/events')}
-                    className="bg-purple-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center sm:justify-start"
+                    className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-4 py-3 font-semibold text-emerald-700 hover:bg-emerald-50"
                   >
                     <Heart className="h-5 w-5 mr-2" />
                     View Events
