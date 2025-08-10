@@ -28,7 +28,7 @@ const getRankIcon = (rank: number) => {
     case 1:
       return <Trophy className="h-6 w-6 text-yellow-500" />;
     case 2:
-      return <Medal className="h-6 w-6 text-gray-400" />;
+      return <Medal className="h-6 w-6 text-gray-700 dark:text-gray-800" />;
     case 3:
       return <Award className="h-6 w-6 text-amber-600" />;
     default:

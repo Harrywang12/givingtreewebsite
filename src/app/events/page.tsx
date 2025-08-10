@@ -224,7 +224,7 @@ export default function EventsPage() {
 
           {events.length === 0 && !error ? (
             <div className="text-center py-12">
-              <Calendar className="h-16 w-16 text-gray-500 dark:text-gray-700 mx-auto mb-4" />
+              <Calendar className="h-16 w-16 text-gray-700 dark:text-gray-900 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-zinc-900 mb-2">No Events Yet</h3>
               <p className="text-green-800 mb-6">
                 Our admins haven't posted any events yet. Check back soon!
@@ -264,7 +264,7 @@ export default function EventsPage() {
                         className={`flex items-center space-x-1 transition-colors ${
                           user 
                             ? 'text-zinc-700 dark:text-zinc-800 hover:text-red-500 cursor-pointer' 
-                            : 'text-zinc-500 dark:text-zinc-600 cursor-not-allowed'
+                            : 'text-zinc-700 dark:text-zinc-800 cursor-not-allowed'
                         } ${event.userLiked ? 'text-red-500' : ''}`}
                       >
                         <ThumbsUp className={`h-4 w-4 ${likingEvents.has(event.id) ? 'animate-pulse' : ''}`} />
@@ -336,7 +336,7 @@ export default function EventsPage() {
                       {event.comments.slice(0, 5).map((comment) => (
                         <div key={comment.id} className="bg-white p-3 rounded-lg border">
                           <div className="flex items-center mb-2">
-                            <User className="h-4 w-4 text-zinc-600 dark:text-zinc-800 mr-2" />
+                            <User className="h-4 w-4 text-zinc-800 dark:text-zinc-900 mr-2" />
                             <span className="text-sm font-medium text-zinc-700">{comment.user.name}</span>
                             <span className="text-xs text-green-700 ml-2">
                               {new Date(comment.createdAt).toLocaleDateString()}
@@ -387,7 +387,7 @@ export default function EventsPage() {
               className="card p-6 text-center"
             >
               <Heart className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Make a Donation</h3>
+              <h3 className="text-xl font-semibold text-zinc-900 mb-3">Make a Donation</h3>
               <p className="text-green-800 mb-4">Support our mission with a financial contribution</p>
               <button 
                 onClick={() => window.location.href = '/donate'}
@@ -404,7 +404,7 @@ export default function EventsPage() {
               className="card p-6 text-center"
             >
               <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Volunteer</h3>
+              <h3 className="text-xl font-semibold text-zinc-900 mb-3">Volunteer</h3>
               <p className="text-green-800 mb-4">Join our team and help us grow our impact</p>
               <a 
                 href="/volunteer"
@@ -421,7 +421,7 @@ export default function EventsPage() {
               className="card p-6 text-center"
             >
               <Calendar className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Stay Updated</h3>
+              <h3 className="text-xl font-semibold text-zinc-900 mb-3">Stay Updated</h3>
               <p className="text-green-800 mb-4">Subscribe to our newsletter for the latest updates</p>
               <button 
                 onClick={() => window.location.href = '/'}

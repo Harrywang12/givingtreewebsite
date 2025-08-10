@@ -50,6 +50,22 @@
   }
 }
 
+/* Dark mode contrast fixes for Tailwind gray/zinc text utilities
+   Ensures text remains readable on light surfaces (e.g., white cards) in dark mode */
+@media (prefers-color-scheme: dark) {
+  .text-gray-300 { color: #4b5563 !important; }
+  .text-gray-400 { color: #374151 !important; }
+  .text-gray-500 { color: #1f2937 !important; }
+  .text-gray-600 { color: #111827 !important; }
+  .text-zinc-300 { color: #4b5563 !important; }
+  .text-zinc-400 { color: #374151 !important; }
+  .text-zinc-500 { color: #1f2937 !important; }
+  .text-zinc-600 { color: #111827 !important; }
+
+  /* On white cards, force default text to dark for contrast */
+  .card { color: #0f1a12; }
+}
+
 /* Base */
 html {
   scroll-behavior: smooth;
