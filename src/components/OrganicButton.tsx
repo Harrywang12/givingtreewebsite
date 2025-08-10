@@ -23,13 +23,7 @@ export default function OrganicButton({
   icon,
   ...props
 }: OrganicButtonProps) {
-  // Filter out any props that might conflict with motion.button
-  const { 
-    whileHover, 
-    whileTap, 
-    transition, 
-    ...buttonProps 
-  } = props;
+
   // Variant classes
   const variantClasses = {
     primary: 'bg-gradient-to-r from-green-600 to-green-500 text-white hover:shadow-lg hover:shadow-green-500/20',
@@ -67,7 +61,7 @@ export default function OrganicButton({
         ${widthClass}
         ${className}
       `}
-      {...buttonProps}
+      {...props}
     >
       {/* Background ripple effect */}
       <span className="absolute inset-0 w-full h-full bg-white/10 transform -translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0"></span>
