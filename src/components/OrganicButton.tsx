@@ -1,7 +1,7 @@
 'use client';
 
 import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
 type OrganicButtonProps = {
   children: ReactNode;
@@ -11,7 +11,7 @@ type OrganicButtonProps = {
   className?: string;
   iconPosition?: 'left' | 'right' | 'none';
   icon?: ReactNode;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof HTMLMotionProps<'button'>>;
 
 export default function OrganicButton({
   children,
@@ -23,6 +23,13 @@ export default function OrganicButton({
   icon,
   ...props
 }: OrganicButtonProps) {
+  // Filter out any props that might conflict with motion.button
+  const { 
+    whileHover, 
+    whileTap, 
+    transition, 
+    ...buttonProps 
+  } = props;
   // Variant classes
   const variantClasses = {
     primary: 'bg-gradient-to-r from-green-600 to-green-500 text-white hover:shadow-lg hover:shadow-green-500/20',
@@ -60,7 +67,7 @@ export default function OrganicButton({
         ${widthClass}
         ${className}
       `}
-      {...props}
+      {...buttonProps}
     >
       {/* Background ripple effect */}
       <span className="absolute inset-0 w-full h-full bg-white/10 transform -translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0"></span>
