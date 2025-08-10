@@ -67,6 +67,7 @@ export default function SiteHeader() {
             <Link href="/about" className="nav-link">About</Link>
             <Link href="/team" className="nav-link">Team</Link>
             <Link href="/events" className="nav-link">Events</Link>
+            <Link href="/volunteer" className="nav-link">Volunteer</Link>
             <Link href="/donate" className="nav-link flex items-center">
               <Heart className="h-3.5 w-3.5 mr-1 text-green-600" />
               <span>Donate</span>
@@ -119,6 +120,7 @@ export default function SiteHeader() {
               <Link href="/about" className="mobile-link">About</Link>
               <Link href="/team" className="mobile-link">Team</Link>
               <Link href="/events" className="mobile-link">Events</Link>
+              <Link href="/volunteer" className="mobile-link">Volunteer</Link>
               <Link href="/donate" className="mobile-link flex items-center">
                 <Heart className="h-4 w-4 mr-2 text-green-600" />
                 <span>Donate</span>

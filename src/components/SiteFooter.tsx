@@ -115,7 +115,7 @@ export default function SiteFooter() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/dashboard" className="footer-link flex items-center">
+                  <Link href="/volunteer" className="footer-link flex items-center">
                     <span className="h-1 w-1 rounded-full bg-green-500 mr-2"></span>
                     Volunteer
                   </Link>

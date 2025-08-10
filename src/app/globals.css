@@ -342,7 +342,7 @@ a {
 }
 
 .field::placeholder {
-  @apply text-green-300;
+  @apply text-green-600;
 }
 
 /* Image styling */
