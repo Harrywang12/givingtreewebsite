@@ -15,9 +15,6 @@ export default function AboutPage() {
 
       {/* About Us Content */}
       <section className="py-24 relative">
-        {/* Background decoration */}
-        <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-green-50 -mt-32 -mr-32 z-0"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-green-50/70 -mb-48 -ml-48 z-0"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div

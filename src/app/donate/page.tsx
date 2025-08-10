@@ -82,9 +82,6 @@ export default function DonatePage() {
   if (isCompleted) {
     return (
       <div className="min-h-screen overflow-hidden relative py-20">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-green-50 -mt-48 -mr-48 z-0"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-green-50 -mb-32 -ml-32 z-0"></div>
         
         <div className="max-w-2xl mx-auto text-center px-4 relative z-10">
           <motion.div
@@ -146,9 +143,6 @@ export default function DonatePage() {
   if (donationType === 'item') {
     return (
       <div className="min-h-screen overflow-hidden py-20 relative">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-green-50/70 -mt-48 -mr-48 z-0"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-green-50/70 -mb-40 -ml-40 z-0"></div>
         
         {/* Subtle leaf pattern */}
         <div className="absolute inset-0 opacity-10 pointer-events-none" 
@@ -184,7 +178,7 @@ export default function DonatePage() {
           <div className="rounded-xl overflow-hidden mb-10 shadow-lg relative">
             <div className="h-56 md:h-72 relative">
               <Image 
-                src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2000&auto=format&fit=crop"
+                src="/personworking.jpg"
                 alt="Volunteers sorting donated items" 
                 fill
                 sizes="(max-width: 768px) 100vw, 2000px"
@@ -223,9 +217,6 @@ export default function DonatePage() {
   if (donationType === 'monetary' && !donationMode) {
     return (
       <div className="min-h-screen overflow-hidden py-20 relative">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-green-50/70 -mt-48 -mr-48 z-0"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-green-50/70 -mb-40 -ml-40 z-0"></div>
         
         <div className="max-w-4xl mx-auto px-4 relative z-10">
           <motion.div
@@ -317,9 +308,6 @@ export default function DonatePage() {
   if (donationType === 'monetary' && donationMode === 'anonymous') {
     return (
       <div className="min-h-screen overflow-hidden py-20 relative">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-green-50/70 -mt-48 -mr-48 z-0"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-green-50/70 -mb-40 -ml-40 z-0"></div>
         
         {/* Subtle leaf pattern */}
         <div className="absolute inset-0 opacity-10 pointer-events-none" 
@@ -459,8 +447,7 @@ export default function DonatePage() {
           }}>
         </div>
         
-        <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-green-50 -mt-36 -mr-36 z-0"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-green-50/70 -mb-48 -ml-48 z-0"></div>
+
       
         <div className="max-w-5xl mx-auto px-4 relative z-10">
           <motion.div

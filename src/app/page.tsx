@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { 
   Users, 
@@ -9,7 +9,6 @@ import {
   Phone,
   MapPin,
   Calendar,
-  ThumbsUp,
   Leaf,
   Heart,
   Sprout,
@@ -25,21 +24,18 @@ import AuthModal from '@/components/AuthModal';
 
 // Nature-inspired images
 const NATURAL_IMAGES = [
-  "https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1598499255830-115fd9d6d006?q=80&w=2000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000&auto=format&fit=crop"
+  "/homepagehero.jpg",
+  "/naturelandscape.jpg", 
+  "/personworking.jpg",
+  "/homepagehero.jpg",
+  "/naturelandscape.jpg",
+  "/personworking.jpg"
 ];
 
 export default function Home() {
   const { user } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [likes, setLikes] = useState(0);
-  const [comments, setComments] = useState<string[]>([]);
-  const [newComment, setNewComment] = useState('');
+  const [email, setEmail] = useState<string>('');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   
@@ -113,155 +109,78 @@ export default function Home() {
   };
   
   // Parallax scroll references
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  });
-  
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
-  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  const heroRef = useRef<HTMLElement>(null);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement email subscription
-    alert('Thank you for subscribing!');
-    setEmail('');
-  };
-
-  const handleLike = () => {
-    setLikes(prev => prev + 1);
-  };
-
-  const handleComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newComment.trim()) {
-      setComments(prev => [...prev, newComment]);
-      setNewComment('');
-    }
-  };
-
-  const handleDashboardClick = () => {
-    if (user) {
-      // User is logged in, go directly to dashboard
-      router.push('/dashboard');
-    } else {
-      // User is not logged in, show login modal
-      setAuthMode('login');
-      setShowAuthModal(true);
-    }
+    // Handle subscription logic here
   };
 
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Hero Section - Immersive natural header */}
-      <section ref={heroRef} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
-        {/* Full-bleed background image with overlay */}
+      <section ref={heroRef} className="relative min-h-[100svh] pt-24 sm:pt-20 flex items-center justify-center overflow-hidden">
+        {/* Hero Background Image */}
         <div className="absolute inset-0 z-0">
-          <Image 
-            src={NATURAL_IMAGES[0]}
-            alt="Lush green forest with sunlight streaming through the leaves" 
+          <Image
+            src="/homepagehero.jpg"
+            alt="Homepage hero background"
             fill
             priority
-            quality={90}
-            className="object-cover brightness-[0.85]"
+            sizes="100vw"
+            style={{objectFit: 'cover'}}
+            className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-green-950/30 via-green-900/20 to-green-950/60"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-green-950/70 via-green-900/60 to-green-800/50" />
         </div>
-
-        {/* Animated floating leaves */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          {/* Use useMemo to generate deterministic values to avoid hydration mismatch */}
-          {useMemo(() => {
-            // Generate deterministic values based on index to avoid hydration mismatch
-            const leaves = Array.from({ length: 10 }, (_, i) => {
-              // Use a simple hash function to generate consistent "random" values
-              const hash = (i * 9301 + 49297) % 233280;
-              const normalized = hash / 233280;
-              
-              return {
-                startX: (normalized * 100 - 50) * 0.8,
-                endX: ((normalized * 0.7 + 0.3) * 100 - 50) * 0.8,
-                startY: -50 - (normalized * 50),
-                duration: 15 + (normalized * 10),
-                left: `${normalized * 100}%`,
-                opacity: 0.3 + (normalized * 0.4),
-                size: 10 + (normalized * 20),
-              };
-            });
-            
-            return leaves.map((leaf, i) => (
-              <motion.div 
-                key={i}
-                className="absolute"
-                animate={{
-                  x: [leaf.startX, leaf.endX],
-                  y: [leaf.startY, 1000], // Fixed height
-                  rotate: [0, 360]
-                }}
-                transition={{
-                  duration: leaf.duration,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-                style={{
-                  left: leaf.left,
-                  top: `-50px`,
-                  opacity: leaf.opacity,
-                }}
-              >
-                <Leaf width={leaf.size} height={leaf.size} className="text-green-200" />
-              </motion.div>
-            ));
-          }, []) /* Empty dependency array means this only runs once */}
-        </div>
-
-        {/* Hero content */}
-        <motion.div 
-          style={{
-            opacity: heroOpacity,
-            scale: heroScale,
-            y: heroY
-          }}
-          className="container relative z-10 px-4 mx-auto text-center text-white"
-        >
+        
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="max-w-3xl mx-auto"
+            className="mb-8"
           >
-            <div className="inline-flex items-center justify-center mb-6">
-              <span className="inline-block h-1 w-10 bg-green-300 mr-3"></span>
-              <span className="font-serif text-green-200 tracking-wider text-lg">THE GIVING TREE FOUNDATION</span>
-              <span className="inline-block h-1 w-10 bg-green-300 ml-3"></span>
+            <div className="inline-flex items-center mb-6 px-4 py-2 bg-green-900/30 backdrop-blur-sm rounded-full border border-green-300/20">
+              <Leaf className="w-5 h-5 text-green-300 mr-2" />
+              <span className="text-green-200 text-sm font-medium">Making a Difference Together</span>
             </div>
             
-            <h1 className="text-5xl sm:text-6xl font-bold mb-6 font-serif">
-              Growing a Better Future
-              <span className="block mt-2 text-green-300">Together</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white font-serif leading-tight mb-6 tracking-tight">
+              The Giving Tree
             </h1>
             
-            <p className="lead-text mb-10 max-w-2xl mx-auto text-gray-100">
-              We transform community generosity into vital support for healthcare. 
-              Every donation helps nurture better care and healthier lives at Mackenzie Health.
+            <p className="text-lg sm:text-xl md:text-2xl text-green-50/90 max-w-3xl mx-auto leading-relaxed mb-8">
+              Empowering communities through sustainable giving, environmental stewardship, and meaningful connections.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/donate" className="btn btn-primary group text-lg">
-                <Heart className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                Donate Now
-              </Link>
-              <Link href="/leaderboard" className="btn btn-secondary text-lg">
-                View Impact
-                <ArrowRight className="ml-2 h-5 w-5" />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowAuthModal(true)}
+                className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+              >
+                <Heart className="w-5 h-5" />
+                Get Started
+              </motion.button>
+              
+              <Link href="/mission">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 bg-transparent border-2 border-green-300 text-green-300 hover:bg-green-300 hover:text-green-900 font-semibold rounded-full transition-all duration-300 flex items-center gap-2"
+                >
+                  <ArrowRight className="w-5 h-5" />
+                  Learn More
+                </motion.button>
               </Link>
             </div>
           </motion.div>
+        </div>
 
-          {/* Scroll indicator removed per request */}
-        </motion.div>
+        {/* Scroll indicator removed per request */}
       </section>
 
       {/* Mission Statement */}
@@ -422,8 +341,8 @@ export default function Home() {
                 />
               </div>
               
-              <div className="absolute -bottom-8 -right-8 w-48 h-48 bg-green-100 rounded-full z-0"></div>
-              <div className="absolute -top-8 -left-8 w-24 h-24 bg-green-50 rounded-full z-0"></div>
+                              <div className="absolute -bottom-8 -right-8 w-48 h-48 bg-green-100 rounded-full z-0"></div>
+                <div className="absolute -top-8 -left-8 w-24 h-24 bg-green-50 rounded-full z-0"></div>
           </motion.div>
           </div>
         </div>
@@ -675,37 +594,37 @@ export default function Home() {
             >
               <div className="card p-8 shadow-lg">
                 <h3 className="text-xl font-bold text-green-900 mb-6">Send Us a Message</h3>
-                <form className="space-y-4">
+                <form className="space-y-4" key="contact-form">
                   <div>
                     <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="name">Name</label>
                     <input type="text" id="name" className="field" placeholder="Your name" />
                   </div>
-            <div>
+                  <div>
                     <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="email">Email</label>
-                <input
-                  type="email"
+                    <input
+                      type="email"
                       id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="field"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="field"
                       placeholder="Your email address" 
-                />
+                    />
                   </div>
                   <div>
                     <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="message">Message</label>
                     <textarea id="message" className="field min-h-[120px] resize-none" placeholder="How can we help?"></textarea>
                   </div>
-                <button 
-                  type="submit"
+                  <button 
+                    type="submit"
                     onClick={handleSubscribe}
                     className="btn btn-primary w-full"
-                >
+                  >
                     <Send className="mr-2 h-5 w-5" />
                     Send Message
-                </button>
-              </form>
-            </div>
-          </motion.div>
+                  </button>
+                </form>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>

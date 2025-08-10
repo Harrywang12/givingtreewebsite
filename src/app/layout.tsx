@@ -32,11 +32,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${nunito.variable} ${playfair.variable} font-sans`}>
+    <html lang="en" className="bg-[var(--color-bg)] text-[var(--color-fg)]">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Suppress Chrome extension errors
+              window.addEventListener('error', function(e) {
+                if (e.message.includes('_gchrome_uniqueid') || e.message.includes('chrome-extension')) {
+                  e.preventDefault();
+                  return false;
+                }
+              });
+              
+              // Suppress console errors from extensions
+              const originalError = console.error;
+              console.error = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('_gchrome_uniqueid') || message.includes('chrome-extension')) {
+                  return;
+                }
+                originalError.apply(console, args);
+              };
+            `,
+          }}
+        />
+      </head>
+      <body className={`${nunito.variable} ${playfair.variable} font-sans text-[var(--color-fg)] bg-[var(--color-bg)] antialiased selection:bg-green-200/40 selection:text-green-900`}>
         <AuthProvider>
           <SiteHeader />
-          <main className="min-h-[calc(100vh-12rem)]">{children}</main>
+          <main className="min-h-[calc(100vh-12rem)] pb-20 sm:pb-0">{children}</main>
           <SiteFooter />
         </AuthProvider>
         <Analytics />

@@ -379,5 +379,20 @@ a {
   .field {
     @apply px-4 py-3 text-sm;
   }
+  
+  /* Ensure text is always visible on mobile */
+  h1, h2, h3, h4, h5, h6 {
+    @apply drop-shadow-lg;
+  }
+  
+  /* Prevent decorative elements from interfering with text */
+  .absolute {
+    @apply pointer-events-none;
+  }
+  
+  /* Ensure proper text contrast */
+  .text-white, .text-green-50, .text-green-100 {
+    @apply drop-shadow-lg;
+  }
 }
 

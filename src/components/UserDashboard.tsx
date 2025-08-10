@@ -237,8 +237,8 @@ export default function UserDashboard() {
           <div className="pointer-events-none absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 sm:mr-4">
-                <User className="h-6 w-6 sm:h-8 sm:w-8" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 sm:mr-4 overflow-hidden">
+                <img src="/public.png" alt="User" className="h-8 w-8 sm:h-10 sm:w-10 object-cover" />
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold">{displayUser.name}</h1>

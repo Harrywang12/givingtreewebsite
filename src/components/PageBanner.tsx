@@ -11,23 +11,34 @@ interface PageBannerProps {
 }
 
 const defaultImages = [
-  'https://images.unsplash.com/photo-1519337265831-281ec6cc8514?q=80&w=1600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1526250854212-6852f9d64ac2?q=80&w=1600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop',
+  '/homepagehero.jpg',
+  '/naturelandscape.jpg',
+  '/personworking.jpg',
 ];
 
 export default function PageBanner({ title, subtitle, imageUrl, imageAlt }: PageBannerProps) {
-  const src = imageUrl || defaultImages[Math.floor(Math.random() * defaultImages.length)];
+  // Deterministic image selection to avoid hydration issues and ensure reliability on mobile
+  const indexFromTitle = (() => {
+    if (!title) return 0;
+    let hash = 0;
+    for (let i = 0; i < title.length; i++) {
+      hash = (hash * 31 + title.charCodeAt(i)) >>> 0;
+    }
+    return hash % defaultImages.length;
+  })();
+  const src = imageUrl || defaultImages[indexFromTitle];
 
   return (
     <section className="relative overflow-hidden">
-      <div className="relative h-[280px] sm:h-[320px] md:h-[400px]">
+        <div className="relative h-[260px] sm:h-[320px] md:h-[400px]">
         <Image
           src={src}
           alt={imageAlt || title}
           fill
           priority
-          className="object-cover object-center brightness-[0.85]"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 100vw"
+          className="object-cover object-center brightness-[0.85] will-change-transform"
+          quality={85}
         />
         
         {/* Organic tint and texture overlays */}
@@ -41,33 +52,33 @@ export default function PageBanner({ title, subtitle, imageUrl, imageAlt }: Page
           }}>
         </div>
 
-        <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+        <div className="relative z-20 mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-16 pb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className="max-w-3xl"
+            className="max-w-3xl w-full"
           >
             <div className="inline-flex items-center mb-4">
               <span className="inline-block h-0.5 w-10 bg-green-300 mr-3"></span>
               <span className="uppercase text-green-200 tracking-wider text-sm font-medium">The Giving Tree</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white font-serif">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white font-serif leading-tight drop-shadow-lg">
               {title}
             </h1>
             
             {subtitle && (
-              <p className="mt-4 text-lg sm:text-xl text-green-50/95 max-w-2xl leading-relaxed">
+              <p className="mt-4 text-base sm:text-lg md:text-xl text-green-50/95 max-w-2xl leading-relaxed drop-shadow-lg">
                 {subtitle}
               </p>
             )}
           </motion.div>
         </div>
         
-        {/* Bottom decorative wave */}
-        <div className="absolute bottom-0 left-0 w-full h-16 overflow-hidden">
-          <svg className="absolute bottom-0 w-full h-16 text-white" 
+        {/* Bottom decorative wave - positioned below content, hidden on mobile */}
+        <div className="absolute bottom-0 left-0 w-full h-12 overflow-hidden pointer-events-none hidden sm:block">
+          <svg className="absolute bottom-0 w-full h-12 text-white" 
             xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 1200 120" 
             preserveAspectRatio="none">

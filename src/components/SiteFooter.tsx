@@ -33,8 +33,8 @@ export default function SiteFooter() {
             <div className="relative">
               {/* Logo section */}
               <div className="flex items-start mb-6">
-                <div className="relative overflow-hidden rounded-full bg-white p-3 shadow-md">
-                  <Leaf className="h-8 w-8 text-green-600" />
+                <div className="relative overflow-hidden rounded-full bg-white p-2 shadow-md">
+                  <Image src="/logo.png" alt="The Giving Tree logo" width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-br from-green-100 to-transparent opacity-30"></div>
                 </div>
                 <div className="ml-3">

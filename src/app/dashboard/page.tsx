@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { User, LogIn } from 'lucide-react';
-import PageBanner from '@/components/PageBanner';
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import UserDashboard from '@/components/UserDashboard';
+import PageBanner from '@/components/PageBanner';
 import AuthModal from '@/components/AuthModal';
-import { useAuth } from '@/contexts/AuthContext';
+import { motion } from 'framer-motion';
+import { User, LogIn } from 'lucide-react';
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();

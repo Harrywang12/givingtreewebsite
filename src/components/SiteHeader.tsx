@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Leaf, Menu, X, Sprout, Heart } from 'lucide-react';
+import { Menu, X, User, LogIn, LogOut, Heart, Sprout } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function SiteHeader() {
@@ -49,7 +49,7 @@ export default function SiteHeader() {
           <div className="flex items-center gap-3">
             <Link href="/" aria-label="The Giving Tree home" className="flex items-center group">
               <div className="relative overflow-hidden rounded-full bg-green-50 p-2 shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:bg-green-100">
-                <Leaf className="h-8 w-8 text-green-600 transition-transform duration-500 group-hover:scale-110" />
+                <Image src="/logo.png" alt="The Giving Tree logo" width={32} height={32} className="h-8 w-8 rounded-full object-cover" />
                 <span className="absolute inset-0 bg-gradient-to-br from-green-100 to-transparent opacity-0 group-hover:opacity-30 transition-opacity duration-300"></span>
               </div>
               <div className="ml-3 flex flex-col">
@@ -82,10 +82,10 @@ export default function SiteHeader() {
               className="btn btn-primary group"
               aria-label={user ? 'Open dashboard' : 'Sign in'}
             >
-              <span className="mr-1.5 relative">
-                <Sprout className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-100 opacity-30"></span>
-              </span>
+                              <span className="mr-1.5 relative">
+                  <Sprout className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-100 opacity-30"></span>
+                </span>
               {user ? 'Dashboard' : 'Sign In'}
             </button>
           </div>
@@ -115,21 +115,21 @@ export default function SiteHeader() {
                 />
               </div>
 
-              <Link href="/" className="mobile-link">Home</Link>
-              <Link href="/mission" className="mobile-link">Mission</Link>
-              <Link href="/about" className="mobile-link">About</Link>
-              <Link href="/team" className="mobile-link">Team</Link>
-              <Link href="/events" className="mobile-link">Events</Link>
-              <Link href="/volunteer" className="mobile-link">Volunteer</Link>
-              <Link href="/donate" className="mobile-link flex items-center">
+              <Link href="/" className="mobile-link" onClick={() => setOpen(false)}>Home</Link>
+              <Link href="/mission" className="mobile-link" onClick={() => setOpen(false)}>Mission</Link>
+              <Link href="/about" className="mobile-link" onClick={() => setOpen(false)}>About</Link>
+              <Link href="/team" className="mobile-link" onClick={() => setOpen(false)}>Team</Link>
+              <Link href="/events" className="mobile-link" onClick={() => setOpen(false)}>Events</Link>
+              <Link href="/volunteer" className="mobile-link" onClick={() => setOpen(false)}>Volunteer</Link>
+              <Link href="/donate" className="mobile-link flex items-center" onClick={() => setOpen(false)}>
                 <Heart className="h-4 w-4 mr-2 text-green-600" />
                 <span>Donate</span>
               </Link>
-              <Link href="/leaderboard" className="mobile-link">Leaderboard</Link>
-              <Link href="/contact" className="mobile-link">Contact</Link>
+              <Link href="/leaderboard" className="mobile-link" onClick={() => setOpen(false)}>Leaderboard</Link>
+              <Link href="/contact" className="mobile-link" onClick={() => setOpen(false)}>Contact</Link>
               <div className="mt-3 pt-3 border-t border-green-100">
                 <button 
-                  onClick={handleDashboardClick} 
+                  onClick={() => { setOpen(false); handleDashboardClick(); }} 
                   className="w-full btn btn-primary flex items-center justify-center"
                 >
                   <Sprout className="h-5 w-5 mr-2" />

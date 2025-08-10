@@ -1,18 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
-  Heart,
-  Leaf,
-  Send,
-  MessageCircle,
-  CheckCircle,
-  XCircle
-} from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Clock, Heart, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ContactPage() {
@@ -77,7 +66,7 @@ export default function ContactPage() {
                   <p className="mt-3 text-lg text-zinc-700">We’re here to help and answer any questions you may have.</p>
                 </div>
               </div>
-              <div className="absolute right-0 top-0 hidden h-full w-1/2 bg-[url('https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center sm:block" aria-hidden="true" />
+              <div className="absolute right-0 top-0 hidden h-full w-1/2 bg-[url('/naturelandscape.jpg')] bg-cover bg-center sm:block" aria-hidden="true" />
             </div>
           </div>
         </div>
