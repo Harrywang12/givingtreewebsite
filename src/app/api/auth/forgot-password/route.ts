@@ -16,7 +16,7 @@ const createTransporter = () => {
 
 export async function POST(request: NextRequest) {
   try {
-    let { email } = await request.json()
+    const { email } = await request.json()
 
     // Validate input
     if (!email) {
@@ -27,11 +27,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Normalize email
-    email = String(email).toLowerCase().trim()
+    const normalizedEmail = String(email).toLowerCase().trim()
 
     // Find user
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { email: normalizedEmail }
     })
 
     if (!user) {
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     
     const mailOptions = {
       from: process.env.GMAIL_USER,
-      to: email,
+      to: normalizedEmail,
       subject: 'Password Reset Request - The Giving Tree Foundation',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

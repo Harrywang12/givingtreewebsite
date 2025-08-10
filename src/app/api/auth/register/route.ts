@@ -4,7 +4,7 @@ import { hashPassword } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    let { name, email, phone, password } = await request.json()
+    const { name, email, phone, password } = await request.json()
 
     // Validate input
     if (!name || !email || !password) {
@@ -15,11 +15,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Normalize email to prevent case-sensitive duplicates
-    email = String(email).toLowerCase().trim()
+    const normalizedEmail = String(email).toLowerCase().trim()
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email: normalizedEmail }
     })
 
     if (existingUser) {
@@ -34,14 +34,14 @@ export async function POST(request: NextRequest) {
 
     // Check if this is an admin email
     const adminEmails = ['wangharrison2009@gmail.com', 'givingtreenonprofit@gmail.com'];
-    const isAdmin = adminEmails.includes(email);
-    const role = isAdmin ? (email === 'wangharrison2009@gmail.com' ? 'SUPER_ADMIN' : 'ADMIN') : 'USER';
+    const isAdmin = adminEmails.includes(normalizedEmail);
+    const role = isAdmin ? (normalizedEmail === 'wangharrison2009@gmail.com' ? 'SUPER_ADMIN' : 'ADMIN') : 'USER';
 
     // Create user
     const user = await prisma.user.create({
       data: {
         name,
-        email,
+        email: normalizedEmail,
         phone: phone || null,
         password: hashedPassword,
         role: role as 'USER' | 'ADMIN' | 'SUPER_ADMIN',
