@@ -4,7 +4,7 @@ import { verifyPassword, generateToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json()
+    let { email, password } = await request.json()
 
     // Validate input
     if (!email || !password) {
@@ -13,6 +13,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Normalize email
+    email = String(email).toLowerCase().trim()
 
     // Find user
     const user = await prisma.user.findUnique({

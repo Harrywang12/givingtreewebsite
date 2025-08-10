@@ -15,12 +15,6 @@ interface Donor {
 
 interface LeaderboardData {
   donors: Donor[];
-  stats: {
-    totalRaised: number;
-    totalDonors: number;
-    totalItemsSold: number;
-    totalDonations: number;
-  };
   pagination: {
     total: number;
     limit: number;

@@ -156,17 +156,16 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Hero Section - Immersive natural header */}
-      <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
         {/* Full-bleed background image with overlay */}
         <div className="absolute inset-0 z-0">
           <Image 
             src={NATURAL_IMAGES[0]}
             alt="Lush green forest with sunlight streaming through the leaves" 
-            layout="fill"
-            objectFit="cover"
+            fill
             priority
             quality={90}
-            className="brightness-[0.85]"
+            className="object-cover brightness-[0.85]"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-green-950/30 via-green-900/20 to-green-950/60"></div>
         </div>
@@ -374,9 +373,8 @@ export default function Home() {
           <Image 
             src={NATURAL_IMAGES[1]}
             alt="Community volunteers working together"
-            layout="fill"
-            objectFit="cover"
-            className="opacity-20"
+            fill
+            className="object-cover opacity-20"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/80"></div>
         </div>
@@ -398,24 +396,7 @@ export default function Home() {
                   into tangible improvements for healthcare. Every donation creates a ripple effect of positive change.
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4 my-8">
-                  <div className="p-4 rounded-lg bg-white shadow-sm border border-green-100">
-                    <div className="text-3xl font-bold text-green-600">100%</div>
-                    <p className="text-green-800 font-medium">Of proceeds donated</p>
-                  </div>
-                  <div className="p-4 rounded-lg bg-white shadow-sm border border-green-100">
-                    <div className="text-3xl font-bold text-green-600">500+</div>
-                    <p className="text-green-800 font-medium">Items redistributed</p>
-                  </div>
-                  <div className="p-4 rounded-lg bg-white shadow-sm border border-green-100">
-                    <div className="text-3xl font-bold text-green-600">50+</div>
-                    <p className="text-green-800 font-medium">Active volunteers</p>
-                  </div>
-                  <div className="p-4 rounded-lg bg-white shadow-sm border border-green-100">
-                    <div className="text-3xl font-bold text-green-600">1,200+</div>
-                    <p className="text-green-800 font-medium">Patients benefited</p>
-                  </div>
-                </div>
+                {/* Stats removed per request */}
                 
                 <Link href="/about" className="btn btn-primary inline-flex">
                   Learn More About Our Work

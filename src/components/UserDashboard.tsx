@@ -41,6 +41,7 @@ interface DashboardData {
     status: string;
     createdAt: string;
   }>;
+  // stats removed from UI use
   stats: {
     totalMonetary: number;
     totalMonetaryDonations: number;

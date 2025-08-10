@@ -44,8 +44,8 @@ export default function SiteHeader() {
         }}>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
-        <div className="flex h-20 items-center justify-between">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 relative">
+        <div className="flex h-16 sm:h-20 items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" aria-label="The Giving Tree home" className="flex items-center group">
               <div className="relative overflow-hidden rounded-full bg-green-50 p-2 shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:bg-green-100">
@@ -91,7 +91,7 @@ export default function SiteHeader() {
           </div>
 
           <button
-            className="md:hidden inline-flex items-center justify-center rounded-full p-2 text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 transition-all"
+            className="md:hidden inline-flex items-center justify-center rounded-full p-2.5 text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 transition-all"
             onClick={() => setOpen((v) => !v)}
             aria-label="Open menu"
             aria-expanded={open}
@@ -102,7 +102,7 @@ export default function SiteHeader() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-white shadow-lg border-t border-green-100 rounded-b-xl mx-2">
+        <div className="md:hidden bg-white shadow-lg border-t border-green-100 rounded-b-xl mx-2 will-change-transform">
           <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
             <div className="grid gap-1 relative">
               {/* Decorative leaf pattern */}

@@ -13,47 +13,7 @@ export default function LeaderboardPage() {
         subtitle="Celebrating our community's most generous supporters who are making a real difference in healthcare."
       />
 
-      {/* Stats Section */}
-      <div className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="grid md:grid-cols-4 gap-8 text-center"
-          >
-            <div>
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-3xl font-bold text-zinc-900 mb-2">$50,000+</h3>
-              <p className="text-zinc-600">Total Raised</p>
-            </div>
-            <div>
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="text-3xl font-bold text-zinc-900 mb-2">500+</h3>
-              <p className="text-zinc-600">Active Donors</p>
-            </div>
-            <div>
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trophy className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="text-3xl font-bold text-zinc-900 mb-2">1,200+</h3>
-              <p className="text-zinc-600">Items Donated</p>
-            </div>
-            <div>
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="h-8 w-8 text-yellow-600" />
-              </div>
-              <h3 className="text-3xl font-bold text-zinc-900 mb-2">100%</h3>
-              <p className="text-zinc-600">To Hospital</p>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      {/* Stats section removed per request */}
 
       {/* Leaderboard */}
       <div className="py-16">

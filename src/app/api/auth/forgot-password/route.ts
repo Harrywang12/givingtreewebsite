@@ -16,7 +16,7 @@ const createTransporter = () => {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json()
+    let { email } = await request.json()
 
     // Validate input
     if (!email) {
@@ -25,6 +25,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Normalize email
+    email = String(email).toLowerCase().trim()
 
     // Find user
     const user = await prisma.user.findUnique({

@@ -29,7 +29,7 @@ export default function SiteFooter() {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 relative">
-          <div className="grid gap-12 md:grid-cols-4 relative z-10">
+          <div className="grid gap-10 sm:gap-12 md:grid-cols-4 relative z-10">
             <div className="relative">
               {/* Logo section */}
               <div className="flex items-start mb-6">

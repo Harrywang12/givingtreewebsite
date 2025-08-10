@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { name, email, phone, bio, location } = await request.json()
+    let { name, email, phone, bio, location } = await request.json()
     const token = request.headers.get('authorization')?.replace('Bearer ', '')
 
     if (!token) {
@@ -79,6 +79,7 @@ export async function PUT(request: NextRequest) {
 
     // Check if email is being changed and if it's already taken
     if (email) {
+      email = String(email).toLowerCase().trim()
       const existingUser = await prisma.user.findFirst({
         where: {
           email: email,
