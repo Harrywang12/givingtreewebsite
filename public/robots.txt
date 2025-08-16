@@ -1,8 +1,21 @@
+# Giving Tree Non-Profit Foundation Robots.txt
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /_next/
+Disallow: /reset-password
 
-# Sitemap location
+# Allow search engines to access static assets
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.svg$
+Allow: /*.webp$
+
+# Sitemap location - will be replaced with actual domain in production
 Sitemap: https://yourdomain.com/sitemap.xml
 
-# Crawl delay (optional - adjust as needed)
-Crawl-delay: 1
+# Crawl rate control
+Crawl-delay: 2
