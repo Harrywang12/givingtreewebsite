@@ -540,12 +540,14 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               <option value="COMPLETED">Completed</option>
                               <option value="FAILED">Failed</option>
                               <option value="CANCELLED">Cancelled</option>
+                              <option value="INVALIDATED">Invalidated</option>
                             </select>
                             <span className={`px-2 py-1 text-xs rounded-full ${
                               donation.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
                               donation.status === 'PROCESSING' ? 'bg-yellow-100 text-yellow-800' :
                               donation.status === 'PENDING' ? 'bg-blue-100 text-blue-800' :
                               donation.status === 'FAILED' ? 'bg-red-100 text-red-800' :
+                              donation.status === 'INVALIDATED' ? 'bg-purple-100 text-purple-800' :
                               'bg-gray-100 text-gray-800'
                             }`}>
                               {donation.status}

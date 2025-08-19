@@ -17,11 +17,13 @@
     "@hookform/resolvers": "^5.2.1",
     "@next/third-parties": "^15.4.6",
     "@prisma/client": "^6.13.0",
+    "@radix-ui/react-tabs": "^1.1.13",
     "@types/nodemailer": "^6.4.17",
     "@types/redis": "^4.0.10",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "bcryptjs": "^3.0.2",
+    "clsx": "^2.1.1",
     "critters": "^0.0.23",
     "framer-motion": "^12.23.12",
     "jsonwebtoken": "^9.0.2",
@@ -34,6 +36,7 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
     "redis": "^5.8.0",
+    "tailwind-merge": "^3.3.1",
     "zod": "^4.0.14"
   },
   "devDependencies": {

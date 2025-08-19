@@ -1,108 +1,69 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { verifyToken } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { verifyAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const { amount, paymentMethod, notes } = await request.json()
-    const token = request.headers.get('authorization')?.replace('Bearer ', '')
-
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
+    // Get authentication token if available
+    const token = request.headers.get('authorization')?.split(' ')[1];
+    let userId: string | null = null;
+    
+    // Verify user if token is provided
+    if (token) {
+      userId = await verifyAuth(token);
+      if (!userId) {
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+      }
     }
 
-    const decoded = verifyToken(token)
-    if (!decoded) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      )
-    }
+    // Parse request body
+    const { amount } = await request.json();
 
-    // Validate input
+    // Validate amount
     if (!amount || amount <= 0) {
-      return NextResponse.json(
-        { error: 'Valid amount is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Valid amount is required' }, { status: 400 });
     }
 
-    // Create donation
-    const donation = await prisma.donation.create({
-      data: {
-        userId: decoded.userId,
-        amount: parseFloat(amount),
-        type: 'MONETARY',
-        status: 'PENDING',
-        paymentMethod: paymentMethod || null,
-        notes: notes || null,
-      }
-    })
-
-    // Update user's total donated
-    await prisma.user.update({
-      where: { id: decoded.userId },
-      data: {
-        totalDonated: {
-          increment: parseFloat(amount)
+    // Create donation record
+    let donation;
+    
+    if (userId) {
+      // Create donation with user association
+      donation = await prisma.donation.create({
+        data: {
+          userId,
+          amount,
+          type: 'MONETARY',
+          status: 'PENDING',
+          notes: 'Initiated monetary donation'
         }
-      }
-    })
+      });
+      
+    } else {
+      // Create anonymous donation (not associated with a user)
+      donation = await prisma.donation.create({
+        data: {
+          // Use a placeholder user or track as anonymous
+          userId: 'anonymous', // You might need to adjust this based on your schema
+          amount,
+          type: 'MONETARY',
+          status: 'PENDING',
+          notes: 'Anonymous monetary donation'
+        }
+      });
+    }
 
     return NextResponse.json({
-      message: 'Donation created successfully',
-      donation
-    }, { status: 201 })
-
+      success: true,
+      donationId: donation.id,
+      message: 'Donation initiated successfully'
+    });
+    
   } catch (error) {
-    console.error('Donation error:', error)
+    console.error('Error creating donation:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to process donation' },
       { status: 500 }
-    )
+    );
   }
 }
-
-export async function GET(request: NextRequest) {
-  try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '')
-
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-
-    const decoded = verifyToken(token)
-    if (!decoded) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      )
-    }
-
-    // Get user's donations
-    const donations = await prisma.donation.findMany({
-      where: {
-        userId: decoded.userId,
-        type: 'MONETARY'
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
-
-    return NextResponse.json({ donations })
-
-  } catch (error) {
-    console.error('Get donations error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-} 

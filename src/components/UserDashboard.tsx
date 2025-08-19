@@ -13,11 +13,13 @@ import {
   LogOut,
   Home,
   Plus,
-  Shield
+  Shield,
+  Trash2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardDonationForm from './DashboardDonationForm';
 import AdminPanel from './AdminPanel';
+import ProfilePicture from './ProfilePicture';
 
 interface DashboardData {
   user: {
@@ -25,6 +27,7 @@ interface DashboardData {
     name: string;
     email: string;
     phone?: string;
+    avatar?: string | null;
     totalDonated: number;
     itemsDonated: number;
     memberSince: string;
@@ -66,6 +69,7 @@ export default function UserDashboard() {
     phone: ''
   });
   const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isUploadingPicture, setIsUploadingPicture] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -162,6 +166,63 @@ export default function UserDashboard() {
     }
   };
 
+  const handleProfilePictureUpload = async (file: File) => {
+    if (!token) return;
+    
+    setIsUploadingPicture(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/user/profile/picture', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        // Refresh the dashboard data to get updated user info
+        window.location.reload();
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Failed to upload profile picture');
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      setError('Failed to upload profile picture');
+    } finally {
+      setIsUploadingPicture(false);
+    }
+  };
+
+  const handleDeleteProfilePicture = async () => {
+    if (!token) return;
+    
+    setIsUploadingPicture(true);
+    try {
+      const response = await fetch('/api/user/profile/picture', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Refresh the dashboard data to get updated user info
+        window.location.reload();
+      } else {
+        setError('Failed to remove profile picture');
+      }
+    } catch (error) {
+      console.error('Error removing profile picture:', error);
+      setError('Failed to remove profile picture');
+    } finally {
+      setIsUploadingPicture(false);
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
@@ -237,8 +298,12 @@ export default function UserDashboard() {
           <div className="pointer-events-none absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 sm:mr-4 overflow-hidden">
-                <img src="/public.png" alt="User" className="h-8 w-8 sm:h-10 sm:w-10 object-cover" />
+              <div className="mr-3 sm:mr-4">
+                <ProfilePicture 
+                  src={dashboardData?.user?.avatar || user?.avatar} 
+                  alt={displayUser?.name || 'User'} 
+                  size="md" 
+                />
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold">{displayUser.name}</h1>
@@ -505,6 +570,31 @@ export default function UserDashboard() {
               </div>
               
               <div className="space-y-4">
+                {/* Profile Picture Section */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-4">Profile Picture</label>
+                  <div className="flex items-center space-x-4">
+                    <ProfilePicture 
+                      src={dashboardData?.user?.avatar || user?.avatar} 
+                      alt={displayUser?.name || 'User'} 
+                      size="lg"
+                      editable={!isEditingProfile}
+                      onUpload={handleProfilePictureUpload}
+                      isLoading={isUploadingPicture}
+                    />
+                    {!isEditingProfile && dashboardData?.user?.avatar && (
+                      <button
+                        onClick={handleDeleteProfilePicture}
+                        disabled={isUploadingPicture}
+                        className="flex items-center text-red-600 hover:text-red-700 disabled:opacity-50"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+                
                 {isEditingProfile ? (
                   <>
                     <div>

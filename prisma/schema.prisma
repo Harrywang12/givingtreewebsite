@@ -61,9 +61,11 @@ model Donation {
   status      DonationStatus @default(PENDING)
   paymentMethod PaymentMethod?
   transactionId String?
+  redirectUrl  String?   // URL where user was redirected to complete donation
   notes       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  confirmedAt DateTime?  // When the donation was confirmed by the user
 
   // Relationships
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -1,107 +1,111 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { verifyAdminFromRequest, logAdminAction } from '@/lib/admin';
+import { verifyAuth } from '@/lib/auth';
+import { isAdmin } from '@/lib/admin';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
-    const { status } = await request.json();
-
-    // Verify admin authentication
-    const admin = await verifyAdminFromRequest(request);
-    if (!admin) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    // Get donation ID from URL params
+    const donationId = params.id;
+    if (!donationId) {
+      return NextResponse.json({ error: 'Donation ID is required' }, { status: 400 });
     }
 
+    // Verify authentication and admin status
+    const token = request.headers.get('authorization')?.split(' ')[1];
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = await verifyAuth(token);
+    if (!userId) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+
+    // Check if user is an admin
+    const isUserAdmin = await isAdmin(userId);
+    if (!isUserAdmin) {
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
+    // Parse request body
+    const { status, reason } = await request.json();
+
     // Validate status
-    const validStatuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED'] as const;
-    type DonationStatus = typeof validStatuses[number];
-    
-    if (!validStatuses.includes(status)) {
-      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    const validStatuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED', 'INVALIDATED'];
+    if (!status || !validStatuses.includes(status)) {
+      return NextResponse.json({ 
+        error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` 
+      }, { status: 400 });
     }
 
     // Find the donation
     const donation = await prisma.donation.findUnique({
-      where: { id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            totalDonated: true
-          }
-        }
-      }
+      where: { id: donationId },
+      include: { user: true }
     });
 
     if (!donation) {
       return NextResponse.json({ error: 'Donation not found' }, { status: 404 });
     }
 
-    const oldStatus = donation.status;
+    // If changing from COMPLETED to another status, adjust user's totalDonated
+    let userData = {};
+    if (donation.status === 'COMPLETED' && status !== 'COMPLETED' && donation.userId && donation.userId !== 'anonymous') {
+      userData = {
+        totalDonated: {
+          decrement: donation.amount
+        }
+      };
+    }
+    // If changing to COMPLETED from another status, increment user's totalDonated
+    else if (donation.status !== 'COMPLETED' && status === 'COMPLETED' && donation.userId && donation.userId !== 'anonymous') {
+      userData = {
+        totalDonated: {
+          increment: donation.amount
+        }
+      };
+    }
 
     // Update donation status
     const updatedDonation = await prisma.donation.update({
-      where: { id },
-      data: { 
-        status: status as DonationStatus,
-        updatedAt: new Date()
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true
-          }
-        }
+      where: { id: donationId },
+      data: {
+        status: status,
+        notes: reason ? 
+          `${donation.notes ? donation.notes + ' | ' : ''}Status changed to ${status} by admin. Reason: ${reason}` : 
+          `${donation.notes ? donation.notes + ' | ' : ''}Status changed to ${status} by admin.`,
+        // Set or clear confirmedAt based on status
+        confirmedAt: status === 'COMPLETED' ? 
+          (donation.confirmedAt || new Date()) : 
+          (status === 'INVALIDATED' || status === 'CANCELLED' || status === 'FAILED' ? null : donation.confirmedAt)
       }
     });
 
-    // If changing from non-completed to completed, update user's total
-    // If changing from completed to non-completed, subtract from user's total
-    if (oldStatus !== 'COMPLETED' && status === 'COMPLETED') {
-      // Add to user's total donated
+    // Update user's totalDonated if needed
+    if (Object.keys(userData).length > 0 && donation.userId && donation.userId !== 'anonymous') {
       await prisma.user.update({
-        where: { id: donation.user.id },
-        data: {
-          totalDonated: {
-            increment: donation.amount
-          }
-        }
-      });
-    } else if (oldStatus === 'COMPLETED' && status !== 'COMPLETED') {
-      // Subtract from user's total donated
-      await prisma.user.update({
-        where: { id: donation.user.id },
-        data: {
-          totalDonated: {
-            decrement: donation.amount
-          }
-        }
+        where: { id: donation.userId },
+        data: userData
       });
     }
 
-    // Log admin action
-    await logAdminAction(
-      admin.id,
-      'UPDATE_DONATION_STATUS',
-      `Changed donation ${id} status from ${oldStatus} to ${status}`,
-      { donationId: id, oldStatus, newStatus: status, amount: donation.amount }
-    );
-
     return NextResponse.json({
-      message: 'Donation status updated successfully',
-      donation: updatedDonation
+      success: true,
+      message: `Donation status updated to ${status}`,
+      donation: {
+        id: updatedDonation.id,
+        status: updatedDonation.status,
+        amount: updatedDonation.amount,
+        updatedAt: updatedDonation.updatedAt
+      }
     });
-
+    
   } catch (error) {
-    console.error('Update donation status error:', error);
+    console.error('Error updating donation status:', error);
     return NextResponse.json(
       { error: 'Failed to update donation status' },
       { status: 500 }

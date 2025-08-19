@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
         name: true,
         email: true,
         phone: true,
+        avatar: true,
         totalDonated: true,
         itemsDonated: true,
         memberSince: true,
