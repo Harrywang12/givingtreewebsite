@@ -18,7 +18,7 @@ export default function MonetaryDonationForm({ isAnonymous = false }: MonetaryDo
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
 
-  const predefinedAmounts = ['25', '50', '100', '250', '500'];
+  const predefinedAmounts = ['10', '15', '20', '50', '100'];
 
   const handleAmountSelect = (value: string) => {
     setAmount(value);
