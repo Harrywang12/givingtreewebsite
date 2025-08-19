@@ -3,17 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
 import { isAdmin } from '@/lib/admin';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest) {
   try {
-    // Get donation ID from URL params
-    const donationId = params.id;
-    if (!donationId) {
-      return NextResponse.json({ error: 'Donation ID is required' }, { status: 400 });
-    }
-
     // Verify authentication and admin status
     const token = request.headers.get('authorization')?.split(' ')[1];
     if (!token) {
@@ -32,7 +23,12 @@ export async function PUT(
     }
 
     // Parse request body
-    const { status, reason } = await request.json();
+    const { donationId, status, reason } = await request.json();
+    
+    // Validate required fields
+    if (!donationId) {
+      return NextResponse.json({ error: 'Donation ID is required' }, { status: 400 });
+    }
 
     // Validate status
     const validStatuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED', 'INVALIDATED'];

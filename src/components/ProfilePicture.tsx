@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Upload, User } from 'lucide-react';
 
@@ -22,7 +22,7 @@ export default function ProfilePicture({
   isLoading = false,
 }: ProfilePictureProps) {
   const [isHovering, setIsHovering] = useState(false);
-  const fileInputRef = useState<HTMLInputElement | null>(null)[1];
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Determine size classes based on the size prop
   const getSizeClasses = () => {
@@ -48,8 +48,8 @@ export default function ProfilePicture({
   };
 
   const triggerFileInput = () => {
-    if (fileInputRef) {
-      fileInputRef.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -80,7 +80,7 @@ export default function ProfilePicture({
             accept="image/*"
             className="hidden"
             onChange={handleFileChange}
-            ref={(input) => fileInputRef = input}
+            ref={fileInputRef}
           />
           <div
             className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity ${

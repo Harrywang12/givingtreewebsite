@@ -94,13 +94,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     
     try {
       setIsSubmitting(true);
-      const response = await fetch(`/api/admin/donations/${donationId}/status`, {
-        method: 'PUT',
+      const response = await fetch(`/api/admin/donations/status`, {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ donationId, status: newStatus })
       });
       
       if (response.ok) {

@@ -17,14 +17,14 @@ export async function POST(request: NextRequest) {
     // Parse the webhook payload
     const payload = await request.json();
     const { 
-      donation_id, 
+      // donation_id, // Unused but may be needed in the future
       external_id, 
       amount, 
       status, 
       receipt_number,
       donation_date,
-      donor_email,
-      donor_name
+      // donor_email, // Unused but may be needed in the future
+      // donor_name   // Unused but may be needed in the future
     } = payload;
 
     // Validate required fields

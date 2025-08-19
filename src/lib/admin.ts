@@ -136,6 +136,27 @@ export async function grantAdminRole(email: string): Promise<boolean> {
 }
 
 /**
+ * Simple check if a user is an admin by userId
+ */
+export async function isAdmin(userId: string): Promise<boolean> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true, role: true }
+    });
+    
+    if (!user) return false;
+    
+    // Check if email is in admin list and has admin role
+    return ADMIN_EMAILS.includes(user.email) && 
+           (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');
+  } catch (error) {
+    console.error('Admin check error:', error);
+    return false;
+  }
+}
+
+/**
  * Security middleware for admin routes
  */
 export function createAdminMiddleware(requiredRole: 'ADMIN' | 'SUPER_ADMIN' = 'ADMIN') {

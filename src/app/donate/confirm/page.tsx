@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CheckCircle, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function DonationConfirmationPage() {
+// Component to safely use searchParams
+function ConfirmationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, token } = useAuth();
@@ -31,6 +32,7 @@ export default function DonationConfirmationPage() {
       // Automatically confirm the donation without requiring receipt verification
       handleConfirmDonation();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success, donationId, isConfirmed, isSubmitting]);
 
   const handleConfirmDonation = async () => {
@@ -261,5 +263,21 @@ export default function DonationConfirmationPage() {
         )}
       </motion.div>
     </div>
+  );
+}
+
+// Export the page with Suspense
+export default function DonationConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ConfirmationContent />
+    </Suspense>
   );
 }

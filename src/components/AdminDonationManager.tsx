@@ -46,6 +46,7 @@ export default function AdminDonationManager() {
 
   useEffect(() => {
     fetchDonations();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, sortField, sortDirection]);
 
   const fetchDonations = async () => {
@@ -146,13 +147,14 @@ export default function AdminDonationManager() {
     setUpdateSuccess(false);
     
     try {
-      const response = await fetch(`/api/admin/donations/${selectedDonation.id}/status`, {
-        method: 'PUT',
+      const response = await fetch(`/api/admin/donations/status`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
+          donationId: selectedDonation.id,
           status: statusUpdateData.status,
           reason: statusUpdateData.reason
         })

@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     const search = url.searchParams.get('search');
 
     // Build query filters
-    const filters: any = {};
+    const filters: Record<string, unknown> = {};
     if (status) {
       filters.status = status;
     }
