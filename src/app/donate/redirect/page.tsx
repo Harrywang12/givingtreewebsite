@@ -15,9 +15,10 @@ function DonationRedirectContent() {
   const amount = searchParams.get('amount');
   const donationType = searchParams.get('type');
   const donationId = searchParams.get('id');
+  const isAnonymous = searchParams.get('anonymous') === 'true';
   
   // Get return URL from params or create default
-  const returnUrl = searchParams.get('returnUrl') || `${typeof window !== 'undefined' ? window.location.origin : ''}/donate/confirm?amount=${amount}&id=${donationId}`;
+  const returnUrl = searchParams.get('returnUrl') || `${typeof window !== 'undefined' ? window.location.origin : ''}/donate/confirm?amount=${amount}&id=${donationId}${isAnonymous ? '&anonymous=true' : ''}`;
   
   // Mackenzie Health donation URL with return parameters
   const mackenzieHealthDonationUrl = `https://supportmackenziehealth.ca/ui/thegivingtree/donations/start?return_url=${encodeURIComponent(returnUrl)}`;
@@ -25,21 +26,28 @@ function DonationRedirectContent() {
   useEffect(() => {
     // Record the donation intent in our system
     const recordDonationIntent = async () => {
-      if (!token || !amount || !donationId) return;
+      if (!amount) return;
       
       try {
-        await fetch('/api/donations/monetary/intent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            amount: parseFloat(amount),
-            donationId,
-            redirectUrl: mackenzieHealthDonationUrl
-          })
-        });
+        if (isAnonymous) {
+          // For anonymous donations, we don't need to record intent in our system
+          // They'll be tracked when they return from Mackenzie Health
+          console.log('Anonymous donation - no intent recording needed');
+        } else if (token && donationId) {
+          // For logged-in users, record the donation intent
+          await fetch('/api/donations/monetary/intent', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              amount: parseFloat(amount),
+              donationId,
+              redirectUrl: mackenzieHealthDonationUrl
+            })
+          });
+        }
       } catch (error) {
         console.error('Error recording donation intent:', error);
       }
@@ -61,7 +69,7 @@ function DonationRedirectContent() {
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [amount, donationId, token, mackenzieHealthDonationUrl]);
+  }, [amount, donationId, token, mackenzieHealthDonationUrl, isAnonymous]);
   
   // Handle manual redirect
   const handleRedirectNow = () => {
@@ -70,7 +78,11 @@ function DonationRedirectContent() {
   
   // Handle cancel and return to donation form
   const handleCancel = () => {
-    router.push('/donate');
+    if (isAnonymous) {
+      router.push('/donate/choice');
+    } else {
+      router.push('/donate');
+    }
   };
   
   return (
@@ -83,6 +95,11 @@ function DonationRedirectContent() {
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Redirecting to Mackenzie Health</h2>
           <p className="text-gray-600">
             You're being redirected to complete your ${amount} donation securely through Mackenzie Health's official donation platform.
+            {isAnonymous && (
+              <span className="block mt-2 text-sm text-gray-500">
+                You're donating anonymously. Your contribution will still be tracked.
+              </span>
+            )}
           </p>
           <div className="mt-4 text-green-600 font-medium">
             Redirecting in {countdown} seconds...

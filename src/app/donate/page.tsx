@@ -1,15 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DonationForm from '@/components/DonationForm';
 import MonetaryDonationForm from '@/components/MonetaryDonationForm';
 import { Heart, DollarSign, Package } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
-export default function DonatePage() {
+function DonateContent() {
   const [activeTab, setActiveTab] = useState('monetary');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { user, token } = useAuth();
+  const isAnonymous = searchParams.get('anonymous') === 'true';
   
+  // If user is not logged in and not anonymous, redirect to choice page
+  useEffect(() => {
+    if (!user && !token && !isAnonymous) {
+      router.push('/donate/choice');
+    }
+  }, [user, token, isAnonymous, router]);
+
+  // If redirecting, show loading
+  if (!user && !token && !isAnonymous) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-green-800">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4">
       <div className="max-w-5xl mx-auto">
@@ -21,6 +46,11 @@ export default function DonatePage() {
           <h1 className="text-4xl sm:text-5xl font-bold text-green-900 mb-6 font-serif">Make a Difference</h1>
           <p className="text-lg text-green-800 max-w-3xl mx-auto">
             Your generosity helps us support Mackenzie Health. Choose how you'd like to contribute below.
+            {isAnonymous && (
+              <span className="block mt-2 text-sm text-gray-600">
+                You're donating anonymously. Your contribution will still be tracked and may qualify for our leaderboard.
+              </span>
+            )}
           </p>
         </motion.div>
         
@@ -39,11 +69,11 @@ export default function DonatePage() {
           </div>
           
           <TabsContent value="monetary">
-            <MonetaryDonationForm />
+            <MonetaryDonationForm isAnonymous={isAnonymous} />
           </TabsContent>
           
           <TabsContent value="items">
-            <DonationForm />
+            <DonationForm isAnonymous={isAnonymous} />
           </TabsContent>
         </Tabs>
         
@@ -79,5 +109,20 @@ export default function DonatePage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function DonatePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-green-800">Loading donation page...</p>
+        </div>
+      </div>
+    }>
+      <DonateContent />
+    </Suspense>
   );
 }

@@ -23,41 +23,52 @@ function ConfirmationContent() {
   // Extract donation details from URL parameters
   const amount = searchParams.get('amount');
   const donationId = searchParams.get('id');
+  const isAnonymous = searchParams.get('anonymous') === 'true';
   // Check if this is a return from Mackenzie Health with success parameter
   const success = searchParams.get('success');
   
   // Effect to auto-confirm if returning with success parameter
   useEffect(() => {
-    if (success === 'true' && donationId && !isConfirmed && !isSubmitting) {
+    if (success === 'true' && !isConfirmed && !isSubmitting) {
       // Automatically confirm the donation without requiring receipt verification
       handleConfirmDonation();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [success, donationId, isConfirmed, isSubmitting]);
+  }, [success, isConfirmed, isSubmitting]);
 
   const handleConfirmDonation = async () => {
     setIsSubmitting(true);
     setError('');
     
     try {
-      const response = await fetch('/api/donations/monetary/confirm', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({
-          donationId,
-          amount: parseFloat(amount || '0')
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
+      if (isAnonymous) {
+        // For anonymous donations, we'll create a record without user association
+        // This could be stored in a separate anonymous donations table or with a special flag
+        console.log('Anonymous donation confirmed:', { amount, isAnonymous });
         setIsConfirmed(true);
+      } else if (donationId) {
+        // For logged-in users, confirm the existing donation record
+        const response = await fetch('/api/donations/monetary/confirm', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            donationId,
+            amount: parseFloat(amount || '0')
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          setIsConfirmed(true);
+        } else {
+          setError(data.error || 'Failed to confirm donation');
+        }
       } else {
-        setError(data.error || 'Failed to confirm donation');
+        setError('Missing donation information');
       }
     } catch (error) {
       console.error('Error confirming donation:', error);
@@ -125,11 +136,14 @@ function ConfirmationContent() {
             <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Thank You!</h2>
             <p className="text-gray-600 mb-6">
-              Your donation of ${amount} has been confirmed and added to your profile. Thank you for supporting Mackenzie Health!
+              {isAnonymous 
+                ? `Your anonymous donation of $${amount} has been confirmed. Thank you for supporting Mackenzie Health! Your contribution may appear on our leaderboard.`
+                : `Your donation of $${amount} has been confirmed and added to your profile. Thank you for supporting Mackenzie Health!`
+              }
             </p>
             
             <div className="space-y-3">
-              {user && (
+              {user && !isAnonymous && (
                 <button
                   onClick={handleGoToDashboard}
                   className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors"
@@ -157,6 +171,11 @@ function ConfirmationContent() {
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">Processing Your Donation</h2>
                   <p className="text-gray-600">
                     Thank you for your ${amount} donation to Mackenzie Health! We're updating your donation history...
+                    {isAnonymous && (
+                      <span className="block mt-2 text-sm text-gray-500">
+                        Processing anonymous donation...
+                      </span>
+                    )}
                   </p>
                 </>
               ) : (
@@ -164,6 +183,11 @@ function ConfirmationContent() {
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">Confirm Your Donation</h2>
                   <p className="text-gray-600">
                     Did you complete your ${amount} donation to Mackenzie Health? Please confirm to update your donation history.
+                    {isAnonymous && (
+                      <span className="block mt-2 text-sm text-gray-500">
+                        Anonymous donations are still tracked and may appear on our leaderboard.
+                      </span>
+                    )}
                   </p>
                 </>
               )}

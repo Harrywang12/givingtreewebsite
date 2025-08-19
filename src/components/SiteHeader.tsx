@@ -68,7 +68,7 @@ export default function SiteHeader() {
             <Link href="/team" className="nav-link">Team</Link>
             <Link href="/events" className="nav-link">Events</Link>
             <Link href="/volunteer" className="nav-link">Volunteer</Link>
-            <Link href="/donate" className="nav-link flex items-center">
+            <Link href={user ? "/donate" : "/donate/choice"} className="nav-link flex items-center">
               <Heart className="h-3.5 w-3.5 mr-1 text-green-600" />
               <span>Donate</span>
             </Link>
@@ -121,7 +121,7 @@ export default function SiteHeader() {
               <Link href="/team" className="mobile-link" onClick={() => setOpen(false)}>Team</Link>
               <Link href="/events" className="mobile-link" onClick={() => setOpen(false)}>Events</Link>
               <Link href="/volunteer" className="mobile-link" onClick={() => setOpen(false)}>Volunteer</Link>
-              <Link href="/donate" className="mobile-link flex items-center" onClick={() => setOpen(false)}>
+              <Link href={user ? "/donate" : "/donate/choice"} className="mobile-link flex items-center" onClick={() => setOpen(false)}>
                 <Heart className="h-4 w-4 mr-2 text-green-600" />
                 <span>Donate</span>
               </Link>

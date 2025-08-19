@@ -112,7 +112,7 @@ export default function UserDashboard() {
   };
 
   const handleDonate = () => {
-    setShowDonationForm(true);
+    router.push('/donate');
   };
 
   const handleAdminPanel = () => {

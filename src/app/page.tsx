@@ -234,7 +234,7 @@ export default function Home() {
               <p className="text-green-700 mb-5">
                 Give your gently used items a new purpose. Your donations become funding for essential hospital equipment.
               </p>
-              <Link href="/donate" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
+              <Link href={user ? "/donate" : "/donate/choice"} className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
                 Learn More
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
@@ -254,7 +254,7 @@ export default function Home() {
               <p className="text-green-700 mb-5">
                 Every dollar donated helps us expand our impact. Make a monetary gift to support our mission directly.
               </p>
-              <Link href="/donate" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
+              <Link href={user ? "/donate" : "/donate/choice"} className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
                 Contribute
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>

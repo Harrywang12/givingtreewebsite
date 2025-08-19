@@ -6,7 +6,11 @@ import { useRouter } from 'next/navigation';
 import { Heart, DollarSign, CreditCard } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function MonetaryDonationForm() {
+interface MonetaryDonationFormProps {
+  isAnonymous?: boolean;
+}
+
+export default function MonetaryDonationForm({ isAnonymous = false }: MonetaryDonationFormProps) {
   const router = useRouter();
   const { user, token } = useAuth();
   const [amount, setAmount] = useState<string>('');
@@ -42,29 +46,39 @@ export default function MonetaryDonationForm() {
         throw new Error('Please enter a valid donation amount');
       }
 
-      // Create a donation record in our system first
-      const response = await fetch('/api/donations/monetary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({
-          amount: donationAmount,
-        }),
-      });
+      // For anonymous donations, we'll create a temporary record
+      // For logged-in users, we'll create a proper donation record
+      if (isAnonymous) {
+        // Generate a unique return URL for anonymous donations
+        const returnUrl = `${window.location.origin}/donate/confirm?amount=${donationAmount}&anonymous=true`;
+        
+        // Redirect to the intermediate page before going to Mackenzie Health
+        router.push(`/donate/redirect?amount=${donationAmount}&anonymous=true&returnUrl=${encodeURIComponent(returnUrl)}`);
+      } else {
+        // Create a donation record in our system first
+        const response = await fetch('/api/donations/monetary/intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            amount: donationAmount,
+          }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to process donation');
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to process donation');
+        }
+
+        // Generate a unique return URL with donation ID and amount
+        const returnUrl = `${window.location.origin}/donate/confirm?amount=${donationAmount}&id=${data.donationId}`;
+        
+        // Redirect to the intermediate page before going to Mackenzie Health
+        router.push(`/donate/redirect?amount=${donationAmount}&id=${data.donationId}&type=monetary&returnUrl=${encodeURIComponent(returnUrl)}`);
       }
-
-      // Generate a unique return URL with donation ID and amount
-      const returnUrl = `${window.location.origin}/donate/confirm?amount=${donationAmount}&id=${data.donationId}`;
-      
-      // Redirect to the intermediate page before going to Mackenzie Health
-      router.push(`/donate/redirect?amount=${donationAmount}&id=${data.donationId}&type=monetary&returnUrl=${encodeURIComponent(returnUrl)}`);
       
     } catch (error) {
       console.error('Donation error:', error);
@@ -84,9 +98,16 @@ export default function MonetaryDonationForm() {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Heart className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Make a Donation</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            {isAnonymous ? 'Make an Anonymous Donation' : 'Make a Donation'}
+          </h2>
           <p className="text-gray-600">
             Your donation helps us support Mackenzie Health. 100% of proceeds go directly to enhancing patient care.
+            {isAnonymous && (
+              <span className="block mt-2 text-sm text-gray-500">
+                As an anonymous donor, your contribution will still be tracked and may qualify for our leaderboard.
+              </span>
+            )}
           </p>
         </div>
 
@@ -159,7 +180,7 @@ export default function MonetaryDonationForm() {
               ) : (
                 <>
                   <CreditCard className="h-5 w-5 mr-2" />
-                  Donate {amount && amount !== 'custom' ? `$${amount}` : amount === 'custom' && customAmount ? `$${customAmount}` : ''}
+                  {isAnonymous ? 'Donate Anonymously' : 'Donate'} {amount && amount !== 'custom' ? `$${amount}` : amount === 'custom' && customAmount ? `$${customAmount}` : ''}
                 </>
               )}
             </button>
@@ -174,6 +195,11 @@ export default function MonetaryDonationForm() {
           <div className="text-center text-sm text-gray-500 mt-4">
             <p>You will be redirected to Mackenzie Health's secure donation platform to complete your donation.</p>
             <p className="mt-1">100% of your donation goes directly to supporting Mackenzie Health.</p>
+            {isAnonymous && (
+              <p className="mt-2 text-xs text-gray-400">
+                Anonymous donations are tracked by amount and may appear on our leaderboard.
+              </p>
+            )}
           </div>
         </form>
       </motion.div>

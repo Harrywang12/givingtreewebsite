@@ -16,7 +16,11 @@ interface DonationFormData {
   additionalNotes: string;
 }
 
-export default function DonationForm() {
+interface DonationFormProps {
+  isAnonymous?: boolean;
+}
+
+export default function DonationForm({ isAnonymous = false }: DonationFormProps) {
   const [formData, setFormData] = useState<DonationFormData>({
     name: '',
     email: '',
@@ -88,7 +92,7 @@ export default function DonationForm() {
         }],
         pickupPreference: formData.pickupPreference,
         preferredDate: '',
-        notes: `${formData.additionalNotes}\n\nEstimated Value: ${formData.estimatedValue || 'Not specified'}\n\nImages attached: ${imageAttachments.length} file(s)`,
+        notes: `${formData.additionalNotes}\n\nEstimated Value: ${formData.estimatedValue || 'Not specified'}\n\nImages attached: ${imageAttachments.length} file(s)${isAnonymous ? '\n\nAnonymous Donation' : ''}`,
         attachments: imageAttachments
       };
 
