@@ -10,9 +10,11 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode: 'login' | 'register';
+  onSuccess?: () => void;
+  redirectTo?: string;
 }
 
-export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, mode, onSuccess, redirectTo }: AuthModalProps) {
   const { login, register } = useAuth();
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(mode === 'login');
@@ -66,8 +68,16 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
           password: '',
           confirmPassword: ''
         });
-        // Redirect to dashboard after successful authentication
-        router.push('/dashboard');
+        
+        // Call onSuccess callback if provided, otherwise use default behavior
+        if (onSuccess) {
+          onSuccess();
+        } else if (redirectTo) {
+          router.push(redirectTo);
+        } else {
+          // Default behavior: redirect to dashboard
+          router.push('/dashboard');
+        }
       } else {
         setError(result.error || 'An error occurred');
       }

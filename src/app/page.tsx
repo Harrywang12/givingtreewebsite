@@ -527,6 +527,44 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Partners Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
+          >
+            <span className="text-green-600 font-medium">OUR PARTNERS</span>
+            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-4 font-serif">Proudly Supporting Mackenzie Health</h2>
+            <p className="text-green-700 max-w-2xl mx-auto">
+              We are honored to partner with Mackenzie Health to strengthen care in our community.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="max-w-4xl mx-auto bg-green-50 rounded-2xl shadow-sm p-6 sm:p-8"
+          >
+            <div className="relative w-full aspect-[3/1] sm:aspect-[5/2] rounded-xl overflow-hidden bg-white">
+              <Image
+                src="/mackenziehealth.jpg"
+                alt="Mackenzie Health Partner"
+                fill
+                sizes="(max-width: 768px) 100vw, 800px"
+                className="object-contain p-4"
+                priority
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Contact Section */}
       <section className="py-24 bg-green-50 relative overflow-hidden">
         {/* Decorative leaf pattern */}
