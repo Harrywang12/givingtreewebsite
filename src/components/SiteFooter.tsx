@@ -147,7 +147,10 @@ export default function SiteFooter() {
                   <div className="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mt-1">
                     <MapPin className="h-4 w-4 text-green-700" />
                   </div>
-                  <span className="ml-3 text-base text-green-800">Serving Mackenzie Health communities</span>
+                  <div className="ml-3">
+                    <h4 className="font-medium text-green-900">Address</h4>
+                    <p className="text-green-700">152 Colesbrook Rd, Richmondhill, ON L4S 2G4</p>
+                  </div>
                 </li>
               </ul>
             </div>
