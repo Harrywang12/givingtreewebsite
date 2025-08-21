@@ -166,17 +166,18 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowAuthModal(true)}
-                className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
-              >
-                <Heart className="w-5 h-5" />
-                Make a donation
-              </motion.button>
+              <Link href="/donate">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+                >
+                  <Heart className="w-5 h-5" />
+                  Make a donation
+                </motion.button>
+              </Link>
               
-              <Link href="/mission">
+              <Link href="/donate">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -255,7 +256,7 @@ export default function Home() {
               <p className="text-green-700 mb-5">
                 Give your gently used items a new purpose. Your donations become funding for essential hospital equipment.
               </p>
-              <Link href={user ? "/donate" : "/donate/choice"} className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
+              <Link href="/donate" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
                 Learn More
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
@@ -275,7 +276,7 @@ export default function Home() {
               <p className="text-green-700 mb-5">
                 Every dollar donated helps us expand our impact. Make a monetary gift to support our mission directly.
               </p>
-              <Link href={user ? "/donate" : "/donate/choice"} className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
+              <Link href="/donate" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
                 Contribute
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
