@@ -15,7 +15,8 @@ import {
   ArrowRight,
   Send,
   Gift,
-  Code
+  Code,
+  Package
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -547,44 +548,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Partners Section */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
-          >
-            <span className="text-green-600 font-medium">OUR PARTNERS</span>
-            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-4 font-serif">Proudly Supporting Mackenzie Health</h2>
-            <p className="text-green-700 max-w-2xl mx-auto">
-              We are honored to partner with Mackenzie Health to strengthen care in our community.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="max-w-4xl mx-auto bg-green-50 rounded-2xl shadow-sm p-6 sm:p-8"
-          >
-            <div className="relative w-full aspect-[3/1] sm:aspect-[5/2] rounded-xl overflow-hidden bg-white">
-              <Image
-                src="/mackenziehealth.jpg"
-                alt="Mackenzie Health Partner"
-                fill
-                sizes="(max-width: 768px) 100vw, 800px"
-                className="object-contain p-4"
-                priority
-              />
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Contact Section */}
       <section id="contact" className="py-24 bg-green-50 relative overflow-hidden">
         {/* Decorative leaf pattern */}
@@ -681,6 +644,94 @@ export default function Home() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Volunteer Section */}
+      <section className="py-24 bg-green-50">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="text-green-600 font-medium">GET INVOLVED</span>
+            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Volunteer With Us</h2>
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-8">
+              Join our dedicated team of volunteers and make a direct impact in your community. 
+              Help us collect, organize, and distribute donations to support Mackenzie Health.
+            </p>
+            <Link
+              href="/volunteer"
+              className="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
+            >
+              <Users className="h-5 w-5 mr-2" />
+              Become a Volunteer
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Donation Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="text-green-600 font-medium">MAKE A DIFFERENCE</span>
+            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Support Our Mission</h2>
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-8">
+              Every donation, whether monetary or in-kind, directly supports Mackenzie Health. 
+              Your generosity helps us provide better healthcare for our community.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/donate"
+                className="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
+              >
+                <Heart className="h-5 w-5 mr-2" />
+                Donate Now
+              </Link>
+              <Link
+                href="/donate"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-green-600 font-semibold rounded-lg border-2 border-green-600 hover:bg-green-50 transition-colors duration-200 shadow-lg hover:shadow-xl"
+              >
+                <Package className="h-5 w-5 mr-2" />
+                Donate Items
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Our Partners Section - MOVED TO BOTTOM */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="text-green-600 font-medium">OUR PARTNERS</span>
+            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-10 font-serif">Committed to Community Health</h2>
+            <div className="flex justify-center items-center">
+              <Image
+                src="/mackenziehealth.jpg"
+                alt="Mackenzie Health Logo"
+                width={300}
+                height={150}
+                className="object-contain"
+              />
+            </div>
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto mt-8">
+              We are proud to partner with Mackenzie Health, dedicating 100% of our proceeds to support their vital work in enhancing patient care and community well-being.
+            </p>
+          </motion.div>
         </div>
       </section>
 

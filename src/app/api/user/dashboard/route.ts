@@ -43,18 +43,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get recent donations (monetary)
-    const recentDonations = await prisma.donation.findMany({
-      where: {
-        userId: decoded.userId,
-        type: 'MONETARY'
-      },
-      orderBy: {
-        createdAt: 'desc'
-      },
-      take: 5
-    })
-
     // Get recent item donations
     const recentItemDonations = await prisma.itemDonation.findMany({
       where: {
@@ -119,7 +107,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       user,
-      recentDonations,
       recentItemDonations,
       stats,
       totalItemsDonated,

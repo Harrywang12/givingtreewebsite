@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { 
   User, 
   Heart, 
-  DollarSign, 
   Package, 
   TrendingUp,
   Edit,
@@ -21,6 +20,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import DashboardDonationForm from './DashboardDonationForm';
 import AdminPanel from './AdminPanel';
 import ProfilePicture from './ProfilePicture';
+import Link from 'next/link';
 
 interface DashboardData {
   user: {
@@ -33,12 +33,6 @@ interface DashboardData {
     itemsDonated: number;
     memberSince: string;
   };
-  recentDonations: Array<{
-    id: string;
-    amount: number;
-    status: string;
-    createdAt: string;
-  }>;
   recentItemDonations: Array<{
     id: string;
     items?: string[];
@@ -226,24 +220,6 @@ export default function UserDashboard() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-      case 'COMPLETED':
-        return 'text-green-600 bg-green-100';
-      case 'pending':
-      case 'PENDING':
-        return 'text-yellow-600 bg-yellow-100';
-      case 'processing':
-      case 'PROCESSING':
-        return 'text-blue-600 bg-blue-100';
-      case 'SOLD':
-        return 'text-green-600 bg-green-100';
-      default:
-        return 'text-gray-600 bg-gray-100';
-    }
-  };
-
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
@@ -383,7 +359,7 @@ export default function UserDashboard() {
                     onClick={handleDonate}
                     className="btn btn-primary flex items-center justify-center sm:justify-start"
                   >
-                    <DollarSign className="h-5 w-5 mr-2" />
+                    <Package className="h-5 w-5 mr-2" />
                     Make a Donation
                   </button>
                   <button
@@ -454,58 +430,54 @@ export default function UserDashboard() {
               */}
 
               {/* Recent Activity */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-                <div className="space-y-3">
-                  {dashboardData?.recentDonations?.slice(0, 3).map((donation) => (
-                    <div key={donation.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg space-y-2 sm:space-y-0">
-                      <div className="flex items-center">
-                        <DollarSign className="h-5 w-5 text-green-600 mr-3" />
-                        <div>
-                          <p className="font-medium">
-                            ${donation.amount} donation
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {new Date(donation.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)} self-start sm:self-auto`}>
-                        {donation.status.toLowerCase()}
-                      </span>
-                    </div>
-                  ))}
-                  {dashboardData?.recentItemDonations?.slice(0, 3).map((donation) => (
-                    <div key={donation.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg space-y-2 sm:space-y-0">
-                      <div className="flex items-center">
-                        <Package className="h-5 w-5 text-blue-600 mr-3" />
-                        <div>
-                          <p className="font-medium">
-                            {donation.items?.join(', ') || 'Item donation'}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {new Date(donation.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)} self-start sm:self-auto`}>
-                        {donation.status.toLowerCase()}
-                      </span>
-                    </div>
-                  ))}
-                  {(!dashboardData?.recentDonations?.length && !dashboardData?.recentItemDonations?.length) && (
-                    <div className="text-center py-8 text-gray-500">
-                      <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                      <p>No donations yet. Start making a difference today!</p>
-                      <button
-                        onClick={handleDonate}
-                        className="mt-4 bg-green-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                      >
-                        Make Your First Donation
-                      </button>
-                    </div>
-                  )}
+              <div className="card p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold">Recent Activity</h3>
+                  <Link href="/donate" className="text-sm text-green-600 hover:text-green-700 font-medium">
+                    View All
+                  </Link>
                 </div>
+                
+                {dashboardData?.recentItemDonations && dashboardData.recentItemDonations.length > 0 ? (
+                  <div className="space-y-4">
+                    {dashboardData.recentItemDonations.slice(0, 5).map((donation) => (
+                      <div key={donation.id} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                        <div className="flex-shrink-0">
+                          <Package className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            Item Donation
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(donation.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            donation.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                            donation.status === 'SOLD' ? 'bg-green-100 text-green-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {donation.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 mb-4">No recent item donations</p>
+                    <Link
+                      href="/donate"
+                      className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      <Package className="h-4 w-4 mr-2" />
+                      Donate Items
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -523,25 +495,6 @@ export default function UserDashboard() {
                 </button>
               </div>
               <div className="space-y-4">
-                {dashboardData?.recentDonations?.map((donation) => (
-                  <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 space-y-2 sm:space-y-0">
-                      <div className="flex items-center">
-                        <DollarSign className="h-5 w-5 text-green-600 mr-2" />
-                        <span className="font-medium">Monetary Donation</span>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)} self-start sm:self-auto`}>
-                        {donation.status.toLowerCase()}
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-600 mb-2">
-                      Date: {new Date(donation.createdAt).toLocaleDateString()}
-                    </div>
-                    <div className="text-sm">
-                      <span className="text-green-600 font-medium">Amount: ${donation.amount}</span>
-                    </div>
-                  </div>
-                ))}
                 {dashboardData?.recentItemDonations?.map((donation) => (
                   <div key={donation.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 space-y-2 sm:space-y-0">
@@ -549,7 +502,11 @@ export default function UserDashboard() {
                         <Package className="h-5 w-5 text-blue-600 mr-2" />
                         <span className="font-medium">Item Donation</span>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.status)} self-start sm:self-auto`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        donation.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                        donation.status === 'SOLD' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      } self-start sm:self-auto`}>
                         {donation.status.toLowerCase()}
                       </span>
                     </div>
@@ -561,7 +518,7 @@ export default function UserDashboard() {
                     </div>
                   </div>
                 ))}
-                {(!dashboardData?.recentDonations?.length && !dashboardData?.recentItemDonations?.length) && (
+                {(!dashboardData?.recentItemDonations?.length) && (
                   <div className="text-center py-8 text-gray-500">
                     <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                     <p>No donation history yet. Start making a difference today!</p>
