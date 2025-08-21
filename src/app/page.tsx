@@ -498,151 +498,44 @@ export default function Home() {
               <div className="col-span-full text-center text-red-600">{homeEventsError}</div>
             )}
             {!homeEventsLoading && !homeEventsError && homeEvents.length === 0 && (
-              <div className="col-span-full text-center text-zinc-600">No updates yet. Check back soon.</div>
+              <div className="col-span-full text-center text-zinc-600">No events scheduled at the moment.</div>
             )}
-            {homeEvents.slice(0, 6).map((event, idx) => (
+            {!homeEventsLoading && !homeEventsError && homeEvents.slice(0, 3).map((event) => (
               <motion.div
                 key={event.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6, delay: idx * 0.05 }}
-                className="card overflow-hidden group"
+                transition={{ duration: 0.6 }}
+                className="card p-6 hover:shadow-lg transition-shadow duration-300"
               >
-                <div className="h-48 overflow-hidden">
-                  <Image
-                    src={event.imageUrl || NATURAL_IMAGES[(3 + idx) % NATURAL_IMAGES.length]}
-                    alt={event.title}
-                    width={500}
-                    height={300}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(event.type)}`}>
+                    {event.type}
+                  </span>
+                  <span className="text-xs text-gray-500">{formatDate(event.date)}</span>
                 </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="flex items-center text-green-600">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      <span className="text-sm">{formatDate(event.date)}</span>
-                      <span className={`ml-3 px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(event.type)}`}>
-                        {event.type}
-                      </span>
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold text-green-900 mb-3">{event.title}</h3>
-                  <p className="text-green-700 mb-4 line-clamp-3">{event.description}</p>
-                  <Link href="/events" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
-                    Read More
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
+                <h3 className="text-lg font-semibold text-green-900 mb-2">{event.title}</h3>
+                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{event.description}</p>
+                <div className="flex items-center text-sm text-gray-500 mb-4">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  <span>{event.location}</span>
                 </div>
+                <Link
+                  href={`/events/${event.id}`}
+                  className="inline-flex items-center text-green-600 hover:text-green-700 font-medium text-sm"
+                >
+                  Learn More
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
               </motion.div>
             ))}
-              </div>
+          </div>
 
           <div className="text-center mt-12">
-            <Link href="/events" className="btn btn-secondary">
-              View All Updates
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Link href="/events" className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-8 py-3 font-semibold text-emerald-700 hover:bg-emerald-50">
+              View All Events
             </Link>
-            </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-24 bg-green-50 relative overflow-hidden">
-        {/* Decorative leaf pattern */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" 
-          style={{ 
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='96' viewBox='0 0 60 96'%3E%3Cg fill='%234caf50' fill-opacity='0.3'%3E%3Cpath d='M36 10a6 6 0 0 1 12 0v12a6 6 0 0 1-12 0V10zm24 78a6 6 0 0 1-6 6h-12a6 6 0 0 1 0-12h12a6 6 0 0 1 6 6zM4 72a6 6 0 0 1-4-10l8-8a6 6 0 0 1 8 8l-8 8a5.9 5.9 0 0 1-4 2zm54-8a6 6 0 0 1 0-12h12a6 6 0 0 1 0 12H58zm-48 0a6 6 0 0 1 0-12H22a6 6 0 0 1 0 12H10zM32 58a6 6 0 0 1-12 0V46a6 6 0 0 1 12 0v12zm24-42a6 6 0 0 1-6 6H38a6 6 0 0 1 0-12h12a6 6 0 0 1 6 6zm-48 0a6 6 0 0 1-6 6H0a6 6 0 0 1 0-12h2a6 6 0 0 1 6 6z'/%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 96px'
-          }}>
-        </div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            >
-              <span className="text-green-600 font-medium">GET IN TOUCH</span>
-              <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Contact Us</h2>
-              
-              <div className="space-y-6 text-green-800">
-                <p className="lead-text">
-                  Have questions or want to get involved? We'd love to hear from you. 
-                  Reach out through any of these channels or fill out our contact form.
-                </p>
-                
-                <ul className="space-y-4">
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mt-1">
-                      <Mail className="h-5 w-5 text-green-700" />
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="font-medium text-green-900">Email</h4>
-                      <p className="text-green-700">Givingtreenonprofit@gmail.com</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mt-1">
-                      <Phone className="h-5 w-5 text-green-700" />
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="font-medium text-green-900">Phone</h4>
-                      <p className="text-green-700">(905) 883-1212</p>
-                </div>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mt-1">
-                      <MapPin className="h-5 w-5 text-green-700" />
-                </div>
-                    <div className="ml-4">
-                      <h4 className="font-medium text-green-900">Location</h4>
-                      <p className="text-green-700">Serving Mackenzie Health communities</p>
-                </div>
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <div className="card p-8 shadow-lg">
-                <h3 className="text-xl font-bold text-green-900 mb-6">Send Us a Message</h3>
-                <form className="space-y-4" key="contact-form">
-                  <div>
-                    <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="name">Name</label>
-                    <input type="text" id="name" className="field" placeholder="Your name" />
-                  </div>
-                  <div>
-                    <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="email">Email</label>
-                    <input
-                      type="email"
-                      id="email"
-                      className="field"
-                      placeholder="Your email address" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-green-800 mb-1 text-sm font-medium" htmlFor="message">Message</label>
-                    <textarea id="message" className="field min-h-[120px] resize-none" placeholder="How can we help?"></textarea>
-                  </div>
-                  <button 
-                    type="submit"
-                    className="btn btn-primary w-full"
-                  >
-                    <Send className="mr-2 h-5 w-5" />
-                    Send Message
-                  </button>
-                </form>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>
@@ -708,7 +601,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Our Partners Section - MOVED TO BOTTOM */}
+      {/* Our Partners Section */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4 text-center">
           <motion.div
@@ -732,6 +625,154 @@ export default function Home() {
               We are proud to partner with Mackenzie Health, dedicating 100% of our proceeds to support their vital work in enhancing patient care and community well-being.
             </p>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Contact Section - MOVED TO BOTTOM */}
+      <section id="contact" className="py-24 bg-green-50 relative overflow-hidden">
+        {/* Decorative leaf pattern */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" 
+             style={{
+               backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23047857' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+             }}
+        />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <span className="text-green-600 font-medium">GET IN TOUCH</span>
+            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Contact Us</h2>
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+              Have questions about our mission, want to volunteer, or need information about donations? 
+              We'd love to hear from you.
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            {/* Contact Information */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <h3 className="text-2xl font-bold text-green-900 mb-6">Let's Connect</h3>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <MapPin className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Address</h3>
+                    <p className="text-gray-600">152 Colesbrook Rd, Richmondhill, ON L4S 2G4</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <Phone className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Phone</h3>
+                    <p className="text-gray-600">(437) 214-6840</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <Mail className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Email</h3>
+                    <p className="text-gray-600">info@givingtreefoundation.org</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                <h3 className="text-2xl font-bold text-green-900 mb-6">Send us a Message</h3>
+                <form className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Enter your email"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                      Subject *
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      placeholder="What's this about?"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                      Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      required
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      placeholder="Tell us more..."
+                    />
+                  </div>
+                  
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+                  >
+                    <Send className="h-5 w-5" />
+                    <span>Send Message</span>
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
