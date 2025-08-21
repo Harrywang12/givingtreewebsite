@@ -84,10 +84,23 @@ export default function VolunteerPage() {
                 <li>• Be part of a compassionate team</li>
               </ul>
               <div className="mt-6 space-y-3 text-sm text-green-800">
-                <div className="flex items-center"><Mail className="h-4 w-4 mr-2"/><span className="break-words">Givingtreenonprofit@gmail.com</span></div>
-                <div className="flex items-center"><Phone className="h-4 w-4 mr-2"/><span>(905) 883-1212</span></div>
-                <div className="flex items-center"><MapPin className="h-4 w-4 mr-2"/><span>Serving Mackenzie Health communities</span></div>
-              </div>
+                  <div className="flex items-center">
+                    <Phone className="h-4 w-4 mr-2"/>
+                    <span>(647) 897-9128</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Phone className="h-4 w-4 mr-2"/>
+                    <span>(437) 214-6840</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Mail className="h-4 w-4 mr-2"/>
+                    <span className="break-words">givingtreenonprofit@gmail.com</span>
+                  </div>
+                  <div className="flex items-center">
+                    <MapPin className="h-4 w-4 mr-2"/>
+                    <span>Serving Mackenzie Health communities</span>
+                  </div>
+                </div>
             </motion.div>
           </div>
 

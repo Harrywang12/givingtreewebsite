@@ -112,27 +112,27 @@ export default function RootLayout({
             "@context": "https://schema.org",
             "@type": "NonProfit",
             "name": "The Giving Tree Non-Profit Foundation",
+            "description": "The Giving Tree Foundation transforms generosity into healthcare support, collecting and reselling items with 100% of proceeds going to Mackenzie Health to enhance patient care.",
             "url": process.env.NEXT_PUBLIC_APP_URL || "https://yourdomain.com",
             "logo": `${process.env.NEXT_PUBLIC_APP_URL || "https://yourdomain.com"}/logo.png`,
-            "sameAs": [],
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "telephone": "(905) 883-1212",
-              "contactType": "customer service",
-              "email": "Givingtreenonprofit@gmail.com"
-            },
-            "description": "The Giving Tree Foundation transforms generosity into tangible support for healthcare. We collect and resell gently used items, directing 100% of proceeds to Mackenzie Health, fostering a community of giving that improves care for all.",
-            "foundingDate": "2025-09",
-            "founder": {
-              "@type": "Person",
-              "name": "Ruogu Qiu and Justin Wu"
-            },
+            "foundingDate": "2024",
             "address": {
               "@type": "PostalAddress",
-              "addressLocality": "Richmond Hill",
+              "streetAddress": "152 Colesbrook Rd",
+              "addressLocality": "Richmondhill",
               "addressRegion": "ON",
+              "postalCode": "L4S 2G4",
               "addressCountry": "CA"
-            }
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": ["+1-647-897-9128", "+1-437-214-6840"],
+              "email": "givingtreenonprofit@gmail.com",
+              "contactType": "customer service"
+            },
+            "sameAs": [
+              "https://supportmackenziehealth.ca"
+            ]
           })
         }} />
       </body>

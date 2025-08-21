@@ -173,7 +173,7 @@ export default function Home() {
                 className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
               >
                 <Heart className="w-5 h-5" />
-                Get Started
+                Make a donation
               </motion.button>
               
               <Link href="/mission">
@@ -304,6 +304,112 @@ export default function Home() {
               </Link>
             </motion.div>
             </div>
+        </div>
+      </section>
+
+      {/* Schedule Section */}
+      <section className="py-24 bg-green-50">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <span className="text-green-600 font-medium">WEEKLY SCHEDULE</span>
+            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Join Us Every Week</h2>
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+              We have a regular schedule of activities to support our mission. Come visit us at our location 
+              to donate items or find great deals while supporting Mackenzie Health.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Monday Collection */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="bg-white rounded-lg shadow-lg p-8 text-center"
+            >
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Package className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-green-900 mb-4">Monday Collections</h3>
+              <p className="text-gray-600 mb-6">
+                Every Monday, we collect gently used items from our community. 
+                Bring your donations to help support Mackenzie Health.
+              </p>
+              <div className="bg-green-50 rounded-lg p-4 mb-6">
+                <p className="text-green-800 font-semibold">📍 152 Colesbrook Rd, Richmondhill, ON L4S 2G4</p>
+              </div>
+              <Link
+                href="/donate"
+                className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors duration-200"
+              >
+                <Package className="h-5 w-5 mr-2" />
+                Donate Items
+              </Link>
+            </motion.div>
+
+            {/* Friday Sales */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="bg-white rounded-lg shadow-lg p-8 text-center"
+            >
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Heart className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-green-900 mb-4">Friday Sales</h3>
+              <p className="text-gray-600 mb-6">
+                Every Friday, we host sales of donated items. 
+                Find great deals while supporting our mission to help Mackenzie Health.
+              </p>
+              <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                <p className="text-blue-800 font-semibold">📍 152 Colesbrook Rd, Richmondhill, ON L4S 2G4</p>
+              </div>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-center mt-12"
+          >
+            <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
+              <h3 className="text-xl font-bold text-green-900 mb-4">Location & Hours</h3>
+              <div className="grid md:grid-cols-2 gap-6 text-left">
+                <div>
+                  <h4 className="font-semibold text-green-800 mb-2">Monday Collections</h4>
+                  <p className="text-gray-600">9:00 AM - 5:00 PM</p>
+                  <p className="text-sm text-gray-500">Item donations accepted</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-blue-800 mb-2">Friday Sales</h4>
+                  <p className="text-gray-600">10:00 AM - 6:00 PM</p>
+                  <p className="text-sm text-gray-500">Public sales event</p>
+                </div>
+              </div>
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <a 
+                  href="https://maps.google.com/?q=152+Colesbrook+Rd,+Richmondhill,+ON+L4S+2G4" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center text-green-600 hover:text-green-700 font-medium"
+                >
+                  <MapPin className="h-4 w-4 mr-2" />
+                  Get Directions on Google Maps
+                </a>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -679,6 +785,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Phone</h3>
+                    <p className="text-gray-600">(647) 897-9128</p>
                     <p className="text-gray-600">(437) 214-6840</p>
                   </div>
                 </div>
@@ -689,7 +796,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">info@givingtreefoundation.org</p>
+                    <p className="text-gray-600">givingtreenonprofit@gmail.com</p>
                   </div>
                 </div>
               </div>

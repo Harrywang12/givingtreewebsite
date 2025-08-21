@@ -106,22 +106,23 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="bg-green-100 p-3 rounded-lg">
+                  <div className="flex-shrink-0">
                     <Phone className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-green-800">(437) 214-6840</p>
+                    <h3 className="text-lg font-semibold text-gray-900">Phone</h3>
+                    <p className="text-gray-600">(647) 897-9128</p>
+                    <p className="text-gray-600">(437) 214-6840</p>
                   </div>
                 </div>
-
+                    
                 <div className="flex items-start space-x-4">
-                  <div className="bg-green-100 p-3 rounded-lg">
+                  <div className="flex-shrink-0">
                     <Mail className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-green-800">info@givingtreefoundation.org</p>
+                    <h3 className="text-lg font-semibold text-gray-900">Email</h3>
+                    <p className="text-gray-600">givingtreenonprofit@gmail.com</p>
                   </div>
                 </div>
               </div>
@@ -228,9 +229,8 @@ export default function ContactPage() {
                       <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
                       <div>
                         <p className="text-green-700 text-sm font-medium">Message Sent Successfully!</p>
-                        <p className="text-green-600 text-sm mt-1">
-                          Your message has been sent to Givingtreenonprofit@gmail.com. 
-                          We&apos;ll respond within 24 hours during business days.
+                        <p className="text-gray-600 mb-6">
+                          Your message has been sent to givingtreenonprofit@gmail.com.
                         </p>
                       </div>
                     </div>

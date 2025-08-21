@@ -125,16 +125,23 @@ export default function SiteFooter() {
               </h4>
               <ul className="space-y-4">
                 <li className="flex items-start">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mt-1">
-                    <Mail className="h-4 w-4 text-green-700" />
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mt-1">
+                    <Phone className="h-5 w-5 text-green-700" />
                   </div>
-                  <span className="ml-3 text-base text-green-800">Givingtreenonprofit@gmail.com</span>
+                  <div className="ml-4">
+                    <h4 className="font-medium text-green-900">Phone</h4>
+                    <p className="text-green-700">(647) 897-9128</p>
+                    <p className="text-green-700">(437) 214-6840</p>
+                  </div>
                 </li>
                 <li className="flex items-start">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mt-1">
-                    <Phone className="h-4 w-4 text-green-700" />
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center mt-1">
+                    <Mail className="h-5 w-5 text-green-700" />
                   </div>
-                  <span className="ml-3 text-base text-green-800">(905) 883-1212</span>
+                  <div className="ml-4">
+                    <h4 className="font-medium text-green-900">Email</h4>
+                    <p className="text-green-700">givingtreenonprofit@gmail.com</p>
+                  </div>
                 </li>
                 <li className="flex items-start">
                   <div className="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mt-1">
