@@ -379,7 +379,7 @@ export default function EventsPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -414,23 +414,6 @@ export default function EventsPage() {
                 <Users className="h-5 w-5 mr-2" />
                 Volunteer Now
               </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="card p-6 text-center"
-            >
-              <Calendar className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-zinc-900 mb-3">Stay Updated</h3>
-              <p className="text-green-800 mb-4">Subscribe to our newsletter for the latest updates</p>
-              <button 
-                onClick={() => window.location.href = '/'}
-                className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-4 py-2 font-semibold text-emerald-700 hover:bg-emerald-50"
-              >
-                Subscribe
-              </button>
             </motion.div>
           </div>
         </div>

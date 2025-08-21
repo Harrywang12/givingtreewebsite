@@ -153,36 +153,6 @@ export default function SiteFooter() {
             </div>
           </div>
 
-          {/* Newsletter sign-up */}
-          <div className="mt-16 mb-8 bg-white rounded-xl p-6 shadow-md max-w-3xl mx-auto relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-40 h-40 opacity-5">
-              <Image 
-                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234caf50'%3E%3Cpath d='M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C16 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z'/%3E%3C/svg%3E"
-                width={160}
-                height={160}
-                alt=""
-              />
-            </div>
-
-            <h3 className="text-xl font-bold text-green-900 mb-2">Join Our Community</h3>
-            <p className="text-green-700 mb-4">Subscribe to receive updates on our impact and upcoming events.</p>
-            
-            <form className="flex flex-col sm:flex-row gap-3">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="field flex-1" 
-                required 
-              />
-              <button 
-                type="submit" 
-                className="btn btn-primary"
-              >
-                Subscribe
-              </button>
-            </form>
-          </div>
-
           <div className="mt-10 pt-6 border-t border-green-200 text-center text-green-700">
             <p className="mb-4">© {new Date().getFullYear()} The Giving Tree Foundation. All rights reserved.</p>
             
