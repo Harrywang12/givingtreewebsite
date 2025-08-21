@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, Clock, Heart, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Send, Heart, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ContactPage() {
@@ -100,9 +100,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900">Address</h3>
                     <p className="text-green-800">
-                      10 Trench Street<br />
-                      Richmond Hill, ON L4C 4Z3<br />
-                      Canada
+                      152 Colesbrook Rd, Richmondhill, ON L4S 2G4
                     </p>
                   </div>
                 </div>
@@ -113,7 +111,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-green-800">+1 (905) 883-1212</p>
+                    <p className="text-green-800">(437) 214-6840</p>
                   </div>
                 </div>
 
@@ -123,21 +121,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-green-800">Givingtreenonprofit@gmail.com</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="bg-green-100 p-3 rounded-lg">
-                    <Clock className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Office Hours</h3>
-                    <p className="text-green-800">
-                      Monday - Friday: 9:00 AM - 5:00 PM<br />
-                      Saturday: 10:00 AM - 2:00 PM<br />
-                      Sunday: Closed
-                    </p>
+                    <p className="text-green-800">info@givingtreefoundation.org</p>
                   </div>
                 </div>
               </div>

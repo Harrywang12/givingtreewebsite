@@ -49,9 +49,9 @@ export const metadata: Metadata = {
     images: ['/homepagehero.jpg'],
   },
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
-    shortcut: "/logo.png",
+    icon: '/logo.png',
+    apple: '/logo.png',
+    shortcut: '/logo.png',
   },
   alternates: {
     canonical: '/',
@@ -74,9 +74,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-[var(--color-bg)] text-[var(--color-fg)]">
       <head>
-        <link rel="icon" type="image/png" href="/logo.png" />
-        <link rel="apple-touch-icon" type="image/png" href="/logo.png" />
-        <link rel="shortcut icon" type="image/png" href="/logo.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

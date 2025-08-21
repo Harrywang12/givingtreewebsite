@@ -14,7 +14,8 @@ import {
   Home,
   Plus,
   Shield,
-  Trash2
+  Trash2,
+  Calendar
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardDonationForm from './DashboardDonationForm';
@@ -51,6 +52,8 @@ interface DashboardData {
     totalItemsSold: number;
     pendingItems: number;
   };
+  totalItemsDonated: number;
+  totalEventsAttended: number;
 }
 
 export default function UserDashboard() {
@@ -281,8 +284,7 @@ export default function UserDashboard() {
 
   // Use real data if available, otherwise fall back to user data
   const displayUser = dashboardData?.user || user;
-  const totalMonetary = dashboardData?.stats.totalMonetary || user.totalDonated || 0;
-  const totalItems = dashboardData?.stats.totalItemsSold || user.itemsDonated || 0;
+  const totalItems = dashboardData?.user?.itemsDonated || 0;
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
@@ -402,35 +404,54 @@ export default function UserDashboard() {
               </div>
 
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                <div className="bg-green-50 p-4 sm:p-6 rounded-lg">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="card p-4 sm:p-6">
                   <div className="flex items-center">
-                    <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mr-3 sm:mr-4" />
-                    <div>
-                      <p className="text-sm text-green-600">Total Donated</p>
-                      <p className="text-xl sm:text-2xl font-bold text-green-800">${totalMonetary}</p>
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <Package className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Items Donated</p>
+                      <p className="text-2xl font-bold text-gray-900">{dashboardData?.user?.itemsDonated || 0}</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-blue-50 p-4 sm:p-6 rounded-lg">
+
+                <div className="card p-4 sm:p-6">
                   <div className="flex items-center">
-                    <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mr-3 sm:mr-4" />
-                    <div>
-                      <p className="text-sm text-blue-600">Items Donated</p>
-                      <p className="text-xl sm:text-2xl font-bold text-blue-800">{totalItems}</p>
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Calendar className="h-6 w-6 text-blue-600" />
                     </div>
-                  </div>
-                </div>
-                <div className="bg-purple-50 p-4 sm:p-6 rounded-lg sm:col-span-2 lg:col-span-1">
-                  <div className="flex items-center">
-                    <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600 mr-3 sm:mr-4" />
-                    <div>
-                      <p className="text-sm text-purple-600">Total Impact</p>
-                      <p className="text-xl sm:text-2xl font-bold text-purple-800">${displayUser.totalDonated || totalMonetary}</p>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Events Attended</p>
+                      <p className="text-2xl font-bold text-gray-900">{dashboardData?.totalEventsAttended || 0}</p>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Donation tracking removed for now - keeping code structure */}
+              {/* 
+              <div className="card p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Donation Progress</h3>
+                  <span className="text-sm text-gray-500">This month</span>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Total Donated</span>
+                    <span className="text-lg font-semibold text-purple-800">${displayUser.totalDonated || totalMonetary}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min((displayUser.totalDonated || totalMonetary) / 1000 * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-gray-500">Goal: $1,000</p>
+                </div>
+              </div>
+              */}
 
               {/* Recent Activity */}
               <div>
@@ -692,6 +713,8 @@ export default function UserDashboard() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
                   />
                 </div>
+                {/* Donation amount tracking removed for now - keeping code structure */}
+                {/*
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Total Amount Donated</label>
                   <input
@@ -701,6 +724,7 @@ export default function UserDashboard() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
                   />
                 </div>
+                */}
               </div>
             </div>
           )}

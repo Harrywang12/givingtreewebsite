@@ -107,11 +107,23 @@ export async function GET(request: NextRequest) {
       pendingItems: donationStats[2]._count.id
     }
 
+    // Get total items donated count
+    const totalItemsDonated = await prisma.itemDonation.count({
+      where: {
+        userId: decoded.userId
+      }
+    })
+
+    // Get total events attended count (placeholder for now)
+    const totalEventsAttended = 0
+
     return NextResponse.json({
       user,
       recentDonations,
       recentItemDonations,
-      stats
+      stats,
+      totalItemsDonated,
+      totalEventsAttended
     })
 
   } catch (error) {

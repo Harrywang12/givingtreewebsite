@@ -34,8 +34,6 @@ const NATURAL_IMAGES = [
 
 export default function Home() {
   const { user } = useAuth();
-  const router = useRouter();
-  const [email, setEmail] = useState<string>('');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   
@@ -111,9 +109,20 @@ export default function Home() {
   // Parallax scroll references
   const heroRef = useRef<HTMLElement>(null);
 
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle subscription logic here
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+  };
+
+  const handleAuthModeChange = (mode: 'login' | 'register') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  };
+
+  const handleScrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -212,11 +221,22 @@ export default function Home() {
             className="max-w-4xl mx-auto text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-green-900 mb-6 font-serif">Our Mission</h2>
-            <p className="text-xl text-green-800 leading-relaxed">
-              The Giving Tree Foundation transforms generosity into tangible support for healthcare. 
-              We collect and resell gently used items, directing 100% of proceeds to Mackenzie Health, 
-              fostering a community of giving that improves care for all.
-            </p>
+            <p className="text-lg text-gray-700 leading-relaxed">
+                    We collect and resell gently used items, with{' '}
+                    <Link href="/donate" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
+                      <Heart className="h-4 w-4 mr-1" />
+                      100% of proceeds
+                    </Link>{' '}
+                    going directly to Mackenzie Health to enhance patient care and support community wellness initiatives.
+                  </p>
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    Whether you{' '}
+                    <Link href="/donate" className="text-green-700 font-medium inline-flex items-center hover:text-green-500 transition-colors">
+                      <Heart className="h-4 w-4 mr-1" />
+                      donate items
+                    </Link>{' '}
+                    or contribute financially, your generosity makes a real difference in healthcare accessibility and quality.
+                  </p>
           </motion.div>
         
           <div className="grid md:grid-cols-3 gap-8">
@@ -566,7 +586,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-24 bg-green-50 relative overflow-hidden">
+      <section id="contact" className="py-24 bg-green-50 relative overflow-hidden">
         {/* Decorative leaf pattern */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" 
           style={{ 
@@ -642,8 +662,6 @@ export default function Home() {
                     <input
                       type="email"
                       id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
                       className="field"
                       placeholder="Your email address" 
                     />
@@ -654,7 +672,6 @@ export default function Home() {
                   </div>
                   <button 
                     type="submit"
-                    onClick={handleSubscribe}
                     className="btn btn-primary w-full"
                   >
                     <Send className="mr-2 h-5 w-5" />

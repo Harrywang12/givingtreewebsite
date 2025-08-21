@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Calendar, MessageCircle, ThumbsUp, Heart, Users, User } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
 import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
 
 interface Comment {
   id: string;
@@ -406,12 +407,13 @@ export default function EventsPage() {
               <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-zinc-900 mb-3">Volunteer</h3>
               <p className="text-green-800 mb-4">Join our team and help us grow our impact</p>
-              <a 
+              <Link
                 href="/volunteer"
-                className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 font-semibold text-white hover:opacity-90"
+                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-8 py-3 font-semibold text-white hover:bg-emerald-700"
               >
-                Get Involved
-              </a>
+                <Users className="h-5 w-5 mr-2" />
+                Volunteer Now
+              </Link>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -450,9 +452,6 @@ export default function EventsPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button onClick={() => (window.location.href = '/donate')} className="btn btn-primary px-8 py-3">
                 Make a Donation
-              </button>
-              <button onClick={() => (window.location.href = '/leaderboard')} className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-8 py-3 font-semibold text-emerald-700 hover:bg-emerald-50">
-                View Leaderboard
               </button>
             </div>
           </motion.div>
