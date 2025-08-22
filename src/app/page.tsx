@@ -327,7 +327,7 @@ export default function Home() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Monday Collection */}
+            {/* Friday Collection */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -340,7 +340,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-bold text-green-900 mb-4">Friday Collections</h3>
               <p className="text-gray-600 mb-6">
-                Every Friday, we collect gently used items from our community. 
+                Every Friday, we collect gently used items from our community.
                 Bring your donations to help support Mackenzie Health.
               </p>
               <div className="bg-green-50 rounded-lg p-4 mb-6">
@@ -355,7 +355,7 @@ export default function Home() {
               </Link>
             </motion.div>
 
-            {/* Friday Sales */}
+            {/* Monday Sales */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -368,7 +368,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-bold text-green-900 mb-4">Monday Sales</h3>
               <p className="text-gray-600 mb-6">
-                Every Monday, we host sales of donated items. 
+                Every Monday, we host sales of donated items.
                 Find great deals while supporting our mission to help Mackenzie Health.
               </p>
               <div className="bg-blue-50 rounded-lg p-4 mb-6">
@@ -388,12 +388,12 @@ export default function Home() {
               <h3 className="text-xl font-bold text-green-900 mb-4">Location & Hours</h3>
               <div className="grid md:grid-cols-2 gap-6 text-center">
                 <div>
-                  <h4 className="font-semibold text-green-800 mb-2">Monday Collections</h4>
+                  <h4 className="font-semibold text-green-800 mb-2">Friday Collections</h4>
                   <p className="text-gray-600">9:00 AM - 5:00 PM</p>
                   <p className="text-sm text-gray-500">Item donations accepted</p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-blue-800 mb-2">Friday Sales</h4>
+                  <h4 className="font-semibold text-blue-800 mb-2">Monday Sales</h4>
                   <p className="text-gray-600">10:00 AM - 6:00 PM</p>
                   <p className="text-sm text-gray-500">Public sales event</p>
                 </div>

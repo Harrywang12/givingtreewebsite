@@ -138,6 +138,23 @@ export default function DonationForm() {
         </div>
       </div>
 
+      {/* Collections List Section */}
+      <div className="mb-8 bg-white rounded-lg shadow-lg p-6">
+        <h3 className="text-xl font-bold text-green-900 mb-4 text-center">Items We Accept for Collections</h3>
+        <div className="flex justify-center">
+          <Image
+            src="/collections.jpg"
+            alt="List of items accepted for collections"
+            width={600}
+            height={400}
+            className="rounded-lg shadow-md max-w-full h-auto"
+          />
+        </div>
+        <p className="text-sm text-gray-600 text-center mt-3">
+          Please review the list above to see what items we accept. For items not listed, please contact us.
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
