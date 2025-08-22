@@ -14,12 +14,14 @@ import {
   Shield
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import AuthModal from '@/components/AuthModal';
 
 export default function SiteHeader() {
   const { user } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Handle scroll events to create a dynamic header
   useEffect(() => {
@@ -32,7 +34,11 @@ export default function SiteHeader() {
   }, []);
 
   const handleDashboardClick = () => {
-    router.push('/dashboard');
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      setShowAuthModal(true);
+    }
   };
 
   return (
@@ -150,6 +156,13 @@ export default function SiteHeader() {
             </div>
           </div>
         </div>
+      )}
+      {showAuthModal && (
+        <AuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)} 
+          mode="login"
+        />
       )}
     </header>
   );
