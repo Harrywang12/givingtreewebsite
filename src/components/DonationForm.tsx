@@ -123,7 +123,7 @@ export default function DonationForm() {
         <h2 className="text-3xl font-bold text-green-900 mb-4">Donate Items</h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           We accept online donations for items that have significant value, items you're unsure if they qualify for our standards, 
-          or items that need to be picked up. For all other donations, we accept donations every Monday at our location.
+          or items that need to be picked up. For all other donations, we accept donations every Friday at our location.
         </p>
         <div className="mt-4">
           <a 

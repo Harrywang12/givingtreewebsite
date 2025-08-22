@@ -338,9 +338,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Package className="h-8 w-8 text-green-600" />
               </div>
-              <h3 className="text-2xl font-bold text-green-900 mb-4">Monday Collections</h3>
+              <h3 className="text-2xl font-bold text-green-900 mb-4">Friday Collections</h3>
               <p className="text-gray-600 mb-6">
-                Every Monday, we collect gently used items from our community. 
+                Every Friday, we collect gently used items from our community. 
                 Bring your donations to help support Mackenzie Health.
               </p>
               <div className="bg-green-50 rounded-lg p-4 mb-6">
@@ -366,9 +366,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Heart className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-2xl font-bold text-green-900 mb-4">Friday Sales</h3>
+              <h3 className="text-2xl font-bold text-green-900 mb-4">Monday Sales</h3>
               <p className="text-gray-600 mb-6">
-                Every Friday, we host sales of donated items. 
+                Every Monday, we host sales of donated items. 
                 Find great deals while supporting our mission to help Mackenzie Health.
               </p>
               <div className="bg-blue-50 rounded-lg p-4 mb-6">
@@ -386,7 +386,7 @@ export default function Home() {
           >
             <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
               <h3 className="text-xl font-bold text-green-900 mb-4">Location & Hours</h3>
-              <div className="grid md:grid-cols-2 gap-6 text-left">
+              <div className="grid md:grid-cols-2 gap-6 text-center">
                 <div>
                   <h4 className="font-semibold text-green-800 mb-2">Monday Collections</h4>
                   <p className="text-gray-600">9:00 AM - 5:00 PM</p>
@@ -398,7 +398,7 @@ export default function Home() {
                   <p className="text-sm text-gray-500">Public sales event</p>
                 </div>
               </div>
-              <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="mt-6 pt-6 border-t border-gray-200 text-center">
                 <a 
                   href="https://maps.google.com/?q=152+Colesbrook+Rd,+Richmondhill,+ON+L4S+2G4" 
                   target="_blank" 
