@@ -177,7 +177,7 @@ export default function Home() {
                 </motion.button>
               </Link>
               
-              <Link href="/donate">
+              <Link href="/about">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
