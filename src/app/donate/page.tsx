@@ -8,7 +8,7 @@ import MonetaryDonationForm from '@/components/MonetaryDonationForm';
 import { Heart, DollarSign, Package } from 'lucide-react';
 
 function DonateContent() {
-  const [activeTab, setActiveTab] = useState('monetary');
+  const [activeTab, setActiveTab] = useState('items');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12">
@@ -39,22 +39,22 @@ function DonateContent() {
         >
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="monetary" className="flex items-center space-x-2">
-                <DollarSign className="h-5 w-5" />
-                <span>Monetary Donation</span>
-              </TabsTrigger>
               <TabsTrigger value="items" className="flex items-center space-x-2">
                 <Package className="h-5 w-5" />
                 <span>Item Donation</span>
               </TabsTrigger>
+              <TabsTrigger value="monetary" className="flex items-center space-x-2">
+                <DollarSign className="h-5 w-5" />
+                <span>Monetary Donation</span>
+              </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="monetary" className="mt-0">
-              <MonetaryDonationForm />
-            </TabsContent>
 
             <TabsContent value="items" className="mt-0">
               <DonationForm />
+            </TabsContent>
+
+            <TabsContent value="monetary" className="mt-0">
+              <MonetaryDonationForm />
             </TabsContent>
           </Tabs>
         </motion.div>
