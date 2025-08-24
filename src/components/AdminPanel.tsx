@@ -28,6 +28,7 @@ interface EventFormData {
   type: 'NEWS' | 'EVENT' | 'ANNOUNCEMENT';
   location: string;
   imageUrl: string;
+  imageFile?: File;
 }
 
 export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
@@ -47,7 +48,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     date: '',
     type: 'NEWS',
     location: '',
-    imageUrl: ''
+    imageUrl: '',
+    imageFile: undefined
   });
 
   // Check if user is admin
@@ -132,14 +134,45 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     setMessage('');
 
     try {
-      const response = await fetch('/api/admin/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
+      let response;
+      
+      if (formData.imageFile) {
+        // Handle file upload
+        const formDataToSend = new FormData();
+        formDataToSend.append('title', formData.title);
+        formDataToSend.append('description', formData.description);
+        formDataToSend.append('content', formData.content);
+        formDataToSend.append('date', formData.date);
+        formDataToSend.append('type', formData.type);
+        formDataToSend.append('location', formData.location);
+        formDataToSend.append('imageFile', formData.imageFile);
+        
+        response = await fetch('/api/admin/events', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formDataToSend
+        });
+      } else {
+        // Handle text-only submission
+        response = await fetch('/api/admin/events', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            title: formData.title,
+            description: formData.description,
+            content: formData.content,
+            date: formData.date,
+            type: formData.type,
+            location: formData.location,
+            imageUrl: formData.imageUrl
+          })
+        });
+      }
 
       const result = await response.json();
 
@@ -152,7 +185,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           date: '',
           type: 'NEWS',
           location: '',
-          imageUrl: ''
+          imageUrl: '',
+          imageFile: undefined
         });
         setShowForm(false);
         fetchAdminEvents(); // Refresh the content list
@@ -172,6 +206,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData(prev => ({
+        ...prev,
+        imageFile: file,
+        imageUrl: URL.createObjectURL(file)
+      }));
+    }
   };
 
   if (!isOpen) return null;
@@ -274,24 +319,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
               {/* Event Action Buttons */}
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">Content Management</h3>
-                <div className="flex items-center space-x-3">
-                  <button
+                                  <button
                     onClick={() => setShowForm(!showForm)}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
                   >
                     {showForm ? <EyeOff className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
                     {showForm ? 'Hide Form' : 'Create Content'}
                   </button>
-                  <a
-                    href="/past-events"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
-                  >
-                    <Calendar className="h-4 w-4 mr-2" />
-                    View Past Events
-                  </a>
-                </div>
               </div>
             </>
           )}
@@ -391,7 +425,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       Date *
                     </label>
                     <input
-                      type="datetime-local"
+                      type="date"
                       name="date"
                       value={formData.date}
                       onChange={handleInputChange}
@@ -418,16 +452,35 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Image URL
+                    Image Upload
                   </label>
-                  <input
-                    type="url"
-                    name="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="https://example.com/image.jpg (optional)"
-                  />
+                  <div className="space-y-3">
+                    <input
+                      type="file"
+                      name="imageFile"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {formData.imageUrl && (
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                        <img 
+                          src={formData.imageUrl} 
+                          alt="Preview" 
+                          className="w-32 h-32 object-cover rounded-lg border"
+                        />
+                      </div>
+                    )}
+                    <input
+                      type="url"
+                      name="imageUrl"
+                      value={formData.imageUrl}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Or enter image URL directly (optional)"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-end space-x-3 pt-4">

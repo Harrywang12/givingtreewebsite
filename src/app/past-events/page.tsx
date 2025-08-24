@@ -217,12 +217,7 @@ export default function PastEventsPage() {
               <p className="text-green-800 mb-6">
                 We haven't hosted any events yet. Check back soon for upcoming community gatherings!
               </p>
-              <Link
-                href="/announcements"
-                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
-              >
-                View Announcements
-              </Link>
+
             </div>
           ) : (
             <div className="space-y-8">
@@ -370,9 +365,6 @@ export default function PastEventsPage() {
               Don't miss out on future events and announcements
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/announcements" className="btn btn-primary px-8 py-3">
-                View Announcements
-              </Link>
               <Link href="/volunteer" className="btn btn-secondary px-8 py-3">
                 Get Involved
               </Link>

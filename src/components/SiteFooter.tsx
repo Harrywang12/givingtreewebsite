@@ -86,12 +86,18 @@ export default function SiteFooter() {
                     Team
                   </Link>
                 </li>
-                <li>
-                  <Link href="/announcements" className="footer-link flex items-center">
-                    <span className="h-1 w-1 rounded-full bg-green-500 mr-2"></span>
-                                          Announcements
-                  </Link>
-                </li>
+                                  <li>
+                    <Link href="/announcements" className="footer-link flex items-center">
+                      <span className="h-1 w-1 rounded-full bg-green-500 mr-2"></span>
+                      Announcements
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/past-events" className="footer-link flex items-center">
+                      <span className="h-1 w-1 rounded-full bg-green-500 mr-2"></span>
+                      Past Events
+                    </Link>
+                  </li>
               </ul>
             </div>
 

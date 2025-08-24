@@ -235,12 +235,7 @@ export default function AnnouncementsPage() {
               <p className="text-green-800 mb-6">
                 Our admins haven't posted any announcements yet. Check back soon!
               </p>
-              <Link
-                href="/past-events"
-                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
-              >
-                View Past Events
-              </Link>
+
             </div>
           ) : (
             <div className="space-y-8">
@@ -447,9 +442,6 @@ export default function AnnouncementsPage() {
               <button onClick={() => (window.location.href = '/donate')} className="btn btn-primary px-8 py-3">
                 Make a Donation
               </button>
-              <Link href="/past-events" className="btn btn-secondary px-8 py-3">
-                View Past Events
-              </Link>
             </div>
           </motion.div>
         </div>
