@@ -370,11 +370,11 @@ export default function UserDashboard() {
                     Donate Items
                   </button>
                   <button
-                    onClick={() => router.push('/events')}
+                    onClick={() => router.push('/announcements')}
                     className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-4 py-3 font-semibold text-emerald-700 hover:bg-emerald-50"
                   >
                     <Heart className="h-5 w-5 mr-2" />
-                    View Events
+                    View Updates
                   </button>
                 </div>
               </div>

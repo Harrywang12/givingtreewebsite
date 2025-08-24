@@ -594,7 +594,7 @@ export default function Home() {
             className="text-center mb-16"
           >
             <span className="text-green-600 font-medium">STAY UPDATED</span>
-            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Latest News & Events</h2>
+                            <h2 className="text-4xl font-bold text-green-900 mt-2 mb-6 font-serif">Latest News & Updates</h2>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -605,7 +605,7 @@ export default function Home() {
               <div className="col-span-full text-center text-red-600">{homeEventsError}</div>
             )}
             {!homeEventsLoading && !homeEventsError && homeEvents.length === 0 && (
-              <div className="col-span-full text-center text-zinc-600">No events scheduled at the moment.</div>
+                              <div className="col-span-full text-center text-zinc-600">No updates at the moment.</div>
             )}
             {!homeEventsLoading && !homeEventsError && homeEvents.slice(0, 3).map((event) => (
               <motion.div
@@ -629,7 +629,7 @@ export default function Home() {
                   <span>{event.location}</span>
                 </div>
                 <Link
-                  href={`/events/${event.id}`}
+                  href={event.type === 'EVENT' ? `/past-events` : `/announcements`}
                   className="inline-flex items-center text-green-600 hover:text-green-700 font-medium text-sm"
                 >
                   Learn More
@@ -640,8 +640,8 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/events" className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-8 py-3 font-semibold text-emerald-700 hover:bg-emerald-50">
-              View All Events
+                            <Link href="/announcements" className="inline-flex items-center justify-center rounded-xl border border-emerald-200 px-8 py-3 font-semibold text-emerald-700 hover:bg-emerald-50">
+                              View All Updates
             </Link>
           </div>
         </div>

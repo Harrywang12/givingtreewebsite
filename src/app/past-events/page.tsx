@@ -37,7 +37,7 @@ interface Event {
   createdAt: string;
 }
 
-export default function EventsPage() {
+export default function PastEventsPage() {
   const { user, token } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,25 +46,25 @@ export default function EventsPage() {
   const [commentingOn, setCommentingOn] = useState<string | null>(null);
   const [likingEvents, setLikingEvents] = useState<Set<string>>(new Set());
 
-  // Fetch events from API
+  // Fetch past events (EVENT type only) from API
   useEffect(() => {
-    fetchEvents();
+    fetchPastEvents();
   }, []);
 
-  const fetchEvents = async () => {
+  const fetchPastEvents = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/events?limit=20');
+      const response = await fetch('/api/events?type=EVENT&limit=50');
       
       if (response.ok) {
         const data = await response.json();
         setEvents(data.events || []);
       } else {
-        setError('Failed to load events');
+        setError('Failed to load past events');
       }
     } catch (error) {
-      console.error('Error fetching events:', error);
-      setError('Failed to load events');
+      console.error('Error fetching past events:', error);
+      setError('Failed to load past events');
     } finally {
       setLoading(false);
     }
@@ -164,25 +164,12 @@ export default function EventsPage() {
     });
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'NEWS':
-        return 'bg-blue-100 text-blue-600';
-      case 'EVENT':
-        return 'bg-green-100 text-green-600';
-      case 'ANNOUNCEMENT':
-        return 'bg-purple-100 text-purple-600';
-      default:
-        return 'bg-gray-100 text-gray-700 dark:text-gray-800';
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-700 dark:text-gray-800">Loading events...</p>
+          <p className="text-gray-700 dark:text-gray-800">Loading past events...</p>
         </div>
       </div>
     );
@@ -191,11 +178,11 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
       <PageBanner
-        title="News & Events"
-        subtitle="Stay updated with the latest news and upcoming events from The Giving Tree Foundation"
+        title="Past Events"
+        subtitle="Relive the memories of our community events and gatherings"
       />
 
-      {/* Events List */}
+      {/* Past Events List */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -205,9 +192,9 @@ export default function EventsPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-zinc-900 mb-8">Latest Updates</h2>
+            <h2 className="text-4xl font-bold text-zinc-900 mb-8">Community Events</h2>
             <p className="text-xl text-green-800">
-              Follow our journey and stay connected with our community
+              Take a look back at the wonderful events we've hosted together
             </p>
           </motion.div>
 
@@ -215,7 +202,7 @@ export default function EventsPage() {
             <div className="text-center py-8">
               <p className="text-red-600 mb-4">{error}</p>
               <button 
-                onClick={fetchEvents}
+                onClick={fetchPastEvents}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
               >
                 Try Again
@@ -226,10 +213,16 @@ export default function EventsPage() {
           {events.length === 0 && !error ? (
             <div className="text-center py-12">
               <Calendar className="h-16 w-16 text-gray-700 dark:text-gray-900 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-zinc-900 mb-2">No Events Yet</h3>
+              <h3 className="text-lg font-semibold text-zinc-900 mb-2">No Past Events Yet</h3>
               <p className="text-green-800 mb-6">
-                Our admins haven't posted any events yet. Check back soon!
+                We haven't hosted any events yet. Check back soon for upcoming community gatherings!
               </p>
+              <Link
+                href="/announcements"
+                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
+              >
+                View Announcements
+              </Link>
             </div>
           ) : (
             <div className="space-y-8">
@@ -246,8 +239,8 @@ export default function EventsPage() {
                     <div className="flex items-center">
                       <Calendar className="h-5 w-5 text-gray-700 dark:text-gray-800 mr-2" />
                       <span className="text-green-800">{formatDate(event.date)}</span>
-                      <span className={`ml-3 px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(event.type)}`}>
-                        {event.type}
+                      <span className="ml-3 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-600">
+                        EVENT
                       </span>
                       {event.author.isAdmin && (
                         <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-600">
@@ -284,9 +277,9 @@ export default function EventsPage() {
                   )}
 
                   {event.location && (
-                                          <p className="text-sm text-green-700 mb-4">
-                        📍 {event.location}
-                      </p>
+                    <p className="text-sm text-green-700 mb-4">
+                      📍 {event.location}
+                    </p>
                   )}
                   
                   {/* Comments Section */}
@@ -363,62 +356,6 @@ export default function EventsPage() {
         </div>
       </section>
 
-      {/* Get Involved Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold text-zinc-900 mb-8">Get Involved</h2>
-            <p className="text-xl text-green-800">
-              Join our community and make a difference
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="card p-6 text-center"
-            >
-              <Heart className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-zinc-900 mb-3">Make a Donation</h3>
-              <p className="text-green-800 mb-4">Support our mission with a financial contribution</p>
-              <button 
-                onClick={() => window.location.href = '/donate'}
-                className="btn btn-primary"
-              >
-                Donate Now
-              </button>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="card p-6 text-center"
-            >
-              <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-zinc-900 mb-3">Volunteer</h3>
-              <p className="text-green-800 mb-4">Join our team and help us grow our impact</p>
-              <Link
-                href="/volunteer"
-                className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-8 py-3 font-semibold text-white hover:bg-emerald-700"
-              >
-                <Users className="h-5 w-5 mr-2" />
-                Volunteer Now
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* Call to Action */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -430,12 +367,15 @@ export default function EventsPage() {
           >
             <h2 className="text-3xl font-bold mb-6 text-zinc-900">Stay Connected</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto text-green-800">
-              Follow our journey and be part of our mission to support Mackenzie Health
+              Don't miss out on future events and announcements
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => (window.location.href = '/donate')} className="btn btn-primary px-8 py-3">
-                Make a Donation
-              </button>
+              <Link href="/announcements" className="btn btn-primary px-8 py-3">
+                View Announcements
+              </Link>
+              <Link href="/volunteer" className="btn btn-secondary px-8 py-3">
+                Get Involved
+              </Link>
             </div>
           </motion.div>
         </div>

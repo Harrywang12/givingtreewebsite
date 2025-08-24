@@ -87,9 +87,9 @@ export default function SiteFooter() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/events" className="footer-link flex items-center">
+                  <Link href="/announcements" className="footer-link flex items-center">
                     <span className="h-1 w-1 rounded-full bg-green-500 mr-2"></span>
-                    Events
+                                          Announcements
                   </Link>
                 </li>
               </ul>
