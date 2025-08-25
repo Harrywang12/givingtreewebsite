@@ -64,6 +64,21 @@ export default function PastEventsPage() {
     }
   }, [events]);
 
+  // Debug logging for image URLs
+  useEffect(() => {
+    if (events.length > 0) {
+      events.forEach(event => {
+        if (event.imageUrl && event.imageUrl.trim() !== '') {
+          console.log('Event has imageUrl:', { 
+            eventId: event.id, 
+            title: event.title, 
+            imageUrl: event.imageUrl 
+          });
+        }
+      });
+    }
+  }, [events]);
+
   const fetchPastEvents = async () => {
     try {
       setLoading(true);
@@ -323,7 +338,6 @@ export default function PastEventsPage() {
                   {/* Event Image */}
                   {event.imageUrl && event.imageUrl.trim() !== '' ? (
                     <div className="mb-4">
-                      {console.log('Rendering EventImage with:', { src: event.imageUrl, alt: event.title })}
                       <EventImage 
                         src={event.imageUrl} 
                         alt={event.title}
