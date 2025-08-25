@@ -30,8 +30,9 @@ export async function POST(request: NextRequest) {
 
     // Verify admin access
     console.log('Verifying admin access...');
+    let admin;
     try {
-      const admin = await verifyAdminFromRequest(request);
+      admin = await verifyAdminFromRequest(request);
       if (!admin) {
         console.log('Admin verification failed');
         try {
@@ -119,14 +120,8 @@ export async function POST(request: NextRequest) {
     
     if (!validation.isValid) {
       console.log('Validation failed:', validation.errors);
-      try {
-        await logAdminAction(admin.id, 'FAILED_EVENT_CREATE', 'events', { 
-          reason: 'Validation failed', 
-          errors: validation.errors 
-        });
-      } catch (logError) {
-        console.log('Failed to log failed event creation, continuing:', logError);
-      }
+      // Note: We can't log admin action here since admin verification hasn't happened yet
+      // This is a validation error, not an admin action failure
       return NextResponse.json(
         { error: 'Invalid event data', details: validation.errors },
         { status: 400, headers: ADMIN_SECURITY_HEADERS }
@@ -173,6 +168,17 @@ export async function POST(request: NextRequest) {
         
       } catch (imageError) {
         console.error('Image upload error:', imageError);
+        
+        // Try to log the admin action failure
+        try {
+          await logAdminAction(admin.id, 'FAILED_EVENT_CREATE', 'events', { 
+            reason: 'Image upload failed', 
+            error: imageError instanceof Error ? imageError.message : 'Unknown image error'
+          });
+        } catch (logError) {
+          console.log('Failed to log image upload failure, continuing:', logError);
+        }
+        
         // Continue without image if upload fails
         finalImageUrl = validation.sanitized!.imageUrl || '';
       }
@@ -185,30 +191,50 @@ export async function POST(request: NextRequest) {
     });
     
     // Create event in database
-    const event = await prisma.event.create({
-      data: {
-        ...validation.sanitized!,
-        imageUrl: finalImageUrl,
-        authorId: admin.id
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            email: true
-          }
+    let event;
+    try {
+      event = await prisma.event.create({
+        data: {
+          ...validation.sanitized!,
+          imageUrl: finalImageUrl,
+          authorId: admin.id
         },
-        _count: {
-          select: {
-            comments: true,
-            likes: true
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          },
+          _count: {
+            select: {
+              comments: true,
+              likes: true
+            }
           }
         }
+      });
+      
+      console.log('Event created successfully:', event.id);
+    } catch (dbError) {
+      console.error('Database creation error:', dbError);
+      
+      // Try to log the admin action failure
+      try {
+        await logAdminAction(admin.id, 'FAILED_EVENT_CREATE', 'events', { 
+          reason: 'Database creation failed', 
+          error: dbError instanceof Error ? dbError.message : 'Unknown database error'
+        });
+      } catch (logError) {
+        console.log('Failed to log database creation failure, continuing:', logError);
       }
-    });
-    
-    console.log('Event created successfully:', event.id);
+      
+      return NextResponse.json(
+        { error: 'Failed to create event in database' },
+        { status: 500, headers: ADMIN_SECURITY_HEADERS }
+      );
+    }
 
     // Log successful admin action
     try {
@@ -217,31 +243,51 @@ export async function POST(request: NextRequest) {
         title: event.title,
         type: event.type
       });
+      console.log('Admin action logged successfully');
     } catch (logError) {
       console.log('Failed to log admin action, continuing:', logError);
     }
 
-    return NextResponse.json({
-      message: 'Event created successfully',
-      event: {
-        id: event.id,
-        title: event.title,
-        description: event.description,
-        content: event.content,
-        date: event.date,
-        type: event.type,
-        location: event.location,
-        imageUrl: event.imageUrl,
-        isActive: event.isActive,
-        author: event.author,
-        commentCount: event._count.comments,
-        likeCount: event._count.likes,
-        createdAt: event.createdAt
+    try {
+      return NextResponse.json({
+        message: 'Event created successfully',
+        event: {
+          id: event.id,
+          title: event.title,
+          description: event.description,
+          content: event.content,
+          date: event.date,
+          type: event.type,
+          location: event.location,
+          imageUrl: event.imageUrl,
+          isActive: event.isActive,
+          author: event.author,
+          commentCount: event._count.comments,
+          likeCount: event._count.likes,
+          createdAt: event.createdAt
+        }
+      }, { 
+        status: 201,
+        headers: ADMIN_SECURITY_HEADERS
+      });
+    } catch (responseError) {
+      console.error('Error creating response:', responseError);
+      
+      // Try to log the admin action failure
+      try {
+        await logAdminAction(admin.id, 'FAILED_EVENT_CREATE', 'events', { 
+          reason: 'Response creation failed', 
+          error: responseError instanceof Error ? responseError.message : 'Unknown response error'
+        });
+      } catch (logError) {
+        console.log('Failed to log response creation failure, continuing:', logError);
       }
-    }, { 
-      status: 201,
-      headers: ADMIN_SECURITY_HEADERS
-    });
+      
+      return NextResponse.json(
+        { error: 'Failed to create response' },
+        { status: 500, headers: ADMIN_SECURITY_HEADERS }
+      );
+    }
 
   } catch (error) {
     console.error('Admin event creation error:', error);
