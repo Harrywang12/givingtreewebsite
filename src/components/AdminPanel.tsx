@@ -560,14 +560,31 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
               </div>
             ) : (
               <div className="space-y-3 max-h-60 overflow-y-auto">
-                {events.slice(0, 10).map((event: { id: string; title: string; type: string; date: string; commentCount: number; likeCount: number; isActive: boolean }) => (
+                {events.slice(0, 10).map((event: { id: string; title: string; type: string; date: string; commentCount: number; likeCount: number; isActive: boolean; imageUrl?: string }) => (
                   <div key={event.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex-1">
-                      <h5 className="font-medium text-gray-900">{event.title}</h5>
-                      <p className="text-sm text-gray-600">{event.type} • {new Date(event.date).toLocaleDateString()}</p>
-                      <p className="text-xs text-gray-500">
-                        {event.commentCount || 0} comments • {event.likeCount || 0} likes
-                      </p>
+                    <div className="flex-1 flex items-center space-x-3">
+                      {/* Event Image Thumbnail */}
+                      {event.imageUrl && (
+                        <div className="flex-shrink-0">
+                          <img 
+                            src={event.imageUrl} 
+                            alt={event.title}
+                            className="w-12 h-12 object-cover rounded-lg border"
+                            onError={(e) => {
+                              // Hide image if it fails to load
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
+                      
+                      <div className="flex-1">
+                        <h5 className="font-medium text-gray-900">{event.title}</h5>
+                        <p className="text-sm text-gray-600">{event.type} • {new Date(event.date).toLocaleDateString()}</p>
+                        <p className="text-xs text-gray-500">
+                          {event.commentCount || 0} comments • {event.likeCount || 0} likes
+                        </p>
+                      </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className={`px-2 py-1 text-xs rounded-full ${

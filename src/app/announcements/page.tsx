@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MessageCircle, ThumbsUp, Heart, Users, User } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
+import EventImage from '@/components/EventImage';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 
@@ -282,6 +283,17 @@ export default function AnnouncementsPage() {
                   
                   <h3 className="text-xl font-semibold mb-3">{event.title}</h3>
                   <p className="text-green-800 mb-4">{event.description}</p>
+                  
+                  {/* Event Image */}
+                  {event.imageUrl && (
+                    <div className="mb-4">
+                      <EventImage 
+                        src={event.imageUrl} 
+                        alt={event.title}
+                        className="w-full h-48 md:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                      />
+                    </div>
+                  )}
                   
                   {event.content && (
                     <div className="bg-white p-4 rounded-lg mb-4">

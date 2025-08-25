@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import EventImage from '@/components/EventImage';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from '@/components/AuthModal';
 
@@ -624,6 +625,18 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-semibold text-green-900 mb-2">{event.title}</h3>
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">{event.description}</p>
+                
+                {/* Event Image */}
+                {event.imageUrl && (
+                  <div className="mb-4">
+                    <EventImage 
+                      src={event.imageUrl} 
+                      alt={event.title}
+                      className="w-full h-32 md:h-40 object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+                    />
+                  </div>
+                )}
+                
                 <div className="flex items-center text-sm text-gray-500 mb-4">
                   <MapPin className="h-4 w-4 mr-1" />
                   <span>{event.location}</span>
