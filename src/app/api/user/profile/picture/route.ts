@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { uploadImage, deleteImage } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,64 +50,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File size exceeds 5MB limit' }, { status: 400 });
     }
 
-    // Generate unique filename for profile picture
-    const timestamp = Date.now();
-    const fileExtension = file.name.split('.').pop();
-    const filename = `profile_${userId}_${timestamp}.${fileExtension}`;
-    console.log('Generated filename:', filename);
+    // Upload image to Supabase Storage
+    console.log('Uploading image to Supabase...');
+    const imageUrl = await uploadImage(file, 'profiles');
+    console.log('Image uploaded to Supabase:', imageUrl);
     
-    // Convert file to buffer
-    console.log('Converting file to buffer...');
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    console.log('File converted to buffer, size:', buffer.length);
-    
-    // Ensure the uploads directory exists
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
-    console.log('Uploads directory path:', uploadsDir);
-    try {
-      await mkdir(uploadsDir, { recursive: true });
-      console.log('Uploads directory ensured');
-    } catch (mkdirError) {
-      console.log('Directory creation error (might already exist):', mkdirError);
-      // Directory might already exist, continue
-    }
-    
-    // Save the file
-    const filePath = join(uploadsDir, filename);
-    console.log('Saving file to:', filePath);
-    await writeFile(filePath, buffer);
-    console.log('File saved successfully');
-    
-    // Get the old avatar path to delete it later
+    // Get the old avatar to check if it needs cleanup
     const oldUser = await prisma.user.findUnique({
       where: { id: userId },
       select: { avatar: true }
     });
     
-    // Update user profile with new avatar path
-    const avatarPath = `/uploads/${filename}`;
-    console.log('Updating user profile with new avatar path:', avatarPath);
+    // Update user profile with new avatar URL
+    console.log('Updating user profile with new avatar URL');
     
     await prisma.user.update({
       where: { id: userId },
-      data: { avatar: avatarPath }
+      data: { avatar: imageUrl }
     });
     
     console.log('User profile updated successfully');
     
-    // Delete old avatar file if it exists and is a local upload
-    if (oldUser?.avatar && oldUser.avatar.startsWith('/uploads/')) {
+    // Delete old avatar from Supabase if it exists
+    if (oldUser?.avatar && oldUser.avatar.includes('supabase.co')) {
       try {
-        const oldFilePath = join(process.cwd(), 'public', oldUser.avatar);
-        console.log('Deleting old avatar file:', oldFilePath);
-        await writeFile(oldFilePath, ''); // Clear the file
-        console.log('Old avatar file deleted successfully');
+        await deleteImage(oldUser.avatar);
+        console.log('Old avatar deleted from Supabase');
       } catch (deleteError) {
-        console.log('Failed to delete old avatar file:', deleteError);
+        console.log('Failed to delete old avatar from Supabase:', deleteError);
         // Continue even if deletion fails
       }
     }
+    
+    console.log('Profile picture updated successfully (Supabase storage)');
 
     return NextResponse.json({ 
       success: true,
@@ -157,16 +131,18 @@ export async function DELETE(request: NextRequest) {
       data: { avatar: null }
     });
     
-    // Delete the avatar file if it exists and is a local upload
-    if (currentUser?.avatar && currentUser.avatar.startsWith('/uploads/')) {
+    // Delete the avatar from Supabase if it exists
+    if (currentUser?.avatar && currentUser.avatar.includes('supabase.co')) {
       try {
-        const filePath = join(process.cwd(), 'public', currentUser.avatar);
-        await writeFile(filePath, ''); // Clear the file
+        await deleteImage(currentUser.avatar);
+        console.log('Avatar deleted from Supabase');
       } catch (deleteError) {
-        console.log('Failed to delete avatar file:', deleteError);
+        console.log('Failed to delete avatar from Supabase:', deleteError);
         // Continue even if deletion fails
       }
     }
+    
+    console.log('Profile picture removed successfully (Supabase storage)');
 
     return NextResponse.json({ 
       success: true,

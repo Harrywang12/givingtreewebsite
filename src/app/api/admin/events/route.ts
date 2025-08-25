@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminFromRequest, logAdminAction, validateEventData, ADMIN_SECURITY_HEADERS } from '@/lib/admin';
 import { rateLimit } from '@/lib/redis';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { uploadImage } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -133,41 +132,16 @@ export async function POST(request: NextRequest) {
     
     if (imageFile) {
       try {
-        console.log('Processing image upload...');
+        console.log('Processing image upload to Supabase...');
         
-        // Generate unique filename
-        const timestamp = Date.now();
-        const fileExtension = imageFile.name.split('.').pop();
-        const filename = `event_${timestamp}.${fileExtension}`;
+        // Upload image to Supabase Storage
+        const imageUrl = await uploadImage(imageFile, 'events');
+        finalImageUrl = imageUrl;
         
-        console.log('Generated filename:', filename);
-        
-        // Convert file to buffer
-        const bytes = await imageFile.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        
-        console.log('File converted to buffer, size:', buffer.length);
-        
-        // Ensure the uploads directory exists
-        const uploadsDir = join(process.cwd(), 'public', 'uploads');
-        try {
-          await mkdir(uploadsDir, { recursive: true });
-          console.log('Uploads directory ensured:', uploadsDir);
-        } catch (mkdirError) {
-          console.log('Directory creation error (might already exist):', mkdirError);
-        }
-        
-        // Save the file
-        const filePath = join(uploadsDir, filename);
-        await writeFile(filePath, buffer);
-        console.log('File saved to:', filePath);
-        
-        // Update the image URL to point to the saved file
-        finalImageUrl = `/uploads/${filename}`;
-        console.log('Final image URL:', finalImageUrl);
+        console.log('Image uploaded to Supabase:', imageUrl);
         
       } catch (imageError) {
-        console.error('Image upload error:', imageError);
+        console.error('Supabase image upload error:', imageError);
         
         // Try to log the admin action failure
         try {
