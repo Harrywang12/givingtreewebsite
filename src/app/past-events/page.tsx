@@ -52,6 +52,18 @@ export default function PastEventsPage() {
     fetchPastEvents();
   }, []);
 
+  // Preload images for better performance
+  useEffect(() => {
+    if (events.length > 0) {
+      events.forEach(event => {
+        if (event.imageUrl) {
+          const img = new Image();
+          img.src = event.imageUrl;
+        }
+      });
+    }
+  }, [events]);
+
   const fetchPastEvents = async () => {
     try {
       setLoading(true);

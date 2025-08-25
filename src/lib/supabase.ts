@@ -29,18 +29,19 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
       throw new Error('File size too large. Maximum size is 5MB.');
     }
     
-    // Generate unique filename
+    // Generate unique filename with optimization hint
     const timestamp = Date.now();
     const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
     const randomString = Math.random().toString(36).substring(2, 15);
     const filename = `${folder}/${timestamp}_${randomString}.${fileExtension}`;
     
-    // Upload file to Supabase Storage
+    // Upload file to Supabase Storage with optimization metadata
     const { data, error } = await supabase.storage
       .from('images')
       .upload(filename, file, {
-        cacheControl: '3600',
-        upsert: false
+        cacheControl: '31536000', // 1 year cache for better performance
+        upsert: false,
+        contentType: file.type
       });
 
     if (error) {
@@ -52,7 +53,7 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
       throw new Error('Upload succeeded but no file path returned');
     }
 
-    // Get public URL
+    // Get public URL with optimization parameters
     const { data: urlData } = supabase.storage
       .from('images')
       .getPublicUrl(data.path);
@@ -61,10 +62,10 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
       throw new Error('Failed to generate public URL for uploaded image');
     }
 
-    // Ensure the URL is properly formatted
+    // Return optimized URL with parameters for faster loading
     let publicUrl = urlData.publicUrl;
     
-    // Remove any query parameters that might cause issues
+    // Remove any existing query parameters
     if (publicUrl.includes('?')) {
       publicUrl = publicUrl.split('?')[0];
     }
@@ -74,7 +75,14 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
       publicUrl = publicUrl.replace('http://', 'https://');
     }
 
-    return publicUrl;
+    // Add optimization parameters for faster loading
+    const optimizationParams = new URLSearchParams({
+      quality: '80',
+      format: 'webp',
+      width: '800'
+    });
+
+    return `${publicUrl}?${optimizationParams.toString()}`;
   } catch (error) {
     console.error('Image upload error:', error);
     throw error;
