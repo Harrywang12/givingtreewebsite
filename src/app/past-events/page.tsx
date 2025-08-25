@@ -55,17 +55,38 @@ export default function PastEventsPage() {
   const fetchPastEvents = async () => {
     try {
       setLoading(true);
+      setError('');
+      
+      console.log('Fetching past events...');
       const response = await fetch('/api/events?type=EVENT&limit=50');
+      
+      console.log('Response status:', response.status);
       
       if (response.ok) {
         const data = await response.json();
-        setEvents(data.events || []);
+        console.log('Events data received:', data);
+        
+        if (data.events && Array.isArray(data.events)) {
+          // Log the first event's date for debugging
+          if (data.events.length > 0) {
+            console.log('First event date:', data.events[0].date);
+            console.log('First event imageUrl:', data.events[0].imageUrl);
+          }
+          
+          setEvents(data.events);
+          console.log('Events set successfully, count:', data.events.length);
+        } else {
+          console.error('Invalid events data format:', data);
+          setError('Invalid data format received from server');
+        }
       } else {
-        setError('Failed to load past events');
+        const errorText = await response.text();
+        console.error('API error response:', errorText);
+        setError(`Failed to load past events: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error('Error fetching past events:', error);
-      setError('Failed to load past events');
+      setError('Failed to load past events. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -157,13 +178,33 @@ export default function PastEventsPage() {
   };
 
   const formatDate = (dateString: string) => {
-    // Add timezone offset to prevent date shifting
-    const date = new Date(dateString + 'T12:00:00');
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    try {
+      // Handle different date formats
+      let date: Date;
+      
+      // If it's already a valid date string, use it directly
+      if (dateString.includes('T') || dateString.includes('Z')) {
+        date = new Date(dateString);
+      } else {
+        // If it's just a date string (YYYY-MM-DD), add time to prevent timezone issues
+        date = new Date(dateString + 'T12:00:00');
+      }
+      
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        console.error('Invalid date string:', dateString);
+        return 'Date unavailable';
+      }
+      
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error, 'Date string:', dateString);
+      return 'Date unavailable';
+    }
   };
 
   if (loading) {

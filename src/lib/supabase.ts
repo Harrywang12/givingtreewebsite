@@ -12,21 +12,30 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // Helper function to upload images to Supabase Storage
 export async function uploadImage(file: File, folder: string = 'events'): Promise<string> {
   try {
-    console.log('🔍 uploadImage function called:');
-    console.log('- file name:', file.name);
-    console.log('- file size:', file.size);
-    console.log('- file type:', file.type);
-    console.log('- folder:', folder);
+    // Validate file
+    if (!file || file.size === 0) {
+      throw new Error('Invalid file provided');
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.');
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      throw new Error('File size too large. Maximum size is 5MB.');
+    }
     
     // Generate unique filename
     const timestamp = Date.now();
-    const fileExtension = file.name.split('.').pop();
-    const filename = `${folder}/${timestamp}_${Math.random().toString(36).substring(2)}.${fileExtension}`;
-    
-    console.log('- generated filename:', filename);
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const filename = `${folder}/${timestamp}_${randomString}.${fileExtension}`;
     
     // Upload file to Supabase Storage
-    console.log('- attempting upload to Supabase...');
     const { data, error } = await supabase.storage
       .from('images')
       .upload(filename, file, {
@@ -35,22 +44,39 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
       });
 
     if (error) {
-      console.error('❌ Supabase upload error:', error);
+      console.error('Supabase upload error:', error);
       throw new Error(`Failed to upload image: ${error.message}`);
     }
 
-    console.log('✅ Upload successful, data:', data);
+    if (!data?.path) {
+      throw new Error('Upload succeeded but no file path returned');
+    }
 
     // Get public URL
-    console.log('- getting public URL...');
     const { data: urlData } = supabase.storage
       .from('images')
-      .getPublicUrl(filename);
+      .getPublicUrl(data.path);
 
-    console.log('✅ Public URL generated:', urlData.publicUrl);
-    return urlData.publicUrl;
+    if (!urlData?.publicUrl) {
+      throw new Error('Failed to generate public URL for uploaded image');
+    }
+
+    // Ensure the URL is properly formatted
+    let publicUrl = urlData.publicUrl;
+    
+    // Remove any query parameters that might cause issues
+    if (publicUrl.includes('?')) {
+      publicUrl = publicUrl.split('?')[0];
+    }
+    
+    // Ensure HTTPS
+    if (publicUrl.startsWith('http://')) {
+      publicUrl = publicUrl.replace('http://', 'https://');
+    }
+
+    return publicUrl;
   } catch (error) {
-    console.error('❌ Image upload error:', error);
+    console.error('Image upload error:', error);
     throw error;
   }
 }

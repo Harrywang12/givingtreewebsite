@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageIcon } from 'lucide-react';
 
 interface EventImageProps {
@@ -18,16 +18,63 @@ export default function EventImage({
 }: EventImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string>('');
+  const [retryCount, setRetryCount] = useState(0);
+  const maxRetries = 2;
 
-  // Debug logging
-  console.log('EventImage component:', { src, alt, hasError });
+  useEffect(() => {
+    // Reset state when src changes
+    setIsLoading(true);
+    setHasError(false);
+    setRetryCount(0);
+    
+    if (!src || src.trim() === '') {
+      setHasError(true);
+      setIsLoading(false);
+      return;
+    }
 
-  if (hasError) {
+    // Ensure the URL is properly formatted
+    let processedSrc = src;
+    
+    // If it's a relative URL, make it absolute
+    if (src.startsWith('/')) {
+      processedSrc = `${window.location.origin}${src}`;
+    }
+    
+    // If it's a Supabase URL, ensure it has the correct format
+    if (src.includes('supabase.co')) {
+      // Add cache busting parameter for Supabase URLs
+      const separator = src.includes('?') ? '&' : '?';
+      processedSrc = `${src}${separator}v=${Date.now()}`;
+    }
+    
+    setImageSrc(processedSrc);
+  }, [src]);
+
+  const handleImageError = () => {
+    console.error('Image failed to load:', imageSrc);
+    
+    if (retryCount < maxRetries) {
+      // Retry with a different cache busting parameter
+      setRetryCount(prev => prev + 1);
+      const newSrc = imageSrc.includes('?') 
+        ? `${imageSrc.split('?')[0]}?v=${Date.now()}&retry=${retryCount + 1}`
+        : `${imageSrc}?v=${Date.now()}&retry=${retryCount + 1}`;
+      setImageSrc(newSrc);
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+      setHasError(true);
+    }
+  };
+
+  if (hasError || !src || src.trim() === '') {
     return (
-      <div className={`${className} bg-gray-100 flex items-center justify-center border-2 border-red-300`}>
+      <div className={`${className} bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300`}>
         <div className="text-center">
-          <ImageIcon className="w-8 h-8 text-red-400 mx-auto mb-2" />
-          <p className="text-sm text-red-600">Image failed to load</p>
+          <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+          <p className="text-sm text-gray-600">No image available</p>
           <p className="text-xs text-gray-500 mt-1">Alt: {alt}</p>
         </div>
       </div>
@@ -42,20 +89,20 @@ export default function EventImage({
             <div className="animate-pulse">
               <ImageIcon className="w-8 h-8 text-blue-400 mx-auto mb-2" />
             </div>
-            <p className="text-sm text-blue-600">Loading image...</p>
-            <p className="text-xs text-gray-500 mt-1">Alt: {alt}</p>
+            <p className="text-sm text-blue-600">
+              {retryCount > 0 ? `Retrying... (${retryCount}/${maxRetries})` : 'Loading image...'}
+            </p>
           </div>
         </div>
       )}
       <img 
-        src={src} 
+        src={imageSrc} 
         alt={alt}
         className={`${className} ${isLoading ? 'hidden' : ''}`}
         onLoad={() => setIsLoading(false)}
-        onError={() => {
-          setIsLoading(false);
-          setHasError(true);
-        }}
+        onError={handleImageError}
+        loading="lazy"
+        crossOrigin="anonymous"
       />
     </div>
   );
