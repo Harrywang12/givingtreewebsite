@@ -1,4 +1,4 @@
-/* Add Nunito and Playfair Display fonts */
+/* Google Fonts - must be imported first */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 @tailwind base;

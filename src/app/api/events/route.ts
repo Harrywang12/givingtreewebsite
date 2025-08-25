@@ -71,30 +71,41 @@ export async function GET(request: NextRequest) {
     })
 
     // Format events for public consumption
-    const formattedEvents = events.map(event => ({
-      id: event.id,
-      title: event.title,
-      description: event.description,
-      content: event.content,
-      date: event.date.toISOString().split('T')[0], // Format as YYYY-MM-DD
-      type: event.type,
-      location: event.location,
-      imageUrl: event.imageUrl,
-      author: {
-        name: event.author.name,
-        isAdmin: event.author.role === 'ADMIN' || event.author.role === 'SUPER_ADMIN'
-      },
-      comments: event.comments.map(comment => ({
-        id: comment.id,
-        content: comment.content,
-        createdAt: comment.createdAt.toISOString(),
-        user: comment.user
-      })),
-      commentCount: event._count.comments,
-      likeCount: event._count.likes,
-      userLiked: false, // Will be updated if user is authenticated
-      createdAt: event.createdAt.toISOString()
-    }))
+    const formattedEvents = events.map(event => {
+      // Debug logging for imageUrl
+      console.log('Event imageUrl from database:', {
+        eventId: event.id,
+        title: event.title,
+        imageUrl: event.imageUrl,
+        imageUrlType: typeof event.imageUrl,
+        imageUrlLength: event.imageUrl?.length
+      });
+      
+      return {
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        content: event.content,
+        date: event.date.toISOString().split('T')[0], // Format as YYYY-MM-DD
+        type: event.type,
+        location: event.location,
+        imageUrl: event.imageUrl && event.imageUrl.trim() !== '' ? event.imageUrl : null,
+        author: {
+          name: event.author.name,
+          isAdmin: event.author.role === 'ADMIN' || event.author.role === 'SUPER_ADMIN'
+        },
+        comments: event.comments.map(comment => ({
+          id: comment.id,
+          content: comment.content,
+          createdAt: comment.createdAt.toISOString(),
+          user: comment.user
+        })),
+        commentCount: event._count.comments,
+        likeCount: event._count.likes,
+        userLiked: false, // Will be updated if user is authenticated
+        createdAt: event.createdAt.toISOString()
+      };
+    });
 
     return NextResponse.json({ 
       events: formattedEvents,

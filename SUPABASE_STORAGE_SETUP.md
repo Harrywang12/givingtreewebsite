@@ -41,23 +41,23 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
 - **Target roles**: `public`
 - **Policy definition**: `true`
 
-### Policy 2: Allow Authenticated Uploads
-- **Policy name**: `Authenticated Uploads`
+### Policy 2: Allow Public Uploads (for server-side uploads)
+- **Policy name**: `Public Uploads`
 - **Allowed operation**: INSERT
-- **Target roles**: `authenticated`
-- **Policy definition**: `auth.role() = 'authenticated'`
+- **Target roles**: `public`
+- **Policy definition**: `true`
 
-### Policy 3: Allow Users to Update Their Own Files
-- **Policy name**: `Update Own Files`
+### Policy 3: Allow Public Updates
+- **Policy name**: `Public Updates`
 - **Allowed operation**: UPDATE
-- **Target roles**: `authenticated`
-- **Policy definition**: `auth.role() = 'authenticated'`
+- **Target roles**: `public`
+- **Policy definition**: `true`
 
-### Policy 4: Allow Users to Delete Their Own Files
-- **Policy name**: `Delete Own Files`
+### Policy 4: Allow Public Deletes
+- **Policy name**: `Public Deletes`
 - **Allowed operation**: DELETE
-- **Target roles**: `authenticated`
-- **Policy definition**: `auth.role() = 'authenticated'`
+- **Target roles**: `public`
+- **Policy definition**: `true`
 
 ## Step 5: Test the Setup
 

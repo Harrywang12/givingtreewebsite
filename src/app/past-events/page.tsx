@@ -321,8 +321,9 @@ export default function PastEventsPage() {
                   <p className="text-green-800 mb-4">{event.description}</p>
                   
                   {/* Event Image */}
-                  {event.imageUrl ? (
+                  {event.imageUrl && event.imageUrl.trim() !== '' ? (
                     <div className="mb-4">
+                      {console.log('Rendering EventImage with:', { src: event.imageUrl, alt: event.title })}
                       <EventImage 
                         src={event.imageUrl} 
                         alt={event.title}
