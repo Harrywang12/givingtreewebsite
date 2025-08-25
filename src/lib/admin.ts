@@ -265,8 +265,13 @@ export function validateEventData(data: EventInput): {
     errors.push('Description is required');
   }
   
-  if (!data.date || isNaN(new Date(data.date).getTime())) {
-    errors.push('Valid date is required');
+  if (!data.date) {
+    errors.push('Date is required');
+  } else {
+    const dateObj = new Date(data.date);
+    if (isNaN(dateObj.getTime())) {
+      errors.push('Valid date is required');
+    }
   }
   
   if (!data.type || !['NEWS', 'EVENT', 'ANNOUNCEMENT'].includes(data.type)) {
@@ -285,7 +290,7 @@ export function validateEventData(data: EventInput): {
     date: new Date(data.date!),
     type: data.type as 'NEWS' | 'EVENT' | 'ANNOUNCEMENT',
     location: data.location ? data.location.trim().substring(0, 200) : null,
-    imageUrl: data.imageUrl && isValidUrl(data.imageUrl) ? data.imageUrl : null,
+    imageUrl: data.imageUrl ? data.imageUrl : null,
     isActive: Boolean(data.isActive ?? true)
   };
 

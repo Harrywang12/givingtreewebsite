@@ -211,12 +211,35 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image file size must be less than 5MB');
+        return;
+      }
+      
       setFormData(prev => ({
         ...prev,
         imageFile: file,
         imageUrl: URL.createObjectURL(file)
       }));
+      
+      // Clear any previous errors
+      setError('');
     }
+  };
+
+  const clearImage = () => {
+    setFormData(prev => ({
+      ...prev,
+      imageFile: undefined,
+      imageUrl: ''
+    }));
   };
 
   if (!isOpen) return null;
@@ -462,24 +485,46 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       onChange={handleFileChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
+                    <p className="text-xs text-gray-500">Accepted formats: JPG, PNG, GIF. Max size: 5MB</p>
+                    
                     {formData.imageUrl && (
                       <div className="mt-2">
-                        <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm text-gray-600">Preview:</p>
+                          <button
+                            type="button"
+                            onClick={clearImage}
+                            className="text-red-600 hover:text-red-800 text-sm font-medium"
+                          >
+                            Remove Image
+                          </button>
+                        </div>
                         <img 
                           src={formData.imageUrl} 
                           alt="Preview" 
                           className="w-32 h-32 object-cover rounded-lg border"
                         />
+                        {formData.imageFile && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            File: {formData.imageFile.name} ({(formData.imageFile.size / 1024 / 1024).toFixed(2)} MB)
+                          </p>
+                        )}
                       </div>
                     )}
-                    <input
-                      type="url"
-                      name="imageUrl"
-                      value={formData.imageUrl}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Or enter image URL directly (optional)"
-                    />
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-600 mb-1">
+                        Or enter image URL directly:
+                      </label>
+                      <input
+                        type="url"
+                        name="imageUrl"
+                        value={formData.imageUrl}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="https://example.com/image.jpg (optional)"
+                      />
+                    </div>
                   </div>
                 </div>
 

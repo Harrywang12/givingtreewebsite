@@ -2,50 +2,193 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminFromRequest, logAdminAction, validateEventData, ADMIN_SECURITY_HEADERS } from '@/lib/admin';
 import { rateLimit } from '@/lib/redis';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
 
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting for admin event creation
-    const clientIp = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
-    const rateLimitKey = `admin_event_${clientIp}`;
-    const isAllowed = await rateLimit.check(rateLimitKey, 10, 3600); // 10 events per hour
-    
-    if (!isAllowed) {
-      return NextResponse.json(
-        { error: 'Too many event creation attempts. Please try again later.' },
-        { status: 429, headers: ADMIN_SECURITY_HEADERS }
-      );
+    console.log('Checking rate limit...');
+    try {
+      const clientIp = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+      const rateLimitKey = `admin_event_${clientIp}`;
+      console.log('Rate limit key:', rateLimitKey);
+      const isAllowed = await rateLimit.check(rateLimitKey, 10, 3600); // 10 events per hour
+      
+      if (!isAllowed) {
+        console.log('Rate limit exceeded');
+        return NextResponse.json(
+          { error: 'Too many event creation attempts. Please try again later.' },
+          { status: 429, headers: ADMIN_SECURITY_HEADERS }
+        );
+      }
+      console.log('Rate limit check passed');
+    } catch (rateLimitError) {
+      console.log('Rate limiting error, continuing without rate limit:', rateLimitError);
+      // Continue without rate limiting if Redis is not available
     }
 
     // Verify admin access
-    const admin = await verifyAdminFromRequest(request);
-    if (!admin) {
-      await logAdminAction('unknown', 'FAILED_EVENT_CREATE', 'events', { reason: 'Invalid admin access' });
+    console.log('Verifying admin access...');
+    try {
+      const admin = await verifyAdminFromRequest(request);
+      if (!admin) {
+        console.log('Admin verification failed');
+        try {
+          await logAdminAction('unknown', 'FAILED_EVENT_CREATE', 'events', { reason: 'Invalid admin access' });
+        } catch (logError) {
+          console.log('Failed to log admin access failure, continuing:', logError);
+        }
+        return NextResponse.json(
+          { error: 'Admin access required' },
+          { status: 403, headers: ADMIN_SECURITY_HEADERS }
+        );
+      }
+      console.log('Admin verified:', admin.email);
+    } catch (adminError) {
+      console.log('Admin verification error:', adminError);
       return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403, headers: ADMIN_SECURITY_HEADERS }
+        { error: 'Admin verification failed' },
+        { status: 500, headers: ADMIN_SECURITY_HEADERS }
       );
     }
 
     // Parse and validate request data
-    const requestData = await request.json();
+    let requestData;
+    let imageFile: File | null = null;
+    
+    // Check if the request contains form data (file upload) or JSON
+    const contentType = request.headers.get('content-type') || '';
+    console.log('Content-Type:', contentType);
+    
+    if (contentType.includes('multipart/form-data')) {
+      // Handle file upload
+      console.log('Processing multipart form data...');
+      const formData = await request.formData();
+      
+      // Log all form data keys
+      console.log('FormData keys:', Array.from(formData.keys()));
+      
+      const dateValue = formData.get('date') as string;
+      const titleValue = formData.get('title') as string;
+      const descriptionValue = formData.get('description') as string;
+      const contentValue = formData.get('content') as string;
+      const typeValue = formData.get('type') as string;
+      const locationValue = formData.get('location') as string;
+      const imageUrlValue = formData.get('imageUrl') as string;
+      
+      console.log('Individual form values:', {
+        date: dateValue,
+        title: titleValue,
+        description: descriptionValue,
+        content: contentValue,
+        type: typeValue,
+        location: locationValue,
+        imageUrl: imageUrlValue
+      });
+      
+      requestData = {
+        title: titleValue,
+        description: descriptionValue,
+        content: contentValue,
+        date: dateValue || '', // Keep the date as is, let validation handle it
+        type: typeValue,
+        location: locationValue,
+        imageUrl: imageUrlValue || ''
+      };
+      
+      console.log('FormData parsed:', requestData);
+      
+      // Get the uploaded file
+      const file = formData.get('imageFile') as File;
+      if (file && file.size > 0) {
+        imageFile = file;
+        console.log('Image file found:', file.name, file.size, file.type);
+      } else {
+        console.log('No image file found or file is empty');
+      }
+    } else {
+      // Handle JSON data
+      requestData = await request.json();
+      console.log('JSON data parsed:', requestData);
+    }
+    
+    console.log('Final requestData:', requestData);
     const validation = validateEventData(requestData);
+    console.log('Validation result:', validation);
     
     if (!validation.isValid) {
-      await logAdminAction(admin.id, 'FAILED_EVENT_CREATE', 'events', { 
-        reason: 'Validation failed', 
-        errors: validation.errors 
-      });
+      console.log('Validation failed:', validation.errors);
+      try {
+        await logAdminAction(admin.id, 'FAILED_EVENT_CREATE', 'events', { 
+          reason: 'Validation failed', 
+          errors: validation.errors 
+        });
+      } catch (logError) {
+        console.log('Failed to log failed event creation, continuing:', logError);
+      }
       return NextResponse.json(
         { error: 'Invalid event data', details: validation.errors },
         { status: 400, headers: ADMIN_SECURITY_HEADERS }
       );
     }
 
+    // Handle image upload if present
+    let finalImageUrl = validation.sanitized!.imageUrl;
+    
+    if (imageFile) {
+      try {
+        console.log('Processing image upload...');
+        
+        // Generate unique filename
+        const timestamp = Date.now();
+        const fileExtension = imageFile.name.split('.').pop();
+        const filename = `event_${timestamp}.${fileExtension}`;
+        
+        console.log('Generated filename:', filename);
+        
+        // Convert file to buffer
+        const bytes = await imageFile.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        
+        console.log('File converted to buffer, size:', buffer.length);
+        
+        // Ensure the uploads directory exists
+        const uploadsDir = join(process.cwd(), 'public', 'uploads');
+        try {
+          await mkdir(uploadsDir, { recursive: true });
+          console.log('Uploads directory ensured:', uploadsDir);
+        } catch (mkdirError) {
+          console.log('Directory creation error (might already exist):', mkdirError);
+        }
+        
+        // Save the file
+        const filePath = join(uploadsDir, filename);
+        await writeFile(filePath, buffer);
+        console.log('File saved to:', filePath);
+        
+        // Update the image URL to point to the saved file
+        finalImageUrl = `/uploads/${filename}`;
+        console.log('Final image URL:', finalImageUrl);
+        
+      } catch (imageError) {
+        console.error('Image upload error:', imageError);
+        // Continue without image if upload fails
+        finalImageUrl = validation.sanitized!.imageUrl || '';
+      }
+    }
+    
+    console.log('Creating event in database with data:', {
+      ...validation.sanitized!,
+      imageUrl: finalImageUrl,
+      authorId: admin.id
+    });
+    
     // Create event in database
     const event = await prisma.event.create({
       data: {
         ...validation.sanitized!,
+        imageUrl: finalImageUrl,
         authorId: admin.id
       },
       include: {
@@ -64,13 +207,19 @@ export async function POST(request: NextRequest) {
         }
       }
     });
+    
+    console.log('Event created successfully:', event.id);
 
     // Log successful admin action
-    await logAdminAction(admin.id, 'CREATE_EVENT', 'events', {
-      eventId: event.id,
-      title: event.title,
-      type: event.type
-    });
+    try {
+      await logAdminAction(admin.id, 'CREATE_EVENT', 'events', {
+        eventId: event.id,
+        title: event.title,
+        type: event.type
+      });
+    } catch (logError) {
+      console.log('Failed to log admin action, continuing:', logError);
+    }
 
     return NextResponse.json({
       message: 'Event created successfully',
@@ -97,8 +246,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Admin event creation error:', error);
     
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500, headers: ADMIN_SECURITY_HEADERS }
     );
   }
