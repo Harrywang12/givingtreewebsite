@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, MessageCircle, ThumbsUp, Heart, Users, User } from 'lucide-react';
+import { Calendar, MessageCircle, ThumbsUp, Heart, Users, User, ImageIcon } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
 import EventImage from '@/components/EventImage';
 import { useAuth } from '@/contexts/AuthContext';
@@ -162,7 +162,8 @@ export default function AnnouncementsPage() {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    // Add timezone offset to prevent date shifting
+    const date = new Date(dateString + 'T12:00:00');
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -285,15 +286,35 @@ export default function AnnouncementsPage() {
                   <p className="text-green-800 mb-4">{event.description}</p>
                   
                   {/* Event Image */}
-                  {event.imageUrl && (
-                    <div className="mb-4">
-                      <EventImage 
-                        src={event.imageUrl} 
-                        alt={event.title}
-                        className="w-full h-48 md:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-                      />
-                    </div>
-                  )}
+                  {(() => {
+                    console.log('Event image debug:', {
+                      title: event.title,
+                      hasImageUrl: !!event.imageUrl,
+                      imageUrl: event.imageUrl,
+                      imageUrlLength: event.imageUrl?.length
+                    });
+                    
+                    return event.imageUrl ? (
+                      <div className="mb-4">
+                        <EventImage 
+                          src={event.imageUrl} 
+                          alt={event.title}
+                          className="w-full h-48 md:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                        />
+                      </div>
+                    ) : (
+                      <div className="mb-4">
+                        <div className="w-full h-48 md:h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                          <div className="text-center">
+                            <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                            <p className="text-sm text-gray-600">No image uploaded</p>
+                            <p className="text-xs text-gray-500 mt-1">Event: {event.title}</p>
+                            <p className="text-xs text-red-500 mt-1">Debug: imageUrl is null/undefined</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                   
                   {event.content && (
                     <div className="bg-white p-4 rounded-lg mb-4">
