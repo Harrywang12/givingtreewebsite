@@ -150,7 +150,15 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         
         console.log('🔍 Frontend debug - sending FormData:');
         console.log('- imageFile:', formData.imageFile);
+        console.log('- imageFile name:', formData.imageFile.name);
+        console.log('- imageFile size:', formData.imageFile.size);
+        console.log('- imageFile type:', formData.imageFile.type);
         console.log('- FormData keys:', Array.from(formDataToSend.keys()));
+        
+        // Log each FormData entry
+        for (let [key, value] of formDataToSend.entries()) {
+          console.log(`- FormData[${key}]:`, value);
+        }
         
         response = await fetch('/api/admin/events', {
           method: 'POST',
@@ -159,6 +167,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           },
           body: formDataToSend
         });
+        
+        console.log('🔍 Response received:', response.status, response.statusText);
       } else {
         // Handle text-only submission
         console.log('🔍 Frontend debug - sending JSON:');
@@ -183,8 +193,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       }
 
       const result = await response.json();
+      console.log('🔍 Response result:', result);
 
       if (response.ok) {
+        console.log('✅ Event created successfully');
         setMessage('Content created successfully!');
         setFormData({
           title: '',
@@ -199,9 +211,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setShowForm(false);
         fetchAdminEvents(); // Refresh the content list
       } else {
+        console.log('❌ Event creation failed:', result.error);
         setError(result.error || 'Failed to create content');
       }
-    } catch {
+    } catch (error) {
+      console.error('🔍 Network error:', error);
       setError('Network error. Please try again.');
     } finally {
       setIsSubmitting(false);
