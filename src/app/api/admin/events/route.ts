@@ -5,7 +5,6 @@ import { rateLimit } from '@/lib/redis';
 import { uploadImage } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
-  console.log('🚀 POST /api/admin/events - API route started');
   try {
     // Rate limiting for admin event creation
     console.log('Checking rate limit...');
@@ -78,6 +77,7 @@ export async function POST(request: NextRequest) {
       const contentValue = formData.get('content') as string;
       const typeValue = formData.get('type') as string;
       const locationValue = formData.get('location') as string;
+      const imageUrlValue = formData.get('imageUrl') as string;
       
       console.log('Individual form values:', {
         date: dateValue,
@@ -85,7 +85,8 @@ export async function POST(request: NextRequest) {
         description: descriptionValue,
         content: contentValue,
         type: typeValue,
-        location: locationValue
+        location: locationValue,
+        imageUrl: imageUrlValue
       });
       
       requestData = {
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
         date: dateValue || '', // Keep the date as is, let validation handle it
         type: typeValue,
         location: locationValue,
-        imageUrl: '' // Set to empty string when uploading a file - will be replaced by Supabase URL
+        imageUrl: imageUrlValue || ''
       };
       
       console.log('FormData parsed:', requestData);

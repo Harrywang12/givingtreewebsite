@@ -1,27 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Debug environment variables
-console.log('🔍 Environment variables check:');
-console.log('- process.env keys:', Object.keys(process.env).filter(key => key.includes('SUPABASE')));
-console.log('- NEXT_PUBLIC_SUPABASE_URL exists:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log('- NEXT_PUBLIC_SUPABASE_ANON_KEY exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-console.log('🔍 Supabase client initialization:');
-console.log('- supabaseUrl:', supabaseUrl);
-console.log('- supabaseAnonKey exists:', !!supabaseAnonKey);
-
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Missing Supabase environment variables');
-  console.error('- supabaseUrl:', supabaseUrl);
-  console.error('- supabaseAnonKey:', supabaseAnonKey ? 'EXISTS' : 'MISSING');
   throw new Error('Missing Supabase environment variables');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-console.log('✅ Supabase client created successfully');
 
 // Helper function to upload images to Supabase Storage
 export async function uploadImage(file: File, folder: string = 'events'): Promise<string> {
@@ -31,8 +17,6 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
     console.log('- file size:', file.size);
     console.log('- file type:', file.type);
     console.log('- folder:', folder);
-    console.log('- supabaseUrl:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log('- supabaseAnonKey exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
     
     // Generate unique filename
     const timestamp = Date.now();
@@ -43,9 +27,6 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
     
     // Upload file to Supabase Storage
     console.log('- attempting upload to Supabase...');
-    console.log('- storage bucket: images');
-    console.log('- file path:', filename);
-    
     const { data, error } = await supabase.storage
       .from('images')
       .upload(filename, file, {

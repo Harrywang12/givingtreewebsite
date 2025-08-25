@@ -36,7 +36,6 @@ export async function GET(request: NextRequest) {
         memberSince: true,
         createdAt: true,
         updatedAt: true,
-        role: true,
       }
     })
 
