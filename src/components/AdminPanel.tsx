@@ -146,6 +146,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         formDataToSend.append('type', formData.type);
         formDataToSend.append('location', formData.location);
         formDataToSend.append('imageFile', formData.imageFile);
+        formDataToSend.append('imageUrl', formData.imageUrl || ''); // Always include imageUrl
+        
+        console.log('🔍 Frontend debug - sending FormData:');
+        console.log('- imageFile:', formData.imageFile);
+        console.log('- imageUrl:', formData.imageUrl);
+        console.log('- FormData keys:', Array.from(formDataToSend.keys()));
         
         response = await fetch('/api/admin/events', {
           method: 'POST',
@@ -156,6 +162,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         });
       } else {
         // Handle text-only submission
+        console.log('🔍 Frontend debug - sending JSON:');
+        console.log('- imageUrl:', formData.imageUrl);
+        
         response = await fetch('/api/admin/events', {
           method: 'POST',
           headers: {
