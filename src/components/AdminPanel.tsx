@@ -156,7 +156,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         console.log('- FormData keys:', Array.from(formDataToSend.keys()));
         
         // Log each FormData entry
-        for (let [key, value] of formDataToSend.entries()) {
+        for (const [key, value] of formDataToSend.entries()) {
           console.log(`- FormData[${key}]:`, value);
         }
         
