@@ -16,24 +16,32 @@ export default function EventImage({
   className = "w-full h-48 object-cover rounded-lg shadow-md",
   fallbackIcon = <ImageIcon className="w-8 h-8 text-gray-400" />
 }: EventImageProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-
   // Check if the src is a blob URL (temporary, won't work after refresh)
   const isBlobUrl = src.startsWith('blob:');
   
-  // If it's a blob URL, don't show loading state
+  // Initialize state based on whether it's a blob URL
+  const [isLoading, setIsLoading] = useState(!isBlobUrl);
+  const [hasError, setHasError] = useState(isBlobUrl);
+  
+  // If it's a blob URL, set error state and don't show loading state
   useEffect(() => {
-    if (isBlobUrl && isLoading) {
+    if (isBlobUrl) {
       setIsLoading(false);
+      setHasError(true);
+      console.log('🔍 Blob URL detected, setting error state');
+    } else {
+      // Reset state for valid URLs
+      setIsLoading(true);
+      setHasError(false);
     }
-  }, [isBlobUrl, isLoading]);
+  }, [isBlobUrl, src]);
   
   // Debug logging
-  console.log('EventImage component:', { src, alt, hasError, isBlobUrl });
+  console.log('EventImage component:', { src, alt, hasError, isBlobUrl, shouldShowError: isBlobUrl || hasError });
 
   // Show error for blob URLs since they're temporary and won't work
   if (isBlobUrl || hasError) {
+    console.log('🔍 Showing error state for:', { isBlobUrl, hasError });
     return (
       <div className={`${className} bg-gray-100 flex items-center justify-center border-2 border-red-300`}>
         <div className="text-center">
