@@ -5,6 +5,7 @@ import { rateLimit } from '@/lib/redis';
 import { uploadImage } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
+  console.log('🚀 POST /api/admin/events - API route started');
   try {
     // Rate limiting for admin event creation
     console.log('Checking rate limit...');
