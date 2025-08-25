@@ -77,7 +77,6 @@ export async function POST(request: NextRequest) {
       const contentValue = formData.get('content') as string;
       const typeValue = formData.get('type') as string;
       const locationValue = formData.get('location') as string;
-      const imageUrlValue = formData.get('imageUrl') as string;
       
       console.log('Individual form values:', {
         date: dateValue,
@@ -85,8 +84,7 @@ export async function POST(request: NextRequest) {
         description: descriptionValue,
         content: contentValue,
         type: typeValue,
-        location: locationValue,
-        imageUrl: imageUrlValue
+        location: locationValue
       });
       
       requestData = {
@@ -96,7 +94,7 @@ export async function POST(request: NextRequest) {
         date: dateValue || '', // Keep the date as is, let validation handle it
         type: typeValue,
         location: locationValue,
-        imageUrl: imageUrlValue || ''
+        imageUrl: '' // Set to empty string when uploading a file - will be replaced by Supabase URL
       };
       
       console.log('FormData parsed:', requestData);

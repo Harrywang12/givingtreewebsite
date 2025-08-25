@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageIcon } from 'lucide-react';
 
 interface EventImageProps {
@@ -19,16 +19,31 @@ export default function EventImage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
+  // Check if the src is a blob URL (temporary, won't work after refresh)
+  const isBlobUrl = src.startsWith('blob:');
+  
+  // If it's a blob URL, don't show loading state
+  useEffect(() => {
+    if (isBlobUrl && isLoading) {
+      setIsLoading(false);
+    }
+  }, [isBlobUrl, isLoading]);
+  
   // Debug logging
-  console.log('EventImage component:', { src, alt, hasError });
+  console.log('EventImage component:', { src, alt, hasError, isBlobUrl });
 
-  if (hasError) {
+  // Show error for blob URLs since they're temporary and won't work
+  if (isBlobUrl || hasError) {
     return (
       <div className={`${className} bg-gray-100 flex items-center justify-center border-2 border-red-300`}>
         <div className="text-center">
           <ImageIcon className="w-8 h-8 text-red-400 mx-auto mb-2" />
-          <p className="text-sm text-red-600">Image failed to load</p>
-          <p className="text-xs text-gray-500 mt-1">Alt: {alt}</p>
+          <p className="text-sm text-red-600">
+            {isBlobUrl ? 'Invalid image URL' : 'Image failed to load'}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {isBlobUrl ? 'This image was not properly uploaded. Please contact an admin.' : `Alt: ${alt}`}
+          </p>
         </div>
       </div>
     );
@@ -36,7 +51,7 @@ export default function EventImage({
 
   return (
     <div className="relative">
-      {isLoading && (
+      {isLoading && !isBlobUrl && (
         <div className={`${className} bg-gray-100 flex items-center justify-center border-2 border-blue-300`}>
           <div className="text-center">
             <div className="animate-pulse">
@@ -47,16 +62,18 @@ export default function EventImage({
           </div>
         </div>
       )}
-      <img 
-        src={src} 
-        alt={alt}
-        className={`${className} ${isLoading ? 'hidden' : ''}`}
-        onLoad={() => setIsLoading(false)}
-        onError={() => {
-          setIsLoading(false);
-          setHasError(true);
-        }}
-      />
+      {!isBlobUrl && (
+        <img 
+          src={src} 
+          alt={alt}
+          className={`${className} ${isLoading ? 'hidden' : ''}`}
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+            setHasError(true);
+          }}
+        />
+      )}
     </div>
   );
 }
