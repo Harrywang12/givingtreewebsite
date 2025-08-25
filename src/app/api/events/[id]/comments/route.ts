@@ -174,4 +174,83 @@ export async function POST(
       { status: 500 }
     )
   }
-} 
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params
+    const { commentId } = await request.json()
+    const token = request.headers.get('authorization')?.replace('Bearer ', '')
+
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+
+    const decoded = verifyToken(token)
+    if (!decoded) {
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      )
+    }
+
+    // Find the comment to verify ownership
+    const comment = await prisma.comment.findFirst({
+      where: {
+        id: commentId,
+        eventId: id
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            role: true
+          }
+        }
+      }
+    })
+
+    if (!comment) {
+      return NextResponse.json(
+        { error: 'Comment not found' },
+        { status: 404 }
+      )
+    }
+
+    // Check if user can delete the comment (owner or admin)
+    const canDelete = comment.user.id === decoded.userId || 
+                     comment.user.role === 'ADMIN' || 
+                     comment.user.role === 'SUPER_ADMIN'
+
+    if (!canDelete) {
+      return NextResponse.json(
+        { error: 'You can only delete your own comments' },
+        { status: 403 }
+      )
+    }
+
+    // Delete the comment
+    await prisma.comment.delete({
+      where: {
+        id: commentId
+      }
+    })
+
+    return NextResponse.json({
+      message: 'Comment deleted successfully'
+    })
+
+  } catch (error) {
+    console.error('Delete comment error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}

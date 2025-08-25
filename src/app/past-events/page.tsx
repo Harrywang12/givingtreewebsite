@@ -156,6 +156,42 @@ export default function PastEventsPage() {
     }
   };
 
+  const handleDeleteComment = async (eventId: string, commentId: string) => {
+    if (!user || !token) return;
+
+    if (!confirm('Are you sure you want to delete this comment?')) return;
+
+    try {
+      const response = await fetch(`/api/events/${eventId}/comments`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ commentId })
+      });
+
+      if (response.ok) {
+        // Remove the deleted comment from the local state
+        setEvents(prev => prev.map(event => 
+          event.id === eventId 
+            ? { 
+                ...event, 
+                comments: event.comments.filter(comment => comment.id !== commentId),
+                commentCount: event.commentCount - 1
+              }
+            : event
+        ));
+      } else {
+        const error = await response.json();
+        setError(error.error || 'Failed to delete comment');
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      setError('Failed to delete comment');
+    }
+  };
+
   const formatDate = (dateString: string) => {
     // Add timezone offset to prevent date shifting
     const date = new Date(dateString + 'T12:00:00');
@@ -347,12 +383,24 @@ export default function PastEventsPage() {
                     <div className="space-y-3">
                       {event.comments.slice(0, 5).map((comment) => (
                         <div key={comment.id} className="bg-white p-3 rounded-lg border">
-                          <div className="flex items-center mb-2">
-                            <User className="h-4 w-4 text-zinc-800 dark:text-zinc-900 mr-2" />
-                            <span className="text-sm font-medium text-zinc-700">{comment.user.name}</span>
-                            <span className="text-xs text-green-700 ml-2">
-                              {new Date(comment.createdAt).toLocaleDateString()}
-                            </span>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center">
+                              <User className="h-4 w-4 text-zinc-800 dark:text-zinc-900 mr-2" />
+                              <span className="text-sm font-medium text-zinc-700">{comment.user.name}</span>
+                              <span className="text-xs text-green-700 ml-2">
+                                {new Date(comment.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                            {/* Delete button - only show for comment owner or admin */}
+                            {(user?.id === comment.user.id || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+                              <button
+                                onClick={() => handleDeleteComment(event.id, comment.id)}
+                                className="text-red-600 hover:text-red-800 text-xs hover:underline"
+                                title="Delete comment"
+                              >
+                                Delete
+                              </button>
+                            )}
                           </div>
                           <p className="text-sm text-green-800">{comment.content}</p>
                         </div>

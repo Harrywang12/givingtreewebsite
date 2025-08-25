@@ -13,6 +13,7 @@ interface User {
   totalDonated: number;
   itemsDonated: number;
   memberSince: string;
+  role?: 'USER' | 'ADMIN' | 'SUPER_ADMIN';
 }
 
 interface AuthContextType {
