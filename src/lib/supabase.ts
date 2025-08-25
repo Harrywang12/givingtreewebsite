@@ -12,12 +12,21 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // Helper function to upload images to Supabase Storage
 export async function uploadImage(file: File, folder: string = 'events'): Promise<string> {
   try {
+    console.log('🔍 uploadImage function called:');
+    console.log('- file name:', file.name);
+    console.log('- file size:', file.size);
+    console.log('- file type:', file.type);
+    console.log('- folder:', folder);
+    
     // Generate unique filename
     const timestamp = Date.now();
     const fileExtension = file.name.split('.').pop();
     const filename = `${folder}/${timestamp}_${Math.random().toString(36).substring(2)}.${fileExtension}`;
     
+    console.log('- generated filename:', filename);
+    
     // Upload file to Supabase Storage
+    console.log('- attempting upload to Supabase...');
     const { data, error } = await supabase.storage
       .from('images')
       .upload(filename, file, {
@@ -26,18 +35,22 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
       });
 
     if (error) {
-      console.error('Supabase upload error:', error);
+      console.error('❌ Supabase upload error:', error);
       throw new Error(`Failed to upload image: ${error.message}`);
     }
 
+    console.log('✅ Upload successful, data:', data);
+
     // Get public URL
+    console.log('- getting public URL...');
     const { data: urlData } = supabase.storage
       .from('images')
       .getPublicUrl(filename);
 
+    console.log('✅ Public URL generated:', urlData.publicUrl);
     return urlData.publicUrl;
   } catch (error) {
-    console.error('Image upload error:', error);
+    console.error('❌ Image upload error:', error);
     throw error;
   }
 }

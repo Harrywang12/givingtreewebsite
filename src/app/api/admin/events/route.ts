@@ -59,7 +59,9 @@ export async function POST(request: NextRequest) {
     
     // Check if the request contains form data (file upload) or JSON
     const contentType = request.headers.get('content-type') || '';
-    console.log('Content-Type:', contentType);
+    console.log('🔍 Request debug:');
+    console.log('- Content-Type:', contentType);
+    console.log('- Is multipart/form-data:', contentType.includes('multipart/form-data'));
     
     if (contentType.includes('multipart/form-data')) {
       // Handle file upload
@@ -101,11 +103,20 @@ export async function POST(request: NextRequest) {
       
       // Get the uploaded file
       const file = formData.get('imageFile') as File;
+      console.log('🔍 Form data debug:');
+      console.log('- All form data keys:', Array.from(formData.keys()));
+      console.log('- imageFile key exists:', formData.has('imageFile'));
+      console.log('- file object:', file);
+      console.log('- file type:', typeof file);
+      console.log('- file instanceof File:', file instanceof File);
+      
       if (file && file.size > 0) {
         imageFile = file;
-        console.log('Image file found:', file.name, file.size, file.type);
+        console.log('✅ Image file found:', file.name, file.size, file.type);
       } else {
-        console.log('No image file found or file is empty');
+        console.log('❌ No image file found or file is empty');
+        console.log('- file size:', file?.size);
+        console.log('- file name:', file?.name);
       }
     } else {
       // Handle JSON data
@@ -130,6 +141,12 @@ export async function POST(request: NextRequest) {
     // Handle image upload if present
     let finalImageUrl = validation.sanitized!.imageUrl;
     
+    console.log('🔍 Image upload debug:');
+    console.log('- imageFile exists:', !!imageFile);
+    console.log('- imageFile name:', imageFile?.name);
+    console.log('- imageFile size:', imageFile?.size);
+    console.log('- imageFile type:', imageFile?.type);
+    
     if (imageFile) {
       try {
         console.log('Processing image upload to Supabase...');
@@ -138,10 +155,14 @@ export async function POST(request: NextRequest) {
         const imageUrl = await uploadImage(imageFile, 'events');
         finalImageUrl = imageUrl;
         
-        console.log('Image uploaded to Supabase:', imageUrl);
+        console.log('✅ Image uploaded to Supabase:', imageUrl);
         
       } catch (imageError) {
-        console.error('Supabase image upload error:', imageError);
+        console.error('❌ Supabase image upload error:', imageError);
+        console.error('Error details:', {
+          message: imageError instanceof Error ? imageError.message : 'Unknown error',
+          stack: imageError instanceof Error ? imageError.stack : undefined
+        });
         
         // Try to log the admin action failure
         try {
@@ -155,7 +176,10 @@ export async function POST(request: NextRequest) {
         
         // Continue without image if upload fails
         finalImageUrl = validation.sanitized!.imageUrl || '';
+        console.log('⚠️ Continuing without image, finalImageUrl:', finalImageUrl);
       }
+    } else {
+      console.log('ℹ️ No image file provided, using existing imageUrl:', finalImageUrl);
     }
     
     console.log('Creating event in database with data:', {
