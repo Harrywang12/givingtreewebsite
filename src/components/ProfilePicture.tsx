@@ -42,8 +42,22 @@ export default function ProfilePicture({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && onUpload) {
-      onUpload(file);
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image file size must be less than 5MB');
+        return;
+      }
+      
+      if (onUpload) {
+        onUpload(file);
+      }
     }
   };
 
@@ -87,11 +101,15 @@ export default function ProfilePicture({
               isHovering || isLoading ? 'opacity-100' : 'opacity-0'
             } cursor-pointer`}
             onClick={triggerFileInput}
+            title="Click to upload new profile picture"
           >
             {isLoading ? (
               <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
-              <Upload className="text-white w-1/4 h-1/4" />
+              <div className="text-center">
+                <Upload className="text-white w-1/3 h-1/3 mx-auto mb-1" />
+                <p className="text-white text-xs">Upload</p>
+              </div>
             )}
           </div>
         </>

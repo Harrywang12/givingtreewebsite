@@ -67,6 +67,7 @@ export default function UserDashboard() {
   });
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isUploadingPicture, setIsUploadingPicture] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -167,6 +168,8 @@ export default function UserDashboard() {
     if (!token) return;
     
     setIsUploadingPicture(true);
+    setError(''); // Clear any previous errors
+    
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -180,8 +183,18 @@ export default function UserDashboard() {
       });
 
       if (response.ok) {
-        // Refresh the dashboard data to get updated user info
-        window.location.reload();
+        const result = await response.json();
+        setMessage(result.message || 'Profile picture updated successfully!');
+        
+        // Update the local user state to show the new picture immediately
+        if (user) {
+          const newAvatarPath = `/uploads/profile_${user.id}_${Date.now()}.${file.name.split('.').pop()}`;
+          // This is a temporary update - the real path will come from the server
+          // For now, we'll reload to get the actual data
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
       } else {
         const data = await response.json();
         setError(data.error || 'Failed to upload profile picture');
@@ -322,6 +335,37 @@ export default function UserDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Success/Error Messages */}
+        {message && (
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg mx-4 mt-4 flex items-center">
+            <div className="w-5 h-5 bg-green-500 rounded-full mr-3 flex items-center justify-center">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+            <p className="text-green-700">{message}</p>
+            <button
+              onClick={() => setMessage('')}
+              className="ml-auto text-green-500 hover:text-green-700"
+            >
+              ×
+            </button>
+          </div>
+        )}
+        
+        {error && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg mx-4 mt-4 flex items-center">
+            <div className="w-5 h-5 bg-red-500 rounded-full mr-3 flex items-center justify-center">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+            <p className="text-red-700">{error}</p>
+            <button
+              onClick={() => setError('')}
+              className="ml-auto text-red-500 hover:text-red-700"
+            >
+              ×
+            </button>
+          </div>
+        )}
 
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200 overflow-x-auto">
