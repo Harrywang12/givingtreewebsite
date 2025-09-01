@@ -390,12 +390,12 @@ export default function Home() {
               <div className="grid md:grid-cols-2 gap-6 text-center">
                 <div>
                   <h4 className="font-semibold text-green-800 mb-2">Friday Collections</h4>
-                  <p className="text-gray-600">9:00 AM - 5:00 PM</p>
+                  <p className="text-gray-600">All Day</p>
                   <p className="text-sm text-gray-500">Item donations accepted</p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-blue-800 mb-2">Monday Sales</h4>
-                  <p className="text-gray-600">10:00 AM - 6:00 PM</p>
+                  <p className="text-gray-600">4:30 - 6pm</p>
                   <p className="text-sm text-gray-500">Public sales event</p>
                 </div>
               </div>
