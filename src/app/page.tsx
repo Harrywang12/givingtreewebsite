@@ -325,6 +325,29 @@ export default function Home() {
               We have a regular schedule of activities to support our mission. Come visit us at our location 
               to donate items or find great deals while supporting Mackenzie Health.
             </p>
+            
+            {/* Monday Sales Example Image */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mt-8 max-w-2xl mx-auto"
+            >
+              <div className="relative rounded-lg overflow-hidden shadow-lg">
+                <Image
+                  src="/mondaysalesexample.jpg"
+                  alt="Monday Sales Example - Items available for purchase"
+                  width={800}
+                  height={400}
+                  className="w-full h-auto object-cover"
+                  priority={false}
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+              
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
