@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Tag, Star, Search, Filter, Package, Heart } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
@@ -19,20 +19,28 @@ interface InventoryItem {
 }
 
 export default function CataloguePage() {
-  const [items, setItems] = useState<InventoryItem[]>([]);
+  const [allItems, setAllItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCondition, setSelectedCondition] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
   const [conditions, setConditions] = useState<string[]>([]);
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Fetch items and filters only once on component mount
   useEffect(() => {
     fetchItems();
-  }, [searchTerm, selectedCategory, selectedCondition]);
-
-  useEffect(() => {
     fetchFilters();
   }, []);
 
@@ -53,17 +61,12 @@ export default function CataloguePage() {
     try {
       setLoading(true);
       
-      // Build query parameters
-      const params = new URLSearchParams();
-      if (searchTerm) params.append('search', searchTerm);
-      if (selectedCategory) params.append('category', selectedCategory);
-      if (selectedCondition) params.append('condition', selectedCondition);
-      
-      const response = await fetch(`/api/inventory?${params.toString()}`);
+      // Fetch all items once
+      const response = await fetch('/api/inventory');
       
       if (response.ok) {
         const data = await response.json();
-        setItems(data.items || []);
+        setAllItems(data.items || []);
       } else {
         setError('Failed to load inventory');
       }
@@ -74,6 +77,24 @@ export default function CataloguePage() {
       setLoading(false);
     }
   };
+  
+  // Filter items client-side based on search and filter criteria
+  const filteredItems = useMemo(() => {
+    return allItems.filter(item => {
+      // Search term filter
+      const matchesSearch = !debouncedSearchTerm || 
+        item.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        (item.description?.toLowerCase() || '').includes(debouncedSearchTerm.toLowerCase());
+      
+      // Category filter
+      const matchesCategory = !selectedCategory || item.category === selectedCategory;
+      
+      // Condition filter
+      const matchesCondition = !selectedCondition || item.condition === selectedCondition;
+      
+      return matchesSearch && matchesCategory && matchesCondition;
+    });
+  }, [allItems, debouncedSearchTerm, selectedCategory, selectedCondition]);
 
 
   const getConditionColor = (condition?: string) => {
@@ -89,8 +110,7 @@ export default function CataloguePage() {
     }
   };
 
-  // Items are already filtered by the API
-  const filteredItems = items;
+  // filteredItems is now computed with useMemo above
 
   if (loading) {
     return (
@@ -217,7 +237,7 @@ export default function CataloguePage() {
           {/* Results Count */}
           <div className="mb-8">
             <p className="text-gray-600">
-              Showing {filteredItems.length} of {items.filter(item => item.isAvailable).length} items
+              Showing {filteredItems.length} of {allItems.length} items
             </p>
           </div>
 
@@ -246,12 +266,12 @@ export default function CataloguePage() {
                 >
                   <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-green-100 overflow-hidden">
                     {/* Item Image */}
-                    <div className="relative h-48 bg-gray-100">
+                    <div className="relative h-48 bg-gray-100 overflow-hidden">
                       {item.imageUrl ? (
                         <EventImage 
                           src={item.imageUrl} 
                           alt={item.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-48 object-cover object-center"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">

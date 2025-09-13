@@ -112,7 +112,9 @@ export default function EventImage({
           loading="lazy"
           style={{
             objectFit: 'cover',
-            objectPosition: 'center'
+            objectPosition: 'center',
+            maxWidth: '100%',
+            maxHeight: '100%'
           }}
         />
       )}
