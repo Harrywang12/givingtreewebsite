@@ -314,8 +314,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get all events with admin details
+    // Get active events with admin details
     const events = await prisma.event.findMany({
+      where: {
+        isActive: true
+      },
       orderBy: { createdAt: 'desc' },
       include: {
         author: {

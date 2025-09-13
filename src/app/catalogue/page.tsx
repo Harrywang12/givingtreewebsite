@@ -25,15 +25,41 @@ export default function CataloguePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCondition, setSelectedCondition] = useState('');
+  const [categories, setCategories] = useState<string[]>([]);
+  const [conditions, setConditions] = useState<string[]>([]);
 
   useEffect(() => {
     fetchItems();
+  }, [searchTerm, selectedCategory, selectedCondition]);
+
+  useEffect(() => {
+    fetchFilters();
   }, []);
+
+  const fetchFilters = async () => {
+    try {
+      const response = await fetch('/api/inventory/filters');
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data.categories || []);
+        setConditions(data.conditions || []);
+      }
+    } catch (error) {
+      console.error('Error fetching filters:', error);
+    }
+  };
 
   const fetchItems = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/inventory');
+      
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (searchTerm) params.append('search', searchTerm);
+      if (selectedCategory) params.append('category', selectedCategory);
+      if (selectedCondition) params.append('condition', selectedCondition);
+      
+      const response = await fetch(`/api/inventory?${params.toString()}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -63,19 +89,8 @@ export default function CataloguePage() {
     }
   };
 
-  // Get unique categories and conditions for filters
-  const categories = Array.from(new Set(items.map(item => item.category).filter(Boolean)));
-  const conditions = Array.from(new Set(items.map(item => item.condition).filter(Boolean)));
-
-  // Filter items based on search and filters
-  const filteredItems = items.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || item.category === selectedCategory;
-    const matchesCondition = !selectedCondition || item.condition === selectedCondition;
-    
-    return matchesSearch && matchesCategory && matchesCondition && item.isAvailable;
-  });
+  // Items are already filtered by the API
+  const filteredItems = items;
 
   if (loading) {
     return (
@@ -278,13 +293,6 @@ export default function CataloguePage() {
                         </p>
                       )}
 
-                      {/* Inquire Button */}
-                      <div className="flex items-center justify-end">
-                        <button className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
-                          <Heart className="w-4 h-4 mr-1" />
-                          Inquire
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </motion.div>
