@@ -188,7 +188,6 @@ export default function UserDashboard() {
         
         // Update the local user state to show the new picture immediately
         if (user) {
-          const newAvatarPath = `/uploads/profile_${user.id}_${Date.now()}.${file.name.split('.').pop()}`;
           // This is a temporary update - the real path will come from the server
           // For now, we'll reload to get the actual data
           setTimeout(() => {

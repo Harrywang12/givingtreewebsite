@@ -10,11 +10,10 @@ interface EventImageProps {
   fallbackIcon?: React.ReactNode;
 }
 
-export default function EventImage({ 
-  src, 
-  alt, 
-  className = "w-full h-48 object-cover rounded-lg shadow-md",
-  fallbackIcon = <ImageIcon className="w-8 h-8 text-gray-400" />
+export default function EventImage({
+  src,
+  alt,
+  className = "w-full h-48 object-cover rounded-lg shadow-md"
 }: EventImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);

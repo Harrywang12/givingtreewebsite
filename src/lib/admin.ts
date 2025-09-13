@@ -297,18 +297,6 @@ export function validateEventData(data: EventInput): {
   return { isValid: true, sanitized };
 }
 
-/**
- * Validate URL for security
- */
-function isValidUrl(string: string): boolean {
-  try {
-    const url = new URL(string);
-    // Only allow HTTP/HTTPS URLs
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
 
 /**
  * Security headers for admin responses

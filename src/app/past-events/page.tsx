@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, MessageCircle, ThumbsUp, Heart, Users, User, ImageIcon } from 'lucide-react';
+import { Calendar, MessageCircle, ThumbsUp, User, ImageIcon } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
 import EventImage from '@/components/EventImage';
 import { useAuth } from '@/contexts/AuthContext';

@@ -12,10 +12,9 @@ import {
   AlertTriangle,
   CheckCircle,
   DollarSign,
-  Users,
   Heart,
-  Edit,
-  Trash2
+  Trash2,
+  Package
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 

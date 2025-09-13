@@ -2,13 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
 import { 
   Users, 
   Mail, 
   Phone,
   MapPin,
-  Calendar,
   Leaf,
   Heart,
   Sprout,
@@ -21,7 +19,6 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import EventImage from '@/components/EventImage';
-import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from '@/components/AuthModal';
 
 // Nature-inspired images
@@ -35,9 +32,8 @@ const NATURAL_IMAGES = [
 ];
 
 export default function Home() {
-  const { user } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [authMode] = useState<'login' | 'register'>('login');
   
   // Home Events state
   type HomeEvent = {
@@ -77,7 +73,7 @@ export default function Home() {
         if (!res.ok) throw new Error('Failed to load events');
         const data = await res.json();
         setHomeEvents(data.events || []);
-      } catch (e) {
+      } catch {
         setHomeEventsError('Failed to load updates.');
       } finally {
         setHomeEventsLoading(false);
@@ -111,21 +107,6 @@ export default function Home() {
   // Parallax scroll references
   const heroRef = useRef<HTMLElement>(null);
 
-  const handleAuthSuccess = () => {
-    setShowAuthModal(false);
-  };
-
-  const handleAuthModeChange = (mode: 'login' | 'register') => {
-    setAuthMode(mode);
-    setShowAuthModal(true);
-  };
-
-  const handleScrollToContact = () => {
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <div className="min-h-screen overflow-hidden">

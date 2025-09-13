@@ -8,7 +8,16 @@ export async function GET(request: NextRequest) {
     const condition = searchParams.get('condition')
     const search = searchParams.get('search')
 
-    const whereClause: any = {
+    const whereClause: {
+      isActive: boolean;
+      isAvailable: boolean;
+      category?: string;
+      condition?: string;
+      OR?: Array<{
+        name?: { contains: string; mode: 'insensitive' };
+        description?: { contains: string; mode: 'insensitive' };
+      }>;
+    } = {
       isActive: true,
       isAvailable: true
     }

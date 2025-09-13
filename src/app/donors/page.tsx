@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Users, Gift, Star, Leaf, Sparkles } from 'lucide-react';
+import { Heart, Users, Gift, Leaf, Sparkles } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
 
 interface Donor {

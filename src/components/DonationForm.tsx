@@ -79,7 +79,7 @@ export default function DonationForm() {
         const errorData = await response.json();
         setError(errorData.error || 'Failed to submit donation');
       }
-    } catch (error) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);

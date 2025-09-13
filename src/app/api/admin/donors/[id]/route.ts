@@ -4,7 +4,7 @@ import { verifyAdminFromRequest, logAdminAction, ADMIN_SECURITY_HEADERS } from '
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify admin access
@@ -16,7 +16,7 @@ export async function PUT(
       );
     }
 
-    const donorId = params.id;
+    const { id: donorId } = await params;
     const body = await request.json();
     const { name, isAnonymous, amount, message, isActive } = body;
 
@@ -62,7 +62,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify admin access
@@ -74,7 +74,7 @@ export async function DELETE(
       );
     }
 
-    const donorId = params.id;
+    const { id: donorId } = await params;
 
     // Soft delete by setting isActive to false
     const donor = await prisma.donor.update({
