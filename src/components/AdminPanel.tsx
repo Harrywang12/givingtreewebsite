@@ -38,6 +38,7 @@ interface DonorFormData {
   name: string;
   isAnonymous: boolean;
   amount: string;
+  itemDonated: string;
   message: string;
 }
 
@@ -46,6 +47,7 @@ interface Donor {
   name: string;
   isAnonymous: boolean;
   amount?: number;
+  itemDonated?: string;
   message?: string;
   isActive: boolean;
   createdAt: string;
@@ -54,7 +56,6 @@ interface Donor {
 interface InventoryItemFormData {
   name: string;
   description: string;
-  price: string;
   category: string;
   condition: string;
   imageFile?: File;
@@ -64,7 +65,6 @@ interface InventoryItem {
   id: string;
   name: string;
   description?: string;
-  price?: number;
   category?: string;
   condition?: string;
   imageUrl?: string;
@@ -100,13 +100,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     name: '',
     isAnonymous: false,
     amount: '',
+    itemDonated: '',
     message: ''
   });
 
   const [inventoryFormData, setInventoryFormData] = useState<InventoryItemFormData>({
     name: '',
     description: '',
-    price: '',
     category: '',
     condition: ''
   });
@@ -221,6 +221,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           name: '',
           isAnonymous: false,
           amount: '',
+          itemDonated: '',
           message: ''
         });
         fetchAdminDonors(); // Refresh the list
@@ -290,7 +291,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       const formDataToSend = new FormData();
       formDataToSend.append('name', inventoryFormData.name);
       formDataToSend.append('description', inventoryFormData.description);
-      formDataToSend.append('price', inventoryFormData.price);
       formDataToSend.append('category', inventoryFormData.category);
       formDataToSend.append('condition', inventoryFormData.condition);
       
@@ -313,7 +313,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setInventoryFormData({
           name: '',
           description: '',
-          price: '',
           category: '',
           condition: ''
         });
@@ -947,6 +946,19 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         />
                       </div>
                     </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Item Donated
+                      </label>
+                      <input
+                        type="text"
+                        value={donorFormData.itemDonated}
+                        onChange={(e) => setDonorFormData({...donorFormData, itemDonated: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        placeholder="e.g., Furniture, Electronics, Books, etc."
+                      />
+                    </div>
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1014,6 +1026,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             {donor.amount && (
                               <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
                                 ${donor.amount.toFixed(2)}
+                              </span>
+                            )}
+                            {donor.itemDonated && (
+                              <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                                {donor.itemDonated}
                               </span>
                             )}
                             <span className={`px-2 py-1 text-xs rounded-full ${
@@ -1145,19 +1162,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           required
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Price (CAD)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={inventoryFormData.price}
-                          onChange={(e) => setInventoryFormData({...inventoryFormData, price: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                          placeholder="0.00"
-                        />
-                      </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1266,11 +1270,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             {item.name}
                           </h5>
                           <div className="flex items-center space-x-2">
-                            {item.price && (
-                              <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                                ${item.price.toFixed(2)}
-                              </span>
-                            )}
                             {item.category && (
                               <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
                                 {item.category}

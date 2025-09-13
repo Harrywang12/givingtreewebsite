@@ -49,13 +49,6 @@ export default function CataloguePage() {
     }
   };
 
-  const formatPrice = (price?: number) => {
-    if (!price) return 'Price on request';
-    return new Intl.NumberFormat('en-CA', {
-      style: 'currency',
-      currency: 'CAD'
-    }).format(price);
-  };
 
   const getConditionColor = (condition?: string) => {
     switch (condition?.toLowerCase()) {
@@ -285,12 +278,8 @@ export default function CataloguePage() {
                         </p>
                       )}
 
-                      {/* Price */}
-                      <div className="flex items-center justify-between">
-                        <div className="text-lg font-bold text-green-600">
-                          {formatPrice(item.price)}
-                        </div>
-                        
+                      {/* Inquire Button */}
+                      <div className="flex items-center justify-end">
                         <button className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
                           <Heart className="w-4 h-4 mr-1" />
                           Inquire

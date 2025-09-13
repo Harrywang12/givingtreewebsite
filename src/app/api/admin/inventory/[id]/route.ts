@@ -18,7 +18,7 @@ export async function PUT(
 
     const { id: itemId } = await params;
     const body = await request.json();
-    const { name, description, price, category, condition, isAvailable, isActive } = body;
+    const { name, description, category, condition, isAvailable, isActive } = body;
 
     // Validate required fields
     if (!name || name.trim() === '') {
@@ -34,7 +34,6 @@ export async function PUT(
       data: {
         name: name.trim(),
         description: description?.trim() || null,
-        price: price ? parseFloat(price) : null,
         category: category?.trim() || null,
         condition: condition?.trim() || null,
         isAvailable: isAvailable !== undefined ? isAvailable : true,

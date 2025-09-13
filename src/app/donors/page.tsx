@@ -10,6 +10,7 @@ interface Donor {
   name: string;
   isAnonymous: boolean;
   amount?: number;
+  itemDonated?: string;
   message?: string;
   createdAt: string;
 }
@@ -159,6 +160,16 @@ export default function DonorsPage() {
                           <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
                             <Gift className="w-4 h-4 mr-1" />
                             {formatAmount(donor.amount)}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Item Donated */}
+                      {donor.itemDonated && (
+                        <div className="text-center mb-4">
+                          <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                            <Leaf className="w-4 h-4 mr-1" />
+                            {donor.itemDonated}
                           </div>
                         </div>
                       )}

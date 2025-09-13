@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, isAnonymous, amount, message } = body;
+    const { name, isAnonymous, amount, itemDonated, message } = body;
 
     // Validate required fields
     if (!name || name.trim() === '') {
@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
         name: name.trim(),
         isAnonymous: isAnonymous || false,
         amount: amount ? parseFloat(amount) : null,
+        itemDonated: itemDonated?.trim() || null,
         message: message?.trim() || null
       }
     });

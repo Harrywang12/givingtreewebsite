@@ -48,7 +48,6 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
-    const price = formData.get('price') as string;
     const category = formData.get('category') as string;
     const condition = formData.get('condition') as string;
     const imageFile = formData.get('imageFile') as File;
@@ -78,7 +77,6 @@ export async function POST(request: NextRequest) {
       data: {
         name: name.trim(),
         description: description?.trim() || null,
-        price: price ? parseFloat(price) : null,
         category: category?.trim() || null,
         condition: condition?.trim() || null,
         imageUrl: imageUrl || null

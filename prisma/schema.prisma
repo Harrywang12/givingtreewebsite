@@ -212,6 +212,7 @@ model Donor {
   name        String
   isAnonymous Boolean  @default(false)
   amount      Float?   // Optional donation amount
+  itemDonated String?  // Optional item donated
   message     String?  // Optional thank you message
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -224,7 +225,6 @@ model InventoryItem {
   id          String   @id @default(cuid())
   name        String
   description String?
-  price       Float?   // Optional price
   category    String?  // e.g., "Furniture", "Electronics", "Books", etc.
   condition   String?  // e.g., "Excellent", "Good", "Fair"
   imageUrl    String?  // Item image
