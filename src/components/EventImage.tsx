@@ -111,10 +111,8 @@ export default function EventImage({
           onError={handleImageError}
           loading="lazy"
           style={{
-            objectFit: 'cover',
-            objectPosition: 'center',
             maxWidth: '100%',
-            maxHeight: '100%'
+            height: 'auto'
           }}
         />
       )}

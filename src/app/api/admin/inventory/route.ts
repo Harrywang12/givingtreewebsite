@@ -49,16 +49,12 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
-    const name = formData.get('name') as string;
-    const description = formData.get('description') as string;
-    const category = formData.get('category') as string;
-    const condition = formData.get('condition') as string;
     const imageFile = formData.get('imageFile') as File;
 
     // Validate required fields
-    if (!name || name.trim() === '') {
+    if (!imageFile || imageFile.size === 0) {
       return NextResponse.json(
-        { error: 'Item name is required' },
+        { error: 'Image file is required' },
         { status: 400, headers: ADMIN_SECURITY_HEADERS }
       );
     }
@@ -75,13 +71,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Generate a random name based on the file name
+    const fileName = imageFile.name || 'image';
+    const timestamp = new Date().toISOString().replace(/[-:.]/g, '');
+    const randomName = `Image_${timestamp}`;
+    
     // Create inventory item
     const item = await prisma.inventoryItem.create({
       data: {
-        name: name.trim(),
-        description: description?.trim() || null,
-        category: category?.trim() || null,
-        condition: condition?.trim() || null,
+        name: randomName,
+        description: null,
+        category: null,
+        condition: null,
         imageUrl: imageUrl || null
       }
     });
@@ -89,8 +90,7 @@ export async function POST(request: NextRequest) {
     // Log admin action
     await logAdminAction(admin.id, 'INVENTORY_ITEM_CREATE', 'inventory', {
       itemId: item.id,
-      itemName: item.name,
-      category: item.category
+      itemName: randomName
     });
 
     return NextResponse.json({ 

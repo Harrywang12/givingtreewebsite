@@ -54,11 +54,7 @@ interface Donor {
 }
 
 interface InventoryItemFormData {
-  name: string;
-  description: string;
-  category: string;
-  condition: string;
-  imageFile?: File;
+  imageFiles: File[];
 }
 
 interface InventoryItem {
@@ -105,11 +101,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   });
 
   const [inventoryFormData, setInventoryFormData] = useState<InventoryItemFormData>({
-    name: '',
-    description: '',
-    category: '',
-    condition: ''
+    imageFiles: []
   });
+  
+  // State to manage multiple image upload fields
+  const [imageUploadFields, setImageUploadFields] = useState<{id: number, file: File | null}[]>([
+    { id: 1, file: null }
+  ]);
 
   // Check if user is admin
   const isAdmin = user?.email === 'wangharrison2009@gmail.com' || user?.email === 'givingtreenonprofit@gmail.com';
@@ -280,6 +278,29 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       console.error('Failed to fetch inventory:', err);
     }
   };
+  
+  // Add a new image upload field
+  const addImageUploadField = () => {
+    const newId = imageUploadFields.length > 0 
+      ? Math.max(...imageUploadFields.map(field => field.id)) + 1 
+      : 1;
+    
+    setImageUploadFields([...imageUploadFields, { id: newId, file: null }]);
+  };
+  
+  // Remove an image upload field
+  const removeImageUploadField = (id: number) => {
+    setImageUploadFields(imageUploadFields.filter(field => field.id !== id));
+  };
+  
+  // Handle file selection for a specific upload field
+  const handleFileChange = (id: number, file: File | null) => {
+    setImageUploadFields(
+      imageUploadFields.map(field => 
+        field.id === id ? { ...field, file } : field
+      )
+    );
+  };
 
   const handleInventorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -288,37 +309,45 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     setMessage('');
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', inventoryFormData.name);
-      formDataToSend.append('description', inventoryFormData.description);
-      formDataToSend.append('category', inventoryFormData.category);
-      formDataToSend.append('condition', inventoryFormData.condition);
+      // Get all files from the upload fields
+      const files = imageUploadFields
+        .map(field => field.file)
+        .filter((file): file is File => file !== null);
       
-      if (inventoryFormData.imageFile) {
-        formDataToSend.append('imageFile', inventoryFormData.imageFile);
+      if (files.length === 0) {
+        setError('Please select at least one image to upload');
+        setIsSubmitting(false);
+        return;
       }
-
-      const response = await fetch('/api/admin/inventory', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage('Inventory item added successfully');
-        setInventoryFormData({
-          name: '',
-          description: '',
-          category: '',
-          condition: ''
+      
+      let successCount = 0;
+      
+      // Process each image sequentially
+      for (const imageFile of files) {
+        const formDataToSend = new FormData();
+        formDataToSend.append('imageFile', imageFile);
+        
+        const response = await fetch('/api/admin/inventory', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formDataToSend
         });
+        
+        if (response.ok) {
+          successCount++;
+        }
+      }
+      
+      if (successCount > 0) {
+        setMessage(`${successCount} inventory items added successfully`);
+        
+        // Reset form
+        setImageUploadFields([{ id: 1, file: null }]);
         fetchAdminInventory(); // Refresh the list
       } else {
-        setError(result.error || 'Failed to add inventory item');
+        setError('Failed to add any inventory items');
       }
     } catch (err) {
       console.error('Failed to add inventory item:', err);
@@ -454,7 +483,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEventFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
@@ -750,7 +779,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       type="file"
                       name="imageFile"
                       accept="image/*"
-                      onChange={handleFileChange}
+                      onChange={handleEventFileChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     <p className="text-xs text-gray-500">Accepted formats: JPG, PNG, GIF. Max size: 5MB</p>
@@ -1148,89 +1177,44 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                   <h5 className="text-sm font-medium text-gray-900 mb-4">Add New Inventory Item</h5>
                   <form onSubmit={handleInventorySubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Item Name *
-                        </label>
-                        <input
-                          type="text"
-                          value={inventoryFormData.name}
-                          onChange={(e) => setInventoryFormData({...inventoryFormData, name: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                          placeholder="Enter item name"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Category
-                        </label>
-                        <select
-                          value={inventoryFormData.category}
-                          onChange={(e) => setInventoryFormData({...inventoryFormData, category: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        >
-                          <option value="">Select category</option>
-                          <option value="Furniture">Furniture</option>
-                          <option value="Electronics">Electronics</option>
-                          <option value="Books">Books</option>
-                          <option value="Clothing">Clothing</option>
-                          <option value="Home Decor">Home Decor</option>
-                          <option value="Kitchen">Kitchen</option>
-                          <option value="Toys">Toys</option>
-                          <option value="Sports">Sports</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Condition
-                        </label>
-                        <select
-                          value={inventoryFormData.condition}
-                          onChange={(e) => setInventoryFormData({...inventoryFormData, condition: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        >
-                          <option value="">Select condition</option>
-                          <option value="Excellent">Excellent</option>
-                          <option value="Good">Good</option>
-                          <option value="Fair">Fair</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Description
-                      </label>
-                      <textarea
-                        value={inventoryFormData.description}
-                        onChange={(e) => setInventoryFormData({...inventoryFormData, description: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        rows={3}
-                        placeholder="Describe the item..."
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Item Image
-                      </label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setInventoryFormData({...inventoryFormData, imageFile: file});
-                          }
-                        }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
+                    <div className="space-y-4">
+                      <h5 className="text-sm font-medium text-gray-700">Upload Images</h5>
+                      
+                      {imageUploadFields.map((field) => (
+                        <div key={field.id} className="flex items-center space-x-2">
+                          <div className="flex-1">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0] || null;
+                                handleFileChange(field.id, file);
+                              }}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                            />
+                          </div>
+                          
+                          {imageUploadFields.length > 1 && (
+                            <button 
+                              type="button"
+                              onClick={() => removeImageUploadField(field.id)}
+                              className="p-2 text-red-500 hover:text-red-700"
+                              aria-label="Remove image"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      
+                      <button
+                        type="button"
+                        onClick={addImageUploadField}
+                        className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add Another Image
+                      </button>
                     </div>
 
                     <div className="flex space-x-3">
