@@ -11,7 +11,11 @@ import {
   X,
   AlertTriangle,
   CheckCircle,
-  DollarSign
+  DollarSign,
+  Users,
+  Heart,
+  Edit,
+  Trash2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -31,6 +35,45 @@ interface EventFormData {
   imageFile?: File;
 }
 
+interface DonorFormData {
+  name: string;
+  isAnonymous: boolean;
+  amount: string;
+  message: string;
+}
+
+interface Donor {
+  id: string;
+  name: string;
+  isAnonymous: boolean;
+  amount?: number;
+  message?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+interface InventoryItemFormData {
+  name: string;
+  description: string;
+  price: string;
+  category: string;
+  condition: string;
+  imageFile?: File;
+}
+
+interface InventoryItem {
+  id: string;
+  name: string;
+  description?: string;
+  price?: number;
+  category?: string;
+  condition?: string;
+  imageUrl?: string;
+  isAvailable: boolean;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const { user, token } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,8 +81,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [error, setError] = useState('');
   const [events, setEvents] = useState([]);
   const [donations, setDonations] = useState([]);
+  const [donors, setDonors] = useState<Donor[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<'events' | 'donations'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'donations' | 'donors' | 'inventory'>('events');
   
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
@@ -50,6 +95,21 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     location: '',
     imageUrl: '',
     imageFile: undefined
+  });
+
+  const [donorFormData, setDonorFormData] = useState<DonorFormData>({
+    name: '',
+    isAnonymous: false,
+    amount: '',
+    message: ''
+  });
+
+  const [inventoryFormData, setInventoryFormData] = useState<InventoryItemFormData>({
+    name: '',
+    description: '',
+    price: '',
+    category: '',
+    condition: ''
   });
 
   // Check if user is admin
@@ -119,10 +179,189 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     }
   };
 
+  const fetchAdminDonors = async () => {
+    if (!token) return;
+    
+    try {
+      const response = await fetch('/api/admin/donors', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setDonors(data.donors || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch donors:', err);
+    }
+  };
+
+  const handleDonorSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/admin/donors', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(donorFormData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage('Donor added successfully');
+        setDonorFormData({
+          name: '',
+          isAnonymous: false,
+          amount: '',
+          message: ''
+        });
+        fetchAdminDonors(); // Refresh the list
+      } else {
+        setError(result.error || 'Failed to add donor');
+      }
+    } catch (err) {
+      console.error('Failed to add donor:', err);
+      setError('Failed to add donor');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteDonor = async (donorId: string) => {
+    if (!token || !confirm('Are you sure you want to remove this donor?')) return;
+    
+    try {
+      setIsSubmitting(true);
+      const response = await fetch(`/api/admin/donors/${donorId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        setMessage('Donor removed successfully');
+        fetchAdminDonors(); // Refresh the list
+      } else {
+        setError('Failed to remove donor');
+      }
+    } catch (err) {
+      console.error('Failed to remove donor:', err);
+      setError('Failed to remove donor');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const fetchAdminInventory = async () => {
+    if (!token) return;
+    
+    try {
+      const response = await fetch('/api/admin/inventory', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setInventoryItems(data.items || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch inventory:', err);
+    }
+  };
+
+  const handleInventorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', inventoryFormData.name);
+      formDataToSend.append('description', inventoryFormData.description);
+      formDataToSend.append('price', inventoryFormData.price);
+      formDataToSend.append('category', inventoryFormData.category);
+      formDataToSend.append('condition', inventoryFormData.condition);
+      
+      if (inventoryFormData.imageFile) {
+        formDataToSend.append('imageFile', inventoryFormData.imageFile);
+      }
+
+      const response = await fetch('/api/admin/inventory', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formDataToSend
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage('Inventory item added successfully');
+        setInventoryFormData({
+          name: '',
+          description: '',
+          price: '',
+          category: '',
+          condition: ''
+        });
+        fetchAdminInventory(); // Refresh the list
+      } else {
+        setError(result.error || 'Failed to add inventory item');
+      }
+    } catch (err) {
+      console.error('Failed to add inventory item:', err);
+      setError('Failed to add inventory item');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteInventoryItem = async (itemId: string) => {
+    if (!token || !confirm('Are you sure you want to remove this inventory item?')) return;
+    
+    try {
+      setIsSubmitting(true);
+      const response = await fetch(`/api/admin/inventory/${itemId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        setMessage('Inventory item removed successfully');
+        fetchAdminInventory(); // Refresh the list
+      } else {
+        setError('Failed to remove inventory item');
+      }
+    } catch (err) {
+      console.error('Failed to remove inventory item:', err);
+      setError('Failed to remove inventory item');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
     useEffect(() => {
     if (isOpen && isAdmin) {
       fetchAdminEvents();
       fetchAdminDonations();
+      fetchAdminDonors();
+      fetchAdminInventory();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, isAdmin]);
@@ -332,6 +571,28 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 }`}
               >
                 Content Management
+              </button>
+              <button
+                onClick={() => {setActiveTab('donors'); setShowForm(false);}}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'donors'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <Heart className="h-4 w-4 inline mr-1" />
+                Donors
+              </button>
+              <button
+                onClick={() => {setActiveTab('inventory'); setShowForm(false);}}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'inventory'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <Package className="h-4 w-4 inline mr-1" />
+                Inventory
               </button>
               <button
                 onClick={() => {setActiveTab('donations'); setShowForm(false);}}
@@ -640,6 +901,155 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             </div>
           )}
 
+          {/* Donors Management */}
+          {activeTab === 'donors' && (
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="text-md font-semibold text-gray-900">Donor Management ({donors.length})</h4>
+                <button
+                  onClick={() => setShowForm(!showForm)}
+                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Donor
+                </button>
+              </div>
+
+              {/* Add Donor Form */}
+              {showForm && (
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <h5 className="text-sm font-medium text-gray-900 mb-4">Add New Donor</h5>
+                  <form onSubmit={handleDonorSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Donor Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={donorFormData.name}
+                          onChange={(e) => setDonorFormData({...donorFormData, name: e.target.value})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="Enter donor name"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Donation Amount
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={donorFormData.amount}
+                          onChange={(e) => setDonorFormData({...donorFormData, amount: e.target.value})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Thank You Message
+                      </label>
+                      <textarea
+                        value={donorFormData.message}
+                        onChange={(e) => setDonorFormData({...donorFormData, message: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        rows={3}
+                        placeholder="Optional thank you message from the donor"
+                      />
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="isAnonymous"
+                        checked={donorFormData.isAnonymous}
+                        onChange={(e) => setDonorFormData({...donorFormData, isAnonymous: e.target.checked})}
+                        className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor="isAnonymous" className="ml-2 block text-sm text-gray-700">
+                        Anonymous donor
+                      </label>
+                    </div>
+
+                    <div className="flex space-x-3">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                      >
+                        <Save className="h-4 w-4 mr-1" />
+                        {isSubmitting ? 'Adding...' : 'Add Donor'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowForm(false)}
+                        className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Donors List */}
+              {donors.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <Heart className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No donors added yet</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-60 overflow-y-auto">
+                  {donors.map((donor) => (
+                    <div key={donor.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h5 className="font-medium text-gray-900">
+                            {donor.isAnonymous ? 'Anonymous Donor' : donor.name}
+                          </h5>
+                          <div className="flex items-center space-x-2">
+                            {donor.amount && (
+                              <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                ${donor.amount.toFixed(2)}
+                              </span>
+                            )}
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              donor.isActive 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {donor.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                        </div>
+                        {donor.message && (
+                          <p className="text-sm text-gray-600 italic mt-1">
+                            "{donor.message}"
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500">
+                          Added {new Date(donor.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => deleteDonor(donor.id)}
+                        className="px-2 py-1 text-xs rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                        disabled={isSubmitting}
+                        aria-label={`Remove donor ${donor.name}`}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Donations List */}
           {activeTab === 'donations' && (
             <div>
@@ -696,6 +1106,203 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           {donation.paymentMethod} • {new Date(donation.createdAt).toLocaleDateString()}
                         </p>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Inventory Management */}
+          {activeTab === 'inventory' && (
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="text-md font-semibold text-gray-900">Inventory Management ({inventoryItems.length})</h4>
+                <button
+                  onClick={() => setShowForm(!showForm)}
+                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Item
+                </button>
+              </div>
+
+              {/* Add Inventory Item Form */}
+              {showForm && (
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <h5 className="text-sm font-medium text-gray-900 mb-4">Add New Inventory Item</h5>
+                  <form onSubmit={handleInventorySubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Item Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={inventoryFormData.name}
+                          onChange={(e) => setInventoryFormData({...inventoryFormData, name: e.target.value})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="Enter item name"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Price (CAD)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={inventoryFormData.price}
+                          onChange={(e) => setInventoryFormData({...inventoryFormData, price: e.target.value})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Category
+                        </label>
+                        <select
+                          value={inventoryFormData.category}
+                          onChange={(e) => setInventoryFormData({...inventoryFormData, category: e.target.value})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                          <option value="">Select category</option>
+                          <option value="Furniture">Furniture</option>
+                          <option value="Electronics">Electronics</option>
+                          <option value="Books">Books</option>
+                          <option value="Clothing">Clothing</option>
+                          <option value="Home Decor">Home Decor</option>
+                          <option value="Kitchen">Kitchen</option>
+                          <option value="Toys">Toys</option>
+                          <option value="Sports">Sports</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Condition
+                        </label>
+                        <select
+                          value={inventoryFormData.condition}
+                          onChange={(e) => setInventoryFormData({...inventoryFormData, condition: e.target.value})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                          <option value="">Select condition</option>
+                          <option value="Excellent">Excellent</option>
+                          <option value="Good">Good</option>
+                          <option value="Fair">Fair</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Description
+                      </label>
+                      <textarea
+                        value={inventoryFormData.description}
+                        onChange={(e) => setInventoryFormData({...inventoryFormData, description: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        rows={3}
+                        placeholder="Describe the item..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Item Image
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setInventoryFormData({...inventoryFormData, imageFile: file});
+                          }
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+
+                    <div className="flex space-x-3">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                      >
+                        <Save className="h-4 w-4 mr-1" />
+                        {isSubmitting ? 'Adding...' : 'Add Item'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowForm(false)}
+                        className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Inventory Items List */}
+              {inventoryItems.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No inventory items added yet</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-60 overflow-y-auto">
+                  {inventoryItems.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h5 className="font-medium text-gray-900">
+                            {item.name}
+                          </h5>
+                          <div className="flex items-center space-x-2">
+                            {item.price && (
+                              <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                ${item.price.toFixed(2)}
+                              </span>
+                            )}
+                            {item.category && (
+                              <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                                {item.category}
+                              </span>
+                            )}
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              item.isAvailable
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {item.isAvailable ? 'Available' : 'Sold'}
+                            </span>
+                          </div>
+                        </div>
+                        {item.description && (
+                          <p className="text-sm text-gray-600 italic mt-1">
+                            {item.description}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500">
+                          Added {new Date(item.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => deleteInventoryItem(item.id)}
+                        className="px-2 py-1 text-xs rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                        disabled={isSubmitting}
+                        aria-label={`Remove item ${item.name}`}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
                     </div>
                   ))}
                 </div>

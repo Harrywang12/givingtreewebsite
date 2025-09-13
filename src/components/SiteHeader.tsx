@@ -73,19 +73,52 @@ export default function SiteHeader() {
             </Link>
           </div>
 
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Medium screens - simplified nav */}
+          <nav className="hidden md:flex lg:hidden items-center gap-1">
             <Link href="/" className="nav-link">Home</Link>
-            <Link href="/mission" className="nav-link">Mission</Link>
             <Link href="/about" className="nav-link">About</Link>
             <Link href="/team" className="nav-link">Team</Link>
-            <Link href="/announcements" className="nav-link">Announcements</Link>
-            <Link href="/past-events" className="nav-link">Past Events</Link>
-            <Link href="/volunteer" className="nav-link">Volunteer</Link>
+            <Link href="/announcements" className="nav-link">News</Link>
+            <Link href="/donors" className="nav-link">Donors</Link>
             <Link
               href="/donate"
-              className="nav-link flex items-center"
+              className="nav-link flex items-center bg-green-600 text-white hover:bg-green-700 rounded-lg px-3 py-1.5 text-sm"
             >
-              <Heart className="h-3.5 w-3.5 mr-1 text-green-600" />
+              <Heart className="h-3.5 w-3.5 mr-1" />
+              <span>Donate</span>
+            </Link>
+          </nav>
+
+          {/* Large screens - full nav with dropdown */}
+          <nav className="hidden lg:flex items-center gap-2">
+            <Link href="/" className="nav-link">Home</Link>
+            <Link href="/about" className="nav-link">About</Link>
+            <Link href="/team" className="nav-link">Team</Link>
+            
+            {/* Dropdown for Community */}
+            <div className="relative group">
+              <button className="nav-link flex items-center">
+                Community
+                <svg className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-green-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="py-2">
+                  <Link href="/announcements" className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors">Announcements</Link>
+                  <Link href="/past-events" className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors">Past Events</Link>
+                  <Link href="/catalogue" className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors">Catalogue</Link>
+                  <Link href="/donors" className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors">Our Donors</Link>
+                  <Link href="/volunteer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors">Volunteer</Link>
+                </div>
+              </div>
+            </div>
+            
+            <Link
+              href="/donate"
+              className="nav-link flex items-center bg-green-600 text-white hover:bg-green-700 rounded-lg px-4 py-2 transition-colors"
+            >
+              <Heart className="h-4 w-4 mr-1" />
               <span>Donate</span>
             </Link>
             <Link href="/contact" className="nav-link">Contact</Link>
@@ -131,18 +164,27 @@ export default function SiteHeader() {
               </div>
 
               <Link href="/" className="mobile-link" onClick={() => setOpen(false)}>Home</Link>
-              <Link href="/mission" className="mobile-link" onClick={() => setOpen(false)}>Mission</Link>
               <Link href="/about" className="mobile-link" onClick={() => setOpen(false)}>About</Link>
               <Link href="/team" className="mobile-link" onClick={() => setOpen(false)}>Team</Link>
-              <Link href="/announcements" className="mobile-link" onClick={() => setOpen(false)}>Announcements</Link>
-              <Link href="/past-events" className="mobile-link" onClick={() => setOpen(false)}>Past Events</Link>
-              <Link href="/volunteer" className="mobile-link" onClick={() => setOpen(false)}>Volunteer</Link>
+              
+              {/* Mobile Community Section */}
+              <div className="px-4 py-2">
+                <h3 className="text-sm font-semibold text-green-800 mb-2">Community</h3>
+                <div className="pl-4 space-y-1">
+                  <Link href="/announcements" className="block py-2 text-sm text-gray-600 hover:text-green-700 transition-colors" onClick={() => setOpen(false)}>Announcements</Link>
+                  <Link href="/past-events" className="block py-2 text-sm text-gray-600 hover:text-green-700 transition-colors" onClick={() => setOpen(false)}>Past Events</Link>
+                  <Link href="/catalogue" className="block py-2 text-sm text-gray-600 hover:text-green-700 transition-colors" onClick={() => setOpen(false)}>Catalogue</Link>
+                  <Link href="/donors" className="block py-2 text-sm text-gray-600 hover:text-green-700 transition-colors" onClick={() => setOpen(false)}>Our Donors</Link>
+                  <Link href="/volunteer" className="block py-2 text-sm text-gray-600 hover:text-green-700 transition-colors" onClick={() => setOpen(false)}>Volunteer</Link>
+                </div>
+              </div>
+              
               <Link
                 href="/donate"
-                className="mobile-link flex items-center"
+                className="mobile-link flex items-center bg-green-600 text-white hover:bg-green-700 rounded-lg mx-4 my-2"
                 onClick={() => setOpen(false)}
               >
-                <Heart className="h-4 w-4 mr-2 text-green-600" />
+                <Heart className="h-4 w-4 mr-2" />
                 <span>Donate</span>
               </Link>
               <Link href="/contact" className="mobile-link" onClick={() => setOpen(false)}>Contact</Link>
