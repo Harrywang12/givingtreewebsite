@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ImageIcon } from 'lucide-react';
 
 interface EventImageProps {
@@ -99,11 +100,13 @@ export default function EventImage({
         </div>
       )}
       
-      {/* Only render img element if we have a valid imageSrc */}
+      {/* Only render Image element if we have a valid imageSrc */}
       {imageSrc && imageSrc.trim() !== '' && (
-        <img 
-          src={imageSrc} 
+        <Image
+          src={imageSrc}
           alt={alt}
+          width={800}
+          height={600}
           className={`${className} transition-opacity duration-300 ${
             isLoading ? 'opacity-0' : 'opacity-100'
           }`}

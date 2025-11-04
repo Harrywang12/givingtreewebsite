@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Users, Heart, Mail, Linkedin } from 'lucide-react';
+import Image from 'next/image';
 import PageBanner from '@/components/PageBanner';
 
 export default function TeamPage() {
@@ -72,6 +73,91 @@ export default function TeamPage() {
                 Justin combines strategic thinking with a commitment to social impact. 
                 His expertise in operations and community engagement has been instrumental 
                 in building the foundation's sustainable donation model.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button className="text-gray-400 hover:text-blue-600 transition-colors">
+                  <Mail className="h-5 w-5" />
+                </button>
+                <button className="text-gray-400 hover:text-blue-600 transition-colors">
+                  <Linkedin className="h-5 w-5" />
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Operations Team */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-zinc-900 mb-8">Operations Team</h2>
+            <p className="text-xl text-zinc-600 max-w-3xl mx-auto">
+              Our dedicated operations team working tirelessly to ensure smooth operations 
+              and community engagement.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+            {/* Leo Zeng */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="card p-8 text-center"
+            >
+              <div className="w-32 h-32 rounded-full mx-auto mb-6 overflow-hidden relative">
+                <Image
+                  src="/leozeng.JPG"
+                  alt="Leo Zeng"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-zinc-900 mb-2">Leo Zeng</h3>
+              <p className="text-emerald-700 font-semibold mb-4">Pickering Head of Operations</p>
+              <p className="text-zinc-600 mb-6">
+                Leo brings operational expertise and strategic planning to ensure the foundation 
+                runs efficiently and effectively serves our community.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button className="text-gray-400 hover:text-green-600 transition-colors">
+                  <Mail className="h-5 w-5" />
+                </button>
+                <button className="text-gray-400 hover:text-green-600 transition-colors">
+                  <Linkedin className="h-5 w-5" />
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Rui Zeng */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="card p-8 text-center"
+            >
+              <div className="w-32 h-32 rounded-full mx-auto mb-6 overflow-hidden relative">
+                <Image
+                  src="/ruizeng.JPG"
+                  alt="Rui Zeng"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-zinc-900 mb-2">Rui Zeng</h3>
+              <p className="text-blue-700 font-semibold mb-4">Pickering Head of Operations</p>
+              <p className="text-zinc-600 mb-6">
+                Rui is committed to streamlining operations and enhancing our ability to make 
+                a meaningful impact in the Pickering community.
               </p>
               <div className="flex justify-center space-x-4">
                 <button className="text-gray-400 hover:text-blue-600 transition-colors">

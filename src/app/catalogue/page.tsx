@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Tag, Star, Search, Filter, Package, Heart, Gift, DollarSign } from 'lucide-react';
+import { Package, Heart, Gift, DollarSign } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
 import EventImage from '@/components/EventImage';
 import Link from 'next/link';
@@ -23,12 +23,10 @@ export default function CataloguePage() {
   const [allItems, setAllItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedCondition, setSelectedCondition] = useState('');
-  const [categories, setCategories] = useState<string[]>([]);
-  const [conditions, setConditions] = useState<string[]>([]);
+  const [selectedCategory] = useState('');
+  const [selectedCondition] = useState('');
 
   // Debounce search term
   useEffect(() => {
@@ -39,24 +37,10 @@ export default function CataloguePage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Fetch items and filters only once on component mount
+  // Fetch items only once on component mount
   useEffect(() => {
     fetchItems();
-    fetchFilters();
   }, []);
-
-  const fetchFilters = async () => {
-    try {
-      const response = await fetch('/api/inventory/filters');
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data.categories || []);
-        setConditions(data.conditions || []);
-      }
-    } catch (error) {
-      console.error('Error fetching filters:', error);
-    }
-  };
 
   const fetchItems = async () => {
     try {
@@ -96,22 +80,6 @@ export default function CataloguePage() {
       return matchesSearch && matchesCategory && matchesCondition;
     });
   }, [allItems, debouncedSearchTerm, selectedCategory, selectedCondition]);
-
-
-  const getConditionColor = (condition?: string) => {
-    switch (condition?.toLowerCase()) {
-      case 'excellent':
-        return 'bg-green-100 text-green-800';
-      case 'good':
-        return 'bg-blue-100 text-blue-800';
-      case 'fair':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  // filteredItems is now computed with useMemo above
 
   if (loading) {
     return (

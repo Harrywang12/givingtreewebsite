@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { 
   Plus, 
   Calendar, 
@@ -53,10 +54,6 @@ interface Donor {
   createdAt: string;
 }
 
-interface InventoryItemFormData {
-  imageFiles: File[];
-}
-
 interface InventoryItem {
   id: string;
   name: string;
@@ -98,10 +95,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     amount: '',
     itemDonated: '',
     message: ''
-  });
-
-  const [inventoryFormData, setInventoryFormData] = useState<InventoryItemFormData>({
-    imageFiles: []
   });
   
   // State to manage multiple image upload fields
@@ -796,11 +789,22 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             Remove Image
                           </button>
                         </div>
-                        <img 
-                          src={formData.imageUrl} 
-                          alt="Preview" 
-                          className="w-32 h-32 object-cover rounded-lg border"
-                        />
+                        {formData.imageUrl.startsWith('blob:') ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img 
+                            src={formData.imageUrl} 
+                            alt="Preview" 
+                            className="w-32 h-32 object-cover rounded-lg border"
+                          />
+                        ) : (
+                          <Image
+                            src={formData.imageUrl}
+                            alt="Preview"
+                            width={128}
+                            height={128}
+                            className="w-32 h-32 object-cover rounded-lg border"
+                          />
+                        )}
                         {formData.imageFile && (
                           <p className="text-xs text-gray-500 mt-1">
                             File: {formData.imageFile.name} ({(formData.imageFile.size / 1024 / 1024).toFixed(2)} MB)
@@ -863,9 +867,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       {/* Event Image Thumbnail */}
                       {event.imageUrl && (
                         <div className="flex-shrink-0">
-                          <img 
-                            src={event.imageUrl} 
+                          <Image
+                            src={event.imageUrl}
                             alt={event.title}
+                            width={48}
+                            height={48}
                             className="w-12 h-12 object-cover rounded-lg border"
                             onError={(e) => {
                               // Hide image if it fails to load

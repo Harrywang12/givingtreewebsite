@@ -71,8 +71,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate a random name based on the file name
-    const fileName = imageFile.name || 'image';
+    // Generate a random name
     const timestamp = new Date().toISOString().replace(/[-:.]/g, '');
     const randomName = `Image_${timestamp}`;
     
