@@ -499,7 +499,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -549,31 +549,6 @@ export default function Home() {
               {/* Subtle background decoration */}
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-green-100 rounded-full opacity-50 z-0 transition-transform duration-500 group-hover:scale-125"></div>
             </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="card p-8 text-center relative overflow-hidden group"
-            >
-              <div className="relative z-10">
-                <div className="w-32 h-32 bg-purple-200 rounded-full mx-auto mb-6 overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Code className="h-16 w-16 text-purple-700" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-green-900 mb-2 font-serif">Harrison Wang</h3>
-                <p className="text-green-600 font-medium mb-4">CTO</p>
-                <p className="text-green-700 mb-5">
-                  Leading the technical vision and digital infrastructure to create seamless 
-                  experiences that connect donors, volunteers, and healthcare communities.
-                </p>
-            </div>
-              
-              {/* Subtle background decoration */}
-              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-green-100 rounded-full opacity-50 z-0 transition-transform duration-500 group-hover:scale-125"></div>
-          </motion.div>
           </div>
 
           <div className="text-center mt-12">

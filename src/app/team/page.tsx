@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Users, Heart, Mail, Linkedin } from 'lucide-react';
+import { Users, Heart } from 'lucide-react';
 import Image from 'next/image';
 import PageBanner from '@/components/PageBanner';
 
@@ -46,14 +46,6 @@ export default function TeamPage() {
                 With a background in healthcare advocacy, Ruogu envisioned a way to connect 
                 community generosity with tangible healthcare improvements.
               </p>
-              <div className="flex justify-center space-x-4">
-                <button className="text-gray-400 hover:text-green-600 transition-colors">
-                  <Mail className="h-5 w-5" />
-                </button>
-                <button className="text-gray-400 hover:text-green-600 transition-colors">
-                  <Linkedin className="h-5 w-5" />
-                </button>
-              </div>
             </motion.div>
 
             {/* Justin Wu */}
@@ -74,20 +66,12 @@ export default function TeamPage() {
                 His expertise in operations and community engagement has been instrumental 
                 in building the foundation's sustainable donation model.
               </p>
-              <div className="flex justify-center space-x-4">
-                <button className="text-gray-400 hover:text-blue-600 transition-colors">
-                  <Mail className="h-5 w-5" />
-                </button>
-                <button className="text-gray-400 hover:text-blue-600 transition-colors">
-                  <Linkedin className="h-5 w-5" />
-                </button>
-              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Operations Team */}
+      {/* Executives Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -97,19 +81,37 @@ export default function TeamPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-zinc-900 mb-8">Operations Team</h2>
+            <h2 className="text-4xl font-bold text-zinc-900 mb-8">Executives</h2>
             <p className="text-xl text-zinc-600 max-w-3xl mx-auto">
-              Our dedicated operations team working tirelessly to ensure smooth operations 
-              and community engagement.
+              Our executive team leading the foundation's strategic direction and operations.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-            {/* Leo Zeng */}
+          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+            {/* Harrison Wang */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="card p-8 text-center"
+            >
+              <div className="w-32 h-32 bg-purple-200 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <Users className="h-16 w-16 text-purple-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-zinc-900 mb-2">Harrison Wang</h3>
+              <p className="text-purple-700 font-semibold mb-4">CTO</p>
+              <p className="text-zinc-600 mb-6">
+                Leading the technical vision and digital infrastructure to create seamless 
+                experiences that connect donors, volunteers, and healthcare communities.
+              </p>
+            </motion.div>
+
+            {/* Leo Zeng */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
               className="card p-8 text-center"
             >
@@ -127,21 +129,13 @@ export default function TeamPage() {
                 Leo brings operational expertise and strategic planning to ensure the foundation 
                 runs efficiently and effectively serves our community.
               </p>
-              <div className="flex justify-center space-x-4">
-                <button className="text-gray-400 hover:text-green-600 transition-colors">
-                  <Mail className="h-5 w-5" />
-                </button>
-                <button className="text-gray-400 hover:text-green-600 transition-colors">
-                  <Linkedin className="h-5 w-5" />
-                </button>
-              </div>
             </motion.div>
 
             {/* Rui Zeng */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
               viewport={{ once: true }}
               className="card p-8 text-center"
             >
@@ -159,14 +153,6 @@ export default function TeamPage() {
                 Rui is committed to streamlining operations and enhancing our ability to make 
                 a meaningful impact in the Pickering community.
               </p>
-              <div className="flex justify-center space-x-4">
-                <button className="text-gray-400 hover:text-blue-600 transition-colors">
-                  <Mail className="h-5 w-5" />
-                </button>
-                <button className="text-gray-400 hover:text-blue-600 transition-colors">
-                  <Linkedin className="h-5 w-5" />
-                </button>
-              </div>
             </motion.div>
           </div>
         </div>
