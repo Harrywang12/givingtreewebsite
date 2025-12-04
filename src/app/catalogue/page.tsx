@@ -6,6 +6,7 @@ import { Package, Heart, Gift, DollarSign } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
 import EventImage from '@/components/EventImage';
 import Link from 'next/link';
+import logger from '@/lib/logger';
 
 interface InventoryItem {
   id: string;
@@ -56,7 +57,7 @@ export default function CataloguePage() {
         setError('Failed to load inventory');
       }
     } catch (error) {
-      console.error('Error fetching inventory:', error);
+      logger.error('Error fetching inventory:', error);
       setError('Failed to load inventory');
     } finally {
       setLoading(false);

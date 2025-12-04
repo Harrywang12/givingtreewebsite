@@ -21,6 +21,7 @@ import DashboardDonationForm from './DashboardDonationForm';
 import AdminPanel from './AdminPanel';
 import ProfilePicture from './ProfilePicture';
 import Link from 'next/link';
+import logger from '@/lib/logger';
 
 interface DashboardData {
   user: {
@@ -90,7 +91,7 @@ export default function UserDashboard() {
           setError('Failed to load dashboard data');
         }
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        logger.error('Error fetching dashboard data:', error);
         setError('Failed to load dashboard data');
       } finally {
         setIsLoading(false);
@@ -157,7 +158,7 @@ export default function UserDashboard() {
         setError('Failed to update profile');
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
+      logger.error('Error updating profile:', error);
       setError('Failed to update profile');
     } finally {
       setIsSavingProfile(false);
@@ -199,7 +200,7 @@ export default function UserDashboard() {
         setError(data.error || 'Failed to upload profile picture');
       }
     } catch (error) {
-      console.error('Error uploading profile picture:', error);
+      logger.error('Error uploading profile picture:', error);
       setError('Failed to upload profile picture');
     } finally {
       setIsUploadingPicture(false);
@@ -225,7 +226,7 @@ export default function UserDashboard() {
         setError('Failed to remove profile picture');
       }
     } catch (error) {
-      console.error('Error removing profile picture:', error);
+      logger.error('Error removing profile picture:', error);
       setError('Failed to remove profile picture');
     } finally {
       setIsUploadingPicture(false);

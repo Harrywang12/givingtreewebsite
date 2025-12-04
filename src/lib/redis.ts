@@ -1,4 +1,5 @@
 import { createClient, RedisClientType } from 'redis';
+import logger from '@/lib/logger';
 
 let redisClient: RedisClientType | null = null;
 let isConnecting = false;
@@ -39,18 +40,18 @@ const getRedisClient = async (): Promise<RedisClientType | null> => {
     });
 
     redisClient.on('error', (err) => {
-      console.error('Redis Client Error:', err);
+      logger.error('Redis Client Error:', err);
     });
 
     redisClient.on('connect', () => {
-      console.log('Redis Client Connected');
+      logger.log('Redis Client Connected');
     });
 
     await redisClient.connect();
     isConnecting = false;
     return redisClient;
   } catch (error) {
-    console.error('Failed to connect to Redis:', error);
+    logger.error('Failed to connect to Redis:', error);
     isConnecting = false;
     return null;
   }
@@ -66,7 +67,7 @@ export const cache = {
       const value = await client.get(key);
       return value ? JSON.parse(value) : null;
     } catch (error) {
-      console.error('Redis get error:', error);
+      logger.error('Redis get error:', error);
       return null;
     }
   },
@@ -83,7 +84,7 @@ export const cache = {
         await client.set(key, serialized);
       }
     } catch (error) {
-      console.error('Redis set error:', error);
+      logger.error('Redis set error:', error);
     }
   },
 
@@ -94,7 +95,7 @@ export const cache = {
       
       await client.del(key);
     } catch (error) {
-      console.error('Redis del error:', error);
+      logger.error('Redis del error:', error);
     }
   },
 
@@ -105,7 +106,7 @@ export const cache = {
       
       return await client.exists(key);
     } catch (error) {
-      console.error('Redis exists error:', error);
+      logger.error('Redis exists error:', error);
       return false;
     }
   }
@@ -124,7 +125,7 @@ export const rateLimit = {
       }
       return current <= limit;
     } catch (error) {
-      console.error('Rate limit check error:', error);
+      logger.error('Rate limit check error:', error);
       return true; // Allow if Redis fails
     }
   }

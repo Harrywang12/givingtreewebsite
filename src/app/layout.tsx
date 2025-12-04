@@ -71,12 +71,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isDevOrTest = process.env.NODE_ENV !== 'production';
+
   return (
     <html lang="en" className="bg-[var(--color-bg)] text-[var(--color-fg)]">
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
+        {isDevOrTest && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
               // Suppress Chrome extension errors
               window.addEventListener('error', function(e) {
                 if (e.message.includes('_gchrome_uniqueid') || e.message.includes('chrome-extension')) {
@@ -95,8 +98,9 @@ export default function RootLayout({
                 originalError.apply(console, args);
               };
             `,
-          }}
-        />
+            }}
+          />
+        )}
       </head>
       <body className={`${nunito.variable} ${playfair.variable} font-sans text-[var(--color-fg)] bg-[var(--color-bg)] antialiased selection:bg-green-200/40 selection:text-green-900`}>
         <AuthProvider>

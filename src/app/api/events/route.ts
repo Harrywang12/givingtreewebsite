@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { EventType } from '@prisma/client'
+import logger from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -72,8 +73,8 @@ export async function GET(request: NextRequest) {
 
     // Format events for public consumption
     const formattedEvents = events.map(event => {
-      // Debug logging for imageUrl
-      console.log('Event imageUrl from database:', {
+      // Debug logging for imageUrl (disabled in production)
+      logger.log('Event imageUrl from database:', {
         eventId: event.id,
         title: event.title,
         imageUrl: event.imageUrl,
@@ -114,7 +115,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Get events error:', error)
+    logger.error('Get events error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
 import { isAdmin } from '@/lib/admin';
+import logger from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -100,7 +101,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching donations:', error);
+    logger.error('Error fetching donations:', error);
     return NextResponse.json(
       { error: 'Failed to fetch donations' },
       { status: 500 }

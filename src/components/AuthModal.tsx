@@ -82,7 +82,7 @@ export default function AuthModal({ isOpen, onClose, mode, onSuccess, redirectTo
         setError(result.error || 'An error occurred');
       }
     } catch (error) {
-      console.error('Auth error:', error);
+      // Error already surfaced via generic message
       setError('An unexpected error occurred');
     } finally {
       setIsSubmitting(false);
@@ -133,7 +133,7 @@ export default function AuthModal({ isOpen, onClose, mode, onSuccess, redirectTo
         setError(data.error || 'An error occurred while sending the reset email');
       }
     } catch (error) {
-      console.error('Forgot password error:', error);
+      // Error already surfaced via generic message
       setError('An unexpected error occurred');
     } finally {
       setIsSubmitting(false);

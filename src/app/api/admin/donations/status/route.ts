@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
 import { isAdmin } from '@/lib/admin';
+import logger from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error updating donation status:', error);
+    logger.error('Error updating donation status:', error);
     return NextResponse.json(
       { error: 'Failed to update donation status' },
       { status: 500 }

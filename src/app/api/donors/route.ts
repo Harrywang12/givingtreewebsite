@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import logger from '@/lib/logger'
 
 export async function GET() {
   try {
@@ -18,7 +19,7 @@ export async function GET() {
     })
 
   } catch (error) {
-    console.error('Get donors error:', error)
+    logger.error('Get donors error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

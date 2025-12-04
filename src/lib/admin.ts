@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { verifyToken } from './auth';
 import { prisma } from './prisma';
+import logger from '@/lib/logger';
 
 // Admin email addresses - only these can have admin access
 const ADMIN_EMAILS = [
@@ -79,7 +80,7 @@ export async function verifyAdmin(token: string): Promise<AdminUser | null> {
     };
 
   } catch (error) {
-    console.error('Admin verification error:', error);
+    logger.error('Admin verification error:', error);
     return null;
   }
 }
@@ -103,7 +104,7 @@ export async function grantAdminRole(email: string): Promise<boolean> {
   try {
     // Only allow admin emails
     if (!ADMIN_EMAILS.includes(email)) {
-      console.error(`Attempted to grant admin to non-approved email: ${email}`);
+      logger.error(`Attempted to grant admin to non-approved email: ${email}`);
       return false;
     }
 
@@ -113,7 +114,7 @@ export async function grantAdminRole(email: string): Promise<boolean> {
     });
 
     if (!user) {
-      console.error(`User not found for admin grant: ${email}`);
+      logger.error(`User not found for admin grant: ${email}`);
       return false;
     }
 
@@ -126,11 +127,11 @@ export async function grantAdminRole(email: string): Promise<boolean> {
       }
     });
 
-    console.log(`Admin role granted to: ${email}`);
+    logger.log(`Admin role granted to: ${email}`);
     return true;
 
   } catch (error) {
-    console.error('Grant admin role error:', error);
+    logger.error('Grant admin role error:', error);
     return false;
   }
 }
@@ -151,7 +152,7 @@ export async function isAdmin(userId: string): Promise<boolean> {
     return ADMIN_EMAILS.includes(user.email) && 
            (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');
   } catch (error) {
-    console.error('Admin check error:', error);
+    logger.error('Admin check error:', error);
     return false;
   }
 }
@@ -194,7 +195,7 @@ export async function checkAdminRateLimit(): Promise<boolean> {
     // For now, return true but you can add Redis-based rate limiting
     return true;
   } catch (error) {
-    console.error('Admin rate limit check error:', error);
+    logger.error('Admin rate limit check error:', error);
     return false;
   }
 }
@@ -209,7 +210,7 @@ export async function logAdminAction(
   details?: Record<string, unknown>
 ): Promise<void> {
   try {
-    console.log('Admin Action:', {
+    logger.log('Admin Action:', {
       adminId,
       action,
       resource,
@@ -220,7 +221,7 @@ export async function logAdminAction(
 
     // You can extend this to write to a database table for audit logs
   } catch (error) {
-    console.error('Admin action logging error:', error);
+    logger.error('Admin action logging error:', error);
   }
 }
 

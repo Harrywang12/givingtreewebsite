@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
+import logger from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -114,7 +115,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Dashboard error:', error)
+    logger.error('Dashboard error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

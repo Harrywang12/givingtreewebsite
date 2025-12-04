@@ -39,7 +39,7 @@ export default function ContactPage() {
         setSubmitError(result.error || 'Failed to send message. Please try again.');
       }
     } catch (error) {
-      console.error('Contact form error:', error);
+      // Errors are already surfaced to the user via UI state
       setSubmitError('Failed to send message. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);

@@ -70,7 +70,7 @@ export default function AdminDonationManager() {
         setError(errorData.error || 'Failed to load donations');
       }
     } catch (error) {
-      console.error('Error fetching donations:', error);
+      // Error already surfaced via UI state
       setError('Failed to load donations. Please try again.');
     } finally {
       setIsLoading(false);
@@ -178,7 +178,7 @@ export default function AdminDonationManager() {
         setError(errorData.error || 'Failed to update donation status');
       }
     } catch (error) {
-      console.error('Error updating donation status:', error);
+      // Error already surfaced via UI state
       setError('Failed to update donation status. Please try again.');
     } finally {
       setIsUpdating(false);

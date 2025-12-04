@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
+import logger from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ user })
 
   } catch (error) {
-    console.error('Get profile error:', error)
+    logger.error('Get profile error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -126,7 +127,7 @@ export async function PUT(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Update profile error:', error)
+    logger.error('Update profile error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

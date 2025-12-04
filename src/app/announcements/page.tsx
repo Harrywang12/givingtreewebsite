@@ -7,6 +7,7 @@ import PageBanner from '@/components/PageBanner';
 import EventImage from '@/components/EventImage';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import logger from '@/lib/logger';
 
 interface Comment {
   id: string;
@@ -69,7 +70,7 @@ export default function AnnouncementsPage() {
         setError('Failed to load announcements');
       }
     } catch (error) {
-      console.error('Error fetching announcements:', error);
+      logger.error('Error fetching announcements:', error);
       setError('Failed to load announcements');
     } finally {
       setLoading(false);
@@ -104,10 +105,10 @@ export default function AnnouncementsPage() {
             : event
         ));
       } else {
-        console.error('Failed to like event');
+        logger.error('Failed to like event');
       }
     } catch (error) {
-      console.error('Error liking event:', error);
+      logger.error('Error liking event:', error);
     } finally {
       setLikingEvents(prev => {
         const newSet = new Set(prev);
@@ -152,10 +153,10 @@ export default function AnnouncementsPage() {
         setNewComment(prev => ({ ...prev, [eventId]: '' }));
       } else {
         const errorData = await response.json();
-        console.error('Failed to post comment:', errorData.error);
+        logger.error('Failed to post comment:', errorData.error);
       }
     } catch (error) {
-      console.error('Error posting comment:', error);
+      logger.error('Error posting comment:', error);
     } finally {
       setCommentingOn(null);
     }
@@ -286,35 +287,25 @@ export default function AnnouncementsPage() {
                   <p className="text-green-800 mb-4">{event.description}</p>
                   
                   {/* Event Image */}
-                  {(() => {
-                    console.log('Event image debug:', {
-                      title: event.title,
-                      hasImageUrl: !!event.imageUrl,
-                      imageUrl: event.imageUrl,
-                      imageUrlLength: event.imageUrl?.length
-                    });
-                    
-                    return event.imageUrl ? (
-                      <div className="mb-4">
-                        <EventImage 
-                          src={event.imageUrl} 
-                          alt={event.title}
-                          className="w-full h-48 md:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-                        />
-                      </div>
-                    ) : (
-                      <div className="mb-4">
-                        <div className="w-full h-48 md:h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                          <div className="text-center">
-                            <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                            <p className="text-sm text-gray-600">No image uploaded</p>
-                            <p className="text-xs text-gray-500 mt-1">Event: {event.title}</p>
-                            <p className="text-xs text-red-500 mt-1">Debug: imageUrl is null/undefined</p>
-                          </div>
+                  {event.imageUrl ? (
+                    <div className="mb-4">
+                      <EventImage 
+                        src={event.imageUrl} 
+                        alt={event.title}
+                        className="w-full h-48 md:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                      />
+                    </div>
+                  ) : (
+                    <div className="mb-4">
+                      <div className="w-full h-48 md:h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                        <div className="text-center">
+                          <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600">No image uploaded</p>
+                          <p className="text-xs text-gray-500 mt-1">Event: {event.title}</p>
                         </div>
                       </div>
-                    );
-                  })()}
+                    </div>
+                  )}
                   
                   {event.content && (
                     <div className="bg-white p-4 rounded-lg mb-4">

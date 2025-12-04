@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminFromRequest, logAdminAction, ADMIN_SECURITY_HEADERS } from '@/lib/admin';
+import logger from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Get donors error:', error);
+    logger.error('Get donors error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500, headers: ADMIN_SECURITY_HEADERS }
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Create donor error:', error);
+    logger.error('Create donor error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500, headers: ADMIN_SECURITY_HEADERS }

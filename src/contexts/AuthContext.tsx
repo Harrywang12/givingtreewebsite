@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import logger from '@/lib/logger';
 
 interface User {
   id: string;
@@ -60,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(null);
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      logger.error('Error fetching user profile:', error);
       localStorage.removeItem('authToken');
       setToken(null);
     } finally {
@@ -89,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, error: data.error };
       }
     } catch (error) {
-      console.error('Login error:', error);
+      logger.error('Login error:', error);
       return { success: false, error: 'An error occurred during login' };
     }
   };
@@ -113,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, error: data.error };
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      logger.error('Registration error:', error);
       return { success: false, error: 'An error occurred during registration' };
     }
   };

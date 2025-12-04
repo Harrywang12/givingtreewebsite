@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Users, Gift, Leaf, Sparkles } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
+import logger from '@/lib/logger';
 
 interface Donor {
   id: string;
@@ -36,7 +37,7 @@ export default function DonorsPage() {
         setError('Failed to load donors');
       }
     } catch (error) {
-      console.error('Error fetching donors:', error);
+      logger.error('Error fetching donors:', error);
       setError('Failed to load donors');
     } finally {
       setLoading(false);

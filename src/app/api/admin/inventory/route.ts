@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminFromRequest, logAdminAction, ADMIN_SECURITY_HEADERS } from '@/lib/admin';
 import { uploadImage } from '@/lib/supabase';
+import logger from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Get inventory error:', error);
+    logger.error('Get inventory error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500, headers: ADMIN_SECURITY_HEADERS }
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
       try {
         imageUrl = await uploadImage(imageFile, 'inventory');
       } catch (imageError) {
-        console.error('Image upload error:', imageError);
+        logger.error('Image upload error:', imageError);
         // Continue without image if upload fails
       }
     }
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Create inventory item error:', error);
+    logger.error('Create inventory item error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500, headers: ADMIN_SECURITY_HEADERS }

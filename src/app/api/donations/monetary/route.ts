@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
+import logger from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Error creating donation:', error);
+    logger.error('Error creating donation:', error);
     return NextResponse.json(
       { error: 'Failed to process donation' },
       { status: 500 }

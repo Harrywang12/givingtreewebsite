@@ -18,6 +18,7 @@ import {
   Package
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import logger from '@/lib/logger';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -118,7 +119,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setEvents(data.events || []);
       }
     } catch (error) {
-      console.error('Error fetching admin events:', error);
+      logger.error('Error fetching admin events:', error);
     }
   };
 
@@ -137,7 +138,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setDonations(data.donations || []);
       }
     } catch (err) {
-      console.error('Failed to fetch donations:', err);
+      logger.error('Failed to fetch donations:', err);
     }
   };
 
@@ -162,7 +163,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setError('Failed to update donation status');
       }
     } catch (err) {
-      console.error('Failed to update donation status:', err);
+      logger.error('Failed to update donation status:', err);
       setError('Failed to update donation status');
     } finally {
       setIsSubmitting(false);
@@ -184,7 +185,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setDonors(data.donors || []);
       }
     } catch (err) {
-      console.error('Failed to fetch donors:', err);
+      logger.error('Failed to fetch donors:', err);
     }
   };
 
@@ -220,7 +221,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setError(result.error || 'Failed to add donor');
       }
     } catch (err) {
-      console.error('Failed to add donor:', err);
+      logger.error('Failed to add donor:', err);
       setError('Failed to add donor');
     } finally {
       setIsSubmitting(false);
@@ -246,7 +247,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setError('Failed to remove donor');
       }
     } catch (err) {
-      console.error('Failed to remove donor:', err);
+      logger.error('Failed to remove donor:', err);
       setError('Failed to remove donor');
     } finally {
       setIsSubmitting(false);
@@ -268,7 +269,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setInventoryItems(data.items || []);
       }
     } catch (err) {
-      console.error('Failed to fetch inventory:', err);
+      logger.error('Failed to fetch inventory:', err);
     }
   };
   
@@ -343,7 +344,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setError('Failed to add any inventory items');
       }
     } catch (err) {
-      console.error('Failed to add inventory item:', err);
+      logger.error('Failed to add inventory item:', err);
       setError('Failed to add inventory item');
     } finally {
       setIsSubmitting(false);
@@ -369,7 +370,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         setError('Failed to remove inventory item');
       }
     } catch (err) {
-      console.error('Failed to remove inventory item:', err);
+      logger.error('Failed to remove inventory item:', err);
       setError('Failed to remove inventory item');
     } finally {
       setIsSubmitting(false);
@@ -407,10 +408,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         formDataToSend.append('imageFile', formData.imageFile);
         formDataToSend.append('imageUrl', formData.imageUrl || ''); // Always include imageUrl
         
-        console.log('🔍 Frontend debug - sending FormData:');
-        console.log('- imageFile:', formData.imageFile);
-        console.log('- imageUrl:', formData.imageUrl);
-        console.log('- FormData keys:', Array.from(formDataToSend.keys()));
+        logger.log('🔍 Frontend debug - sending FormData:');
+        logger.log('- imageFile:', formData.imageFile);
+        logger.log('- imageUrl:', formData.imageUrl);
+        logger.log('- FormData keys:', Array.from(formDataToSend.keys()));
         
         response = await fetch('/api/admin/events', {
           method: 'POST',
@@ -421,8 +422,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         });
       } else {
         // Handle text-only submission
-        console.log('🔍 Frontend debug - sending JSON:');
-        console.log('- imageUrl:', formData.imageUrl);
+        logger.log('🔍 Frontend debug - sending JSON:');
+        logger.log('- imageUrl:', formData.imageUrl);
         
         response = await fetch('/api/admin/events', {
           method: 'POST',
@@ -914,7 +915,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               setError(data.error || 'Failed to delete content');
                             }
                           } catch (err) {
-                            console.error('Delete content failed:', err);
+                            logger.error('Delete content failed:', err);
                             setError('Failed to delete content');
                           } finally {
                             setIsSubmitting(false);

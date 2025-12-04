@@ -3,50 +3,51 @@ import { prisma } from '@/lib/prisma';
 import { verifyAdminFromRequest, logAdminAction, validateEventData, ADMIN_SECURITY_HEADERS } from '@/lib/admin';
 import { rateLimit } from '@/lib/redis';
 import { uploadImage } from '@/lib/supabase';
+import logger from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting for admin event creation
-    console.log('Checking rate limit...');
+    logger.log('Checking rate limit...');
     try {
       const clientIp = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
       const rateLimitKey = `admin_event_${clientIp}`;
-      console.log('Rate limit key:', rateLimitKey);
+      logger.log('Rate limit key:', rateLimitKey);
       const isAllowed = await rateLimit.check(rateLimitKey, 10, 3600); // 10 events per hour
       
       if (!isAllowed) {
-        console.log('Rate limit exceeded');
+        logger.log('Rate limit exceeded');
         return NextResponse.json(
           { error: 'Too many event creation attempts. Please try again later.' },
           { status: 429, headers: ADMIN_SECURITY_HEADERS }
         );
       }
-      console.log('Rate limit check passed');
+      logger.log('Rate limit check passed');
     } catch (rateLimitError) {
-      console.log('Rate limiting error, continuing without rate limit:', rateLimitError);
+      logger.log('Rate limiting error, continuing without rate limit:', rateLimitError);
       // Continue without rate limiting if Redis is not available
     }
 
     // Verify admin access
-    console.log('Verifying admin access...');
+    logger.log('Verifying admin access...');
     let admin;
     try {
       admin = await verifyAdminFromRequest(request);
       if (!admin) {
-        console.log('Admin verification failed');
+        logger.log('Admin verification failed');
         try {
           await logAdminAction('unknown', 'FAILED_EVENT_CREATE', 'events', { reason: 'Invalid admin access' });
         } catch (logError) {
-          console.log('Failed to log admin access failure, continuing:', logError);
+          logger.log('Failed to log admin access failure, continuing:', logError);
         }
         return NextResponse.json(
           { error: 'Admin access required' },
           { status: 403, headers: ADMIN_SECURITY_HEADERS }
         );
       }
-      console.log('Admin verified:', admin.email);
+      logger.log('Admin verified:', admin.email);
     } catch (adminError) {
-      console.log('Admin verification error:', adminError);
+      logger.log('Admin verification error:', adminError);
       return NextResponse.json(
         { error: 'Admin verification failed' },
         { status: 500, headers: ADMIN_SECURITY_HEADERS }
@@ -59,17 +60,17 @@ export async function POST(request: NextRequest) {
     
     // Check if the request contains form data (file upload) or JSON
     const contentType = request.headers.get('content-type') || '';
-    console.log('🔍 Request debug:');
-    console.log('- Content-Type:', contentType);
-    console.log('- Is multipart/form-data:', contentType.includes('multipart/form-data'));
+    logger.log('🔍 Request debug:');
+    logger.log('- Content-Type:', contentType);
+    logger.log('- Is multipart/form-data:', contentType.includes('multipart/form-data'));
     
     if (contentType.includes('multipart/form-data')) {
       // Handle file upload
-      console.log('Processing multipart form data...');
+      logger.log('Processing multipart form data...');
       const formData = await request.formData();
       
       // Log all form data keys
-      console.log('FormData keys:', Array.from(formData.keys()));
+      logger.log('FormData keys:', Array.from(formData.keys()));
       
       const dateValue = formData.get('date') as string;
       const titleValue = formData.get('title') as string;
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
       const locationValue = formData.get('location') as string;
       const imageUrlValue = formData.get('imageUrl') as string;
       
-      console.log('Individual form values:', {
+      logger.log('Individual form values:', {
         date: dateValue,
         title: titleValue,
         description: descriptionValue,
@@ -99,37 +100,37 @@ export async function POST(request: NextRequest) {
         imageUrl: imageUrlValue || ''
       };
       
-      console.log('FormData parsed:', requestData);
+      logger.log('FormData parsed:', requestData);
       
       // Get the uploaded file
       const file = formData.get('imageFile') as File;
-      console.log('🔍 Form data debug:');
-      console.log('- All form data keys:', Array.from(formData.keys()));
-      console.log('- imageFile key exists:', formData.has('imageFile'));
-      console.log('- file object:', file);
-      console.log('- file type:', typeof file);
-      console.log('- file instanceof File:', file instanceof File);
+      logger.log('🔍 Form data debug:');
+      logger.log('- All form data keys:', Array.from(formData.keys()));
+      logger.log('- imageFile key exists:', formData.has('imageFile'));
+      logger.log('- file object:', file);
+      logger.log('- file type:', typeof file);
+      logger.log('- file instanceof File:', file instanceof File);
       
       if (file && file.size > 0) {
         imageFile = file;
-        console.log('✅ Image file found:', file.name, file.size, file.type);
+        logger.log('✅ Image file found:', file.name, file.size, file.type);
       } else {
-        console.log('❌ No image file found or file is empty');
-        console.log('- file size:', file?.size);
-        console.log('- file name:', file?.name);
+        logger.log('❌ No image file found or file is empty');
+        logger.log('- file size:', file?.size);
+        logger.log('- file name:', file?.name);
       }
     } else {
       // Handle JSON data
       requestData = await request.json();
-      console.log('JSON data parsed:', requestData);
+      logger.log('JSON data parsed:', requestData);
     }
     
-    console.log('Final requestData:', requestData);
+    logger.log('Final requestData:', requestData);
     const validation = validateEventData(requestData);
-    console.log('Validation result:', validation);
+    logger.log('Validation result:', validation);
     
     if (!validation.isValid) {
-      console.log('Validation failed:', validation.errors);
+      logger.log('Validation failed:', validation.errors);
       // Note: We can't log admin action here since admin verification hasn't happened yet
       // This is a validation error, not an admin action failure
       return NextResponse.json(
@@ -141,25 +142,25 @@ export async function POST(request: NextRequest) {
     // Handle image upload if present
     let finalImageUrl = validation.sanitized!.imageUrl;
     
-    console.log('🔍 Image upload debug:');
-    console.log('- imageFile exists:', !!imageFile);
-    console.log('- imageFile name:', imageFile?.name);
-    console.log('- imageFile size:', imageFile?.size);
-    console.log('- imageFile type:', imageFile?.type);
+    logger.log('🔍 Image upload debug:');
+    logger.log('- imageFile exists:', !!imageFile);
+    logger.log('- imageFile name:', imageFile?.name);
+    logger.log('- imageFile size:', imageFile?.size);
+    logger.log('- imageFile type:', imageFile?.type);
     
     if (imageFile) {
       try {
-        console.log('Processing image upload to Supabase...');
+        logger.log('Processing image upload to Supabase...');
         
         // Upload image to Supabase Storage
         const imageUrl = await uploadImage(imageFile, 'events');
         finalImageUrl = imageUrl;
         
-        console.log('✅ Image uploaded to Supabase:', imageUrl);
+        logger.log('✅ Image uploaded to Supabase:', imageUrl);
         
       } catch (imageError) {
-        console.error('❌ Supabase image upload error:', imageError);
-        console.error('Error details:', {
+        logger.error('❌ Supabase image upload error:', imageError);
+        logger.error('Error details:', {
           message: imageError instanceof Error ? imageError.message : 'Unknown error',
           stack: imageError instanceof Error ? imageError.stack : undefined
         });
@@ -171,18 +172,18 @@ export async function POST(request: NextRequest) {
             error: imageError instanceof Error ? imageError.message : 'Unknown image error'
           });
         } catch (logError) {
-          console.log('Failed to log image upload failure, continuing:', logError);
+          logger.log('Failed to log image upload failure, continuing:', logError);
         }
         
         // Continue without image if upload fails
         finalImageUrl = validation.sanitized!.imageUrl || '';
-        console.log('⚠️ Continuing without image, finalImageUrl:', finalImageUrl);
+        logger.log('⚠️ Continuing without image, finalImageUrl:', finalImageUrl);
       }
     } else {
-      console.log('ℹ️ No image file provided, using existing imageUrl:', finalImageUrl);
+      logger.log('ℹ️ No image file provided, using existing imageUrl:', finalImageUrl);
     }
     
-    console.log('Creating event in database with data:', {
+    logger.log('Creating event in database with data:', {
       ...validation.sanitized!,
       imageUrl: finalImageUrl,
       authorId: admin.id
@@ -214,9 +215,9 @@ export async function POST(request: NextRequest) {
         }
       });
       
-      console.log('Event created successfully:', event.id);
+      logger.log('Event created successfully:', event.id);
     } catch (dbError) {
-      console.error('Database creation error:', dbError);
+      logger.error('Database creation error:', dbError);
       
       // Try to log the admin action failure
       try {
@@ -225,7 +226,7 @@ export async function POST(request: NextRequest) {
           error: dbError instanceof Error ? dbError.message : 'Unknown database error'
         });
       } catch (logError) {
-        console.log('Failed to log database creation failure, continuing:', logError);
+        logger.log('Failed to log database creation failure, continuing:', logError);
       }
       
       return NextResponse.json(
@@ -241,9 +242,9 @@ export async function POST(request: NextRequest) {
         title: event.title,
         type: event.type
       });
-      console.log('Admin action logged successfully');
+      logger.log('Admin action logged successfully');
     } catch (logError) {
-      console.log('Failed to log admin action, continuing:', logError);
+      logger.log('Failed to log admin action, continuing:', logError);
     }
 
     try {
@@ -269,7 +270,7 @@ export async function POST(request: NextRequest) {
         headers: ADMIN_SECURITY_HEADERS
       });
     } catch (responseError) {
-      console.error('Error creating response:', responseError);
+      logger.error('Error creating response:', responseError);
       
       // Try to log the admin action failure
       try {
@@ -278,7 +279,7 @@ export async function POST(request: NextRequest) {
           error: responseError instanceof Error ? responseError.message : 'Unknown response error'
         });
       } catch (logError) {
-        console.log('Failed to log response creation failure, continuing:', logError);
+        logger.log('Failed to log response creation failure, continuing:', logError);
       }
       
       return NextResponse.json(
@@ -288,12 +289,12 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Admin event creation error:', error);
+    logger.error('Admin event creation error:', error);
     
     // Log more details about the error
     if (error instanceof Error) {
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
+      logger.error('Error message:', error.message);
+      logger.error('Error stack:', error.stack);
     }
     
     return NextResponse.json(
@@ -363,7 +364,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Admin get events error:', error);
+    logger.error('Admin get events error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500, headers: ADMIN_SECURITY_HEADERS }

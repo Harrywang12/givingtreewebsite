@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import logger from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -45,7 +46,7 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
       });
 
     if (error) {
-      console.error('Supabase upload error:', error);
+      logger.error('Supabase upload error:', error);
       throw new Error(`Failed to upload image: ${error.message}`);
     }
 
@@ -84,7 +85,7 @@ export async function uploadImage(file: File, folder: string = 'events'): Promis
 
     return `${publicUrl}?${optimizationParams.toString()}`;
   } catch (error) {
-    console.error('Image upload error:', error);
+    logger.error('Image upload error:', error);
     throw error;
   }
 }
@@ -103,11 +104,11 @@ export async function deleteImage(url: string): Promise<void> {
       .remove([filePath]);
 
     if (error) {
-      console.error('Supabase delete error:', error);
+      logger.error('Supabase delete error:', error);
       throw new Error(`Failed to delete image: ${error.message}`);
     }
   } catch (error) {
-    console.error('Image deletion error:', error);
+    logger.error('Image deletion error:', error);
     throw error;
   }
 }

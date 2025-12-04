@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
 import { rateLimit } from '@/lib/redis'
+import logger from '@/lib/logger'
 
 export async function GET(
   request: NextRequest,
@@ -50,7 +51,7 @@ export async function GET(
     })
 
   } catch (error) {
-    console.error('Get comments error:', error)
+    logger.error('Get comments error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -168,7 +169,7 @@ export async function POST(
     }, { status: 201 })
 
   } catch (error) {
-    console.error('Add comment error:', error)
+    logger.error('Add comment error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -7,6 +7,7 @@ import PageBanner from '@/components/PageBanner';
 import EventImage from '@/components/EventImage';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import logger from '@/lib/logger';
 
 interface Comment {
   id: string;
@@ -64,12 +65,12 @@ export default function PastEventsPage() {
     }
   }, [events]);
 
-  // Debug logging for image URLs
+  // Debug logging for image URLs (disabled in production)
   useEffect(() => {
     if (events.length > 0) {
       events.forEach(event => {
         if (event.imageUrl && event.imageUrl.trim() !== '') {
-          console.log('Event has imageUrl:', { 
+          logger.log('Event has imageUrl:', { 
             eventId: event.id, 
             title: event.title, 
             imageUrl: event.imageUrl 
@@ -84,35 +85,35 @@ export default function PastEventsPage() {
       setLoading(true);
       setError('');
       
-      console.log('Fetching past events...');
+      logger.log('Fetching past events...');
       const response = await fetch('/api/events?type=EVENT&limit=50');
       
-      console.log('Response status:', response.status);
+      logger.log('Response status:', response.status);
       
       if (response.ok) {
         const data = await response.json();
-        console.log('Events data received:', data);
+        logger.log('Events data received:', data);
         
         if (data.events && Array.isArray(data.events)) {
           // Log the first event's date for debugging
           if (data.events.length > 0) {
-            console.log('First event date:', data.events[0].date);
-            console.log('First event imageUrl:', data.events[0].imageUrl);
+            logger.log('First event date:', data.events[0].date);
+            logger.log('First event imageUrl:', data.events[0].imageUrl);
           }
           
           setEvents(data.events);
-          console.log('Events set successfully, count:', data.events.length);
+          logger.log('Events set successfully, count:', data.events.length);
         } else {
-          console.error('Invalid events data format:', data);
+          logger.error('Invalid events data format:', data);
           setError('Invalid data format received from server');
         }
       } else {
         const errorText = await response.text();
-        console.error('API error response:', errorText);
+        logger.error('API error response:', errorText);
         setError(`Failed to load past events: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Error fetching past events:', error);
+      logger.error('Error fetching past events:', error);
       setError('Failed to load past events. Please check your connection and try again.');
     } finally {
       setLoading(false);
@@ -124,7 +125,7 @@ export default function PastEventsPage() {
 
     setLikingEvents(prev => new Set(prev).add(eventId));
 
-    try {
+      try {
       const response = await fetch(`/api/events/${eventId}/like`, {
         method: 'POST',
         headers: {
@@ -147,10 +148,10 @@ export default function PastEventsPage() {
             : event
         ));
       } else {
-        console.error('Failed to like event');
+        logger.error('Failed to like event');
       }
     } catch (error) {
-      console.error('Error liking event:', error);
+      logger.error('Error liking event:', error);
     } finally {
       setLikingEvents(prev => {
         const newSet = new Set(prev);
@@ -195,10 +196,10 @@ export default function PastEventsPage() {
         setNewComment(prev => ({ ...prev, [eventId]: '' }));
       } else {
         const errorData = await response.json();
-        console.error('Failed to post comment:', errorData.error);
+        logger.error('Failed to post comment:', errorData.error);
       }
     } catch (error) {
-      console.error('Error posting comment:', error);
+      logger.error('Error posting comment:', error);
     } finally {
       setCommentingOn(null);
     }
@@ -219,7 +220,7 @@ export default function PastEventsPage() {
       
       // Check if the date is valid
       if (isNaN(date.getTime())) {
-        console.error('Invalid date string:', dateString);
+        logger.error('Invalid date string:', dateString);
         return 'Date unavailable';
       }
       
@@ -229,7 +230,7 @@ export default function PastEventsPage() {
         day: 'numeric'
       });
     } catch (error) {
-      console.error('Error formatting date:', error, 'Date string:', dateString);
+      logger.error('Error formatting date:', error, 'Date string:', dateString);
       return 'Date unavailable';
     }
   };

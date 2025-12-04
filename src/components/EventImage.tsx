@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ImageIcon } from 'lucide-react';
+import logger from '@/lib/logger';
 
 interface EventImageProps {
   src: string;
@@ -21,7 +22,7 @@ export default function EventImage({
   const [imageSrc, setImageSrc] = useState<string>('');
 
   useEffect(() => {
-    console.log('EventImage: Processing src:', src);
+    logger.log('EventImage: Processing src:', src);
     
     // Reset state when src changes
     setIsLoading(true);
@@ -29,7 +30,7 @@ export default function EventImage({
     
     // Check for empty or invalid src
     if (!src || src.trim() === '' || src === 'null' || src === 'undefined') {
-      console.log('EventImage: Invalid src, setting error');
+      logger.log('EventImage: Invalid src, setting error');
       setHasError(true);
       setIsLoading(false);
       return;
@@ -42,21 +43,21 @@ export default function EventImage({
     if (processedSrc.includes('supabase.co')) {
       const baseUrl = processedSrc.split('?')[0];
       processedSrc = `${baseUrl}?quality=80&format=webp&width=800`;
-      console.log('EventImage: Supabase URL processed:', processedSrc);
+      logger.log('EventImage: Supabase URL processed:', processedSrc);
     }
     
-    console.log('EventImage: Final processed src:', processedSrc);
+    logger.log('EventImage: Final processed src:', processedSrc);
     setImageSrc(processedSrc);
   }, [src]);
 
   const handleImageError = () => {
-    console.error('EventImage: Image failed to load:', imageSrc);
+    logger.error('EventImage: Image failed to load:', imageSrc);
     setIsLoading(false);
     setHasError(true);
   };
 
   const handleImageLoad = () => {
-    console.log('EventImage: Image loaded successfully:', imageSrc);
+    logger.log('EventImage: Image loaded successfully:', imageSrc);
     setIsLoading(false);
   };
 
