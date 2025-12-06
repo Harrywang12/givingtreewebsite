@@ -72,8 +72,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate a random name
-    const timestamp = new Date().toISOString().replace(/[-:.]/g, '');
+    // Generate a random, file-system-safe name without relying on a character class
+    const iso = new Date().toISOString();
+    const timestamp = iso
+      .replaceAll('-', '')
+      .replaceAll(':', '')
+      .replaceAll('.', '');
     const randomName = `Image_${timestamp}`;
     
     // Create inventory item

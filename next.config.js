@@ -52,9 +52,12 @@ const nextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
   
-  // Experimental features for better performance
+  // Experimental features
+  // Note: `optimizeCss` is disabled because the Lightning CSS optimizer used by Next 16
+  // can currently fail on some Tailwind-generated selectors with arbitrary values.
+  // If you re-enable it, make sure `next build` succeeds without CSS parse errors.
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false,
     scrollRestoration: true,
   },
   
