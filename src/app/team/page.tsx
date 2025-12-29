@@ -10,6 +10,34 @@ export default function TeamPage() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50">
       <PageBanner title="Meet Our Team" subtitle="The passionate individuals behind The Giving Tree Foundation" />
 
+      {/* Team Photo */}
+      <section className="py-16">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="relative rounded-2xl overflow-hidden shadow-2xl"
+          >
+            <Image
+              src="/teampicture.jpg"
+              alt="The Giving Tree Foundation Team"
+              width={1200}
+              height={675}
+              className="w-full h-auto object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+              <p className="text-lg font-medium text-center">
+                Our dedicated team working together to make a difference
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Team Members */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
